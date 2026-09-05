@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { TrendingUp, Award, Shield, Target } from "lucide-react";
@@ -27,7 +27,7 @@ export default function EfficientFrontierChart({
 
   if (!frontierPoints || frontierPoints.length === 0) {
     return (
-      <div className="h-64 rounded-xl border border-zinc-800 bg-zinc-900/30 flex items-center justify-center text-zinc-500 text-xs font-mono">
+      <div className="h-64 rounded-2xl border border-slate-100 bg-white flex items-center justify-center text-slate-400 text-xs font-mono">
         Optimizing frontier points...
       </div>
     );
@@ -57,7 +57,6 @@ export default function EfficientFrontierChart({
   const scaleX = (vol: number) => padLeft + ((vol - minX) / (maxX - minX)) * (width - padLeft - padRight);
   const scaleY = (ret: number) => height - padBottom - ((ret - minY) / (maxY - minY)) * (height - padTop - padBottom);
 
-  // Generate SVG path for the curve
   const pathD = frontierPoints
     .slice()
     .sort((a, b) => a.volatility - b.volatility)
@@ -65,27 +64,27 @@ export default function EfficientFrontierChart({
     .join(" ");
 
   return (
-    <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-5 backdrop-blur-sm space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4 select-none">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-white tracking-wide">Interactive Efficient Frontier & Capital Allocation Line</h3>
-          <p className="text-xs text-zinc-400">Risk (Annual Volatility) vs Reward (Expected Annual Return)</p>
+          <h3 className="text-[15px] font-bold text-[#0A1128] tracking-tight">Interactive Efficient Frontier</h3>
+          <p className="text-xs text-slate-400">Risk (Annual Volatility) vs Reward (Expected Annual Return)</p>
         </div>
         <div className="flex items-center gap-3 text-xs">
-          <div className="flex items-center gap-1 text-cyan-400 text-[11px] font-mono">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block" /> Current
+          <div className="flex items-center gap-1.5 text-blue-600 text-[11px] font-semibold">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF] inline-block" /> Current
           </div>
-          <div className="flex items-center gap-1 text-emerald-400 text-[11px] font-mono">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" /> Max Sharpe
+          <div className="flex items-center gap-1.5 text-emerald-600 text-[11px] font-semibold">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> Max Sharpe
           </div>
-          <div className="flex items-center gap-1 text-purple-400 text-[11px] font-mono">
-            <span className="w-2.5 h-2.5 rounded-full bg-purple-400 inline-block" /> Min Variance
+          <div className="flex items-center gap-1.5 text-violet-600 text-[11px] font-semibold">
+            <span className="w-2.5 h-2.5 rounded-full bg-violet-500 inline-block" /> Min Variance
           </div>
         </div>
       </div>
 
       {/* SVG Chart */}
-      <div className="relative overflow-hidden w-full aspect-[2/1] max-h-[340px] bg-zinc-950/60 rounded-lg border border-zinc-800/80 p-2">
+      <div className="relative overflow-hidden w-full aspect-[2/1] max-h-[340px] bg-[#F8FAFC] rounded-xl border border-slate-100 p-2">
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full">
           {/* Grid lines */}
           {[0.25, 0.5, 0.75].map((frac) => {
@@ -97,129 +96,94 @@ export default function EfficientFrontierChart({
                 y1={y}
                 x2={width - padRight}
                 y2={y}
-                stroke="#27272a"
+                stroke="#E2E8F0"
+                strokeDasharray="4 4"
+                strokeWidth="1"
+              />
+            );
+          })}
+          {[0.25, 0.5, 0.75].map((frac) => {
+            const x = padLeft + frac * (width - padLeft - padRight);
+            return (
+              <line
+                key={frac}
+                x1={x}
+                y1={padTop}
+                x2={x}
+                y2={height - padBottom}
+                stroke="#E2E8F0"
                 strokeDasharray="4 4"
                 strokeWidth="1"
               />
             );
           })}
 
-          {/* Frontier Curve Line */}
-          <path d={pathD} fill="none" stroke="#38bdf8" strokeWidth="2.5" className="opacity-80" />
+          {/* Axes labels */}
+          <text x={padLeft} y={height - 12} fill="#94A3B8" fontSize="10" fontFamily="sans-serif">
+            Vol: {(minX * 100).toFixed(0)}%
+          </text>
+          <text x={width - padRight} y={height - 12} fill="#94A3B8" fontSize="10" textAnchor="end" fontFamily="sans-serif">
+            Vol: {(maxX * 100).toFixed(0)}%
+          </text>
+          <text x={padLeft - 8} y={padTop + 10} fill="#94A3B8" fontSize="10" textAnchor="end" fontFamily="sans-serif">
+            {(maxY * 100).toFixed(0)}%
+          </text>
+          <text x={padLeft - 8} y={height - padBottom} fill="#94A3B8" fontSize="10" textAnchor="end" fontFamily="sans-serif">
+            {(minY * 100).toFixed(0)}%
+          </text>
 
-          {/* Frontier Discrete Points */}
+          {/* Frontier Line */}
+          <path d={pathD} fill="none" stroke="#0066FF" strokeWidth="2.5" strokeLinecap="round" opacity="0.85" />
+
+          {/* Frontier Point Dots */}
           {frontierPoints.map((p, i) => (
             <circle
               key={i}
               cx={scaleX(p.volatility)}
               cy={scaleY(p.expected_return)}
-              r="3.5"
-              fill="#0284c7"
-              className="hover:r-5 cursor-pointer transition-all"
+              r={3}
+              fill="#0066FF"
+              opacity="0.5"
+              className="cursor-pointer hover:opacity-100 transition-opacity"
               onMouseEnter={() => setHoveredPoint(p)}
+              onMouseLeave={() => setHoveredPoint(null)}
             />
           ))}
 
-          {/* Current Portfolio (Cyan Circle) */}
+          {/* Current Portfolio Point */}
           {currentPortfolio && (
-            <g transform={`translate(${scaleX(currentPortfolio.volatility)}, ${scaleY(currentPortfolio.expected_return)})`}>
-              <circle r="7" fill="#06b6d4" className="animate-ping opacity-75" />
-              <circle r="5.5" fill="#22d3ee" stroke="#083344" strokeWidth="2" />
-              <text x="9" y="3" fill="#22d3ee" fontSize="10" fontFamily="monospace" fontWeight="bold">
-                CURRENT
-              </text>
+            <g>
+              <circle cx={scaleX(currentPortfolio.volatility)} cy={scaleY(currentPortfolio.expected_return)} r={9} fill="#0066FF" opacity="0.2" className="animate-pulse" />
+              <circle cx={scaleX(currentPortfolio.volatility)} cy={scaleY(currentPortfolio.expected_return)} r={5} fill="#0066FF" stroke="#ffffff" strokeWidth="2" />
             </g>
           )}
 
-          {/* Max Sharpe Portfolio (Emerald Star/Diamond) */}
+          {/* Max Sharpe Portfolio Point */}
           {maxSharpePortfolio && (
-            <g transform={`translate(${scaleX(maxSharpePortfolio.volatility)}, ${scaleY(maxSharpePortfolio.expected_return)})`}>
-              <polygon points="0,-7 6,0 0,7 -6,0" fill="#10b981" stroke="#022c22" strokeWidth="1.5" />
-              <text x="9" y="3" fill="#34d399" fontSize="10" fontFamily="monospace" fontWeight="bold">
-                MAX SHARPE
-              </text>
+            <g>
+              <circle cx={scaleX(maxSharpePortfolio.volatility)} cy={scaleY(maxSharpePortfolio.expected_return)} r={9} fill="#10B981" opacity="0.2" />
+              <circle cx={scaleX(maxSharpePortfolio.volatility)} cy={scaleY(maxSharpePortfolio.expected_return)} r={5} fill="#10B981" stroke="#ffffff" strokeWidth="2" />
             </g>
           )}
 
-          {/* Min Variance Portfolio (Purple Square) */}
+          {/* Min Variance Portfolio Point */}
           {minVariancePortfolio && (
-            <g transform={`translate(${scaleX(minVariancePortfolio.volatility)}, ${scaleY(minVariancePortfolio.expected_return)})`}>
-              <rect x="-4.5" y="-4.5" width="9" height="9" fill="#a855f7" stroke="#3b0764" strokeWidth="1.5" />
-              <text x="9" y="3" fill="#c084fc" fontSize="10" fontFamily="monospace" fontWeight="bold">
-                MIN VAR
-              </text>
+            <g>
+              <circle cx={scaleX(minVariancePortfolio.volatility)} cy={scaleY(minVariancePortfolio.expected_return)} r={9} fill="#8B5CF6" opacity="0.2" />
+              <circle cx={scaleX(minVariancePortfolio.volatility)} cy={scaleY(minVariancePortfolio.expected_return)} r={5} fill="#8B5CF6" stroke="#ffffff" strokeWidth="2" />
             </g>
           )}
-
-          {/* Axis Labels */}
-          <text x={width / 2} y={height - 8} fill="#71717a" fontSize="10" fontFamily="monospace" textAnchor="middle">
-            Annual Volatility (Risk)
-          </text>
-          <text
-            x={-height / 2}
-            y={18}
-            fill="#71717a"
-            fontSize="10"
-            fontFamily="monospace"
-            textAnchor="middle"
-            transform="rotate(-90)"
-          >
-            Expected Return
-          </text>
         </svg>
 
-        {/* Floating Tooltip */}
+        {/* Hover Tooltip Card */}
         {hoveredPoint && (
-          <div className="absolute top-4 right-4 bg-zinc-900/90 border border-zinc-700 p-2.5 rounded-lg text-xs font-mono text-white shadow-xl pointer-events-none">
-            <div className="text-[10px] text-zinc-400 font-semibold mb-1">FRONTIER CANDIDATE</div>
-            <div>Exp Return: <span className="text-sky-400 font-bold">{(hoveredPoint.expected_return * 100).toFixed(2)}%</span></div>
-            <div>Volatility: <span className="text-zinc-300">{(hoveredPoint.volatility * 100).toFixed(2)}%</span></div>
-            <div>Sharpe: <span className="text-emerald-400 font-bold">{hoveredPoint.sharpe.toFixed(2)}</span></div>
-            <div>CVaR (10d): <span className="text-rose-400">{(hoveredPoint.cvar_95_10d * 100).toFixed(2)}%</span></div>
+          <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md border border-slate-200 p-2.5 rounded-xl text-xs shadow-lg space-y-1 font-mono pointer-events-none">
+            <div className="text-slate-900 font-bold">Frontier Optimal Point</div>
+            <div className="text-emerald-600">Return: {(hoveredPoint.expected_return * 100).toFixed(2)}%</div>
+            <div className="text-blue-600">Volatility: {(hoveredPoint.volatility * 100).toFixed(2)}%</div>
+            <div className="text-slate-500">Sharpe: {hoveredPoint.sharpe.toFixed(2)}</div>
           </div>
         )}
-      </div>
-
-      {/* Benchmark Comparisons */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1">
-        <div className="p-3 rounded-lg bg-zinc-800/40 border border-zinc-800">
-          <div className="flex items-center gap-1.5 text-zinc-400 mb-1">
-            <Target className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="font-semibold text-[11px]">CURRENT PORTFOLIO</span>
-          </div>
-          <div className="text-base font-bold font-mono text-white">
-            {currentPortfolio ? `${(currentPortfolio.expected_return * 100).toFixed(1)}% / ${(currentPortfolio.volatility * 100).toFixed(1)}%` : "—"}
-          </div>
-          <div className="text-[10px] text-zinc-500 font-mono">
-            Sharpe: {currentPortfolio?.sharpe.toFixed(2) || "—"} | CVaR: {currentPortfolio ? `${(currentPortfolio.cvar_95_10d * 100).toFixed(1)}%` : "—"}
-          </div>
-        </div>
-
-        <div className="p-3 rounded-lg bg-zinc-800/40 border border-zinc-800">
-          <div className="flex items-center gap-1.5 text-zinc-400 mb-1">
-            <Award className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-semibold text-[11px]">MAX SHARPE TARGET</span>
-          </div>
-          <div className="text-base font-bold font-mono text-emerald-400">
-            {maxSharpePortfolio ? `${(maxSharpePortfolio.expected_return * 100).toFixed(1)}% / ${(maxSharpePortfolio.volatility * 100).toFixed(1)}%` : "—"}
-          </div>
-          <div className="text-[10px] text-zinc-500 font-mono">
-            Sharpe: {maxSharpePortfolio?.sharpe.toFixed(2) || "—"} | CVaR: {maxSharpePortfolio ? `${(maxSharpePortfolio.cvar_95_10d * 100).toFixed(1)}%` : "—"}
-          </div>
-        </div>
-
-        <div className="p-3 rounded-lg bg-zinc-800/40 border border-zinc-800">
-          <div className="flex items-center gap-1.5 text-zinc-400 mb-1">
-            <Shield className="w-3.5 h-3.5 text-purple-400" />
-            <span className="font-semibold text-[11px]">MIN VARIANCE TARGET</span>
-          </div>
-          <div className="text-base font-bold font-mono text-purple-300">
-            {minVariancePortfolio ? `${(minVariancePortfolio.expected_return * 100).toFixed(1)}% / ${(minVariancePortfolio.volatility * 100).toFixed(1)}%` : "—"}
-          </div>
-          <div className="text-[10px] text-zinc-500 font-mono">
-            Sharpe: {minVariancePortfolio?.sharpe.toFixed(2) || "—"} | CVaR: {minVariancePortfolio ? `${(minVariancePortfolio.cvar_95_10d * 100).toFixed(1)}%` : "—"}
-          </div>
-        </div>
       </div>
     </div>
   );

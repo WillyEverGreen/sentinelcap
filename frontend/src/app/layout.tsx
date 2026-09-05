@@ -1,14 +1,18 @@
-﻿import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
 
-const inter = Inter({ subsets: ["latin"] });
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-plus-jakarta",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "SentinelCap - Institutional Capital & Risk Optimization Control Engine",
-  description: "Automated capital management, multi-method tail-risk optimization, Markov regime switching, and autonomous safeguard circuit breakers.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://sentinelcap.ai"),
+  title: "SentinelCap - AI for Asset & Capital Management",
+  description: "Optimize asset allocation, enforce risk controls, and adapt in real time to a changing market — all in one intelligent platform.",
 };
 
 export default function RootLayout({
@@ -17,20 +21,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} min-h-screen bg-[#11121d] text-zinc-100 antialiased selection:bg-sky-500/30 selection:text-sky-200 overflow-x-hidden`}>
-        <div className="flex min-h-screen w-full">
-          {/* Fixed Left Sidebar - remains in place on scroll */}
-          <Sidebar />
-
-          {/* Right Main Application Area offset by fixed sidebar width (250px) */}
-          <div className="flex-1 flex flex-col min-w-0 bg-[#11121d] ml-[250px]">
-            <Header />
-            <main className="flex-1 p-6 md:p-8 w-full">
-              {children}
-            </main>
-          </div>
-        </div>
+    <html lang="en" className={plusJakarta.variable}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body
+        className={`${plusJakarta.className} min-h-screen bg-white text-slate-900 antialiased overflow-x-hidden`}
+        style={{ fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+      >
+        {children}
       </body>
     </html>
   );

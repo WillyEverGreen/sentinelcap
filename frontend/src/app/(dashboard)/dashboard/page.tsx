@@ -676,7 +676,7 @@ export default function DashboardOverviewPage() {
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0066FF] via-[#0055EE] to-[#0A1128] p-6 text-white shadow-xl shadow-blue-500/10 flex flex-col justify-between">
           <div className="pointer-events-none absolute -top-12 -right-12 w-48 h-48 bg-[#00D2FF]/20 rounded-full blur-3xl" />
           
-          <div className="relative z-10 space-y-4">
+          <div className="relative z-10 space-y-3.5">
             <div className="flex items-center justify-between">
               <span className="px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-[11px] font-bold text-white/90 border border-white/15">
                 {marketScope === "india" ? "Domestic Institutional Vault" : "Global Core Vault"}
@@ -697,31 +697,64 @@ export default function DashboardOverviewPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5 pt-2">
-              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/10">
-                <p className="text-[11px] text-blue-200">Rebalance Mode</p>
-                <p className="text-sm font-bold text-white mt-0.5 uppercase">AUTONOMOUS</p>
+            <div className="grid grid-cols-2 gap-2.5 pt-1">
+              <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/10">
+                <p className="text-[10.5px] text-blue-200">Rebalance Mode</p>
+                <p className="text-xs font-bold text-white mt-0.5 uppercase">AUTONOMOUS</p>
               </div>
-              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/10">
-                <p className="text-[11px] text-blue-200">Liquidity Horizon</p>
-                <p className="text-sm font-bold text-white mt-0.5">
+              <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/10">
+                <p className="text-[10.5px] text-blue-200">Liquidity Horizon</p>
+                <p className="text-xs font-bold text-white mt-0.5">
                   {marketScope === "india" ? "RBI LCR > 100%" : "MAR33.12 10d"}
+                </p>
+              </div>
+            </div>
+
+            {/* Risk Buffer Utilization Progress */}
+            <div className="space-y-2 p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/10">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-blue-100 font-medium flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+                  Risk Buffer Utilization
+                </span>
+                <span className="font-mono font-bold text-white">30.0% Consumed</span>
+              </div>
+              <div className="w-full h-1.5 bg-black/25 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-emerald-400 to-cyan-300 rounded-full" style={{ width: "30%" }} />
+              </div>
+              <div className="flex items-center justify-between text-[10.5px] text-blue-200/90 font-mono">
+                <span>Current: 2.40% DD</span>
+                <span>Breaker: 8.00%</span>
+              </div>
+            </div>
+
+            {/* Operational Telemetry Matrix */}
+            <div className="grid grid-cols-2 gap-2.5 text-xs">
+              <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/10">
+                <p className="text-[10.5px] text-blue-200">Rebalance Clock</p>
+                <p className="text-xs font-bold text-white mt-0.5 font-mono">14m ago (TWAP)</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/10">
+                <p className="text-[10.5px] text-blue-200">Regulatory Mandate</p>
+                <p className="text-xs font-bold text-emerald-300 mt-0.5 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" />
+                  100% Compliant
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="relative z-10 pt-5 mt-4 border-t border-white/10 space-y-2">
+          <div className="relative z-10 pt-4 mt-3 border-t border-white/15 space-y-2">
             <Link
               href="/optimize"
-              className="w-full py-2.5 rounded-xl bg-white text-[#0066FF] hover:bg-blue-50 dark:bg-blue-950/60 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-white text-[#0066FF] hover:bg-white/90 text-xs font-extrabold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
             >
               <Sliders className="w-3.5 h-3.5" />
               <span>Configure Mean-CVaR Engine</span>
             </Link>
             <Link
               href="/stress-test"
-              className="w-full py-2 rounded-xl bg-white/10 hover:bg-white dark:hover:bg-[#2A374A]/15 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border border-white/10 cursor-pointer"
+              className="w-full py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border border-white/15 cursor-pointer"
             >
               <Flame className="w-3.5 h-3.5 text-amber-300" />
               <span>Indian & Global Stress Tests</span>
@@ -932,7 +965,7 @@ export default function DashboardOverviewPage() {
 
         {/* Dynamic Asset Holdings Table (Col Span 2) */}
         <div className="lg:col-span-2 bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80">
             <div>
               <h3 className="text-base font-bold text-[#0A1128] dark:text-white">
                 {marketScope === "global" ? "Global Asset Allocation & Risk Attribution" : "Domestic Indian Portfolio Allocation (₹100 Cr AUM)"}
@@ -941,32 +974,32 @@ export default function DashboardOverviewPage() {
                 {marketScope === "global" ? "Mean-CVaR risk budget across global ETFs" : "SEBI compliant asset weights across Indian Large Caps, G-Sec, and Liquid TREPS"}
               </p>
             </div>
-            <Link href="/dashboard/trades" className="text-xs font-semibold text-[#0066FF] hover:underline flex items-center gap-1">
+            <Link href="/dashboard/trades" className="text-xs font-semibold text-[#0066FF] dark:text-[#38BDF8] hover:underline flex items-center gap-1">
               <span>View Execution Blotter</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800/70">
             {activeAssets.map((asset) => (
-              <div key={asset.ticker} className="py-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-[#1E293B] dark:bg-[#1E293B] px-2.5 rounded-xl transition-all">
-                <div className="flex items-center gap-3">
+              <div key={asset.ticker} className="py-3 px-3 flex items-center justify-between hover:bg-slate-50/80 dark:hover:bg-slate-800/50 rounded-xl transition-colors">
+                <div className="flex items-center gap-3.5">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black text-white shadow-xs"
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black text-white shadow-xs shrink-0"
                     style={{ backgroundColor: asset.color }}
                   >
                     {asset.ticker.slice(0, 2)}
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-extrabold text-[#0A1128] dark:text-white">{asset.ticker}</span>
-                      <span className="text-[10px] text-slate-400 font-medium">({asset.name})</span>
+                      <span className="text-xs font-extrabold text-[#0A1128] dark:text-white tracking-wide">{asset.ticker}</span>
+                      <span className="text-[11px] text-slate-400 font-medium">({asset.name})</span>
                     </div>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+                    <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
                       <span>{asset.class}</span>
-                      <span>â€¢</span>
+                      <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600 inline-block" />
                       <span>LH: {asset.lh}</span>
-                      <span>â€¢</span>
+                      <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600 inline-block" />
                       <span className="font-semibold text-slate-600 dark:text-slate-300">Risk Contrib: {asset.riskContrib}</span>
                     </div>
                   </div>
@@ -976,9 +1009,9 @@ export default function DashboardOverviewPage() {
                   <div className="text-xs font-extrabold text-[#0A1128] dark:text-white font-mono">
                     {marketScope === "global" ? `$${(asset.notional).toLocaleString()}` : `₹${(asset.notional / 10000000).toFixed(2)} Cr`}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-semibold mt-0.5">
-                    {(asset.weight * 100).toFixed(1)}% Weight
-                    <span className="text-slate-400 ml-1.5 font-mono">({asset.price})</span>
+                  <div className="flex items-center justify-end gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1">
+                    <span>{(asset.weight * 100).toFixed(1)}% Weight</span>
+                    <span className="text-slate-400 dark:text-slate-500 font-mono text-[10.5px]">({asset.price})</span>
                   </div>
                 </div>
               </div>
@@ -987,31 +1020,31 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Daily Execution Volume & Safeguard Progress */}
-        <div className="bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-sm space-y-5 flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
           <div>
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80 mb-3">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-3">
               <div>
                 <h3 className="text-base font-bold text-[#0A1128] dark:text-white">Daily Execution Volume</h3>
                 <p className="text-xs text-slate-400 mt-0.5">
                   {marketScope === "global" ? "Algorithmic vs Manual tickets" : "NSE Smart Order Routing (SOR)"}
                 </p>
               </div>
-              <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0066FF] text-[10px] font-bold">
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200/60 dark:border-blue-900/60 text-[10px] font-bold">
                 Smart Routed
               </span>
             </div>
 
             {/* Readout when hovering bar */}
             {hoveredBarDay && (
-              <div className="mb-2 p-2 rounded-lg bg-blue-50 dark:bg-blue-950/60/70 border border-blue-200/60 text-[11px] flex items-center justify-between text-slate-700 dark:text-slate-300">
+              <div className="mb-2 p-2 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-900 text-[11px] flex items-center justify-between text-slate-700 dark:text-slate-300">
                 <span className="font-bold">{hoveredBarDay.day}: {hoveredBarDay.algo + hoveredBarDay.manual} Fills</span>
-                <span className="text-[#0066FF] font-semibold">{Math.round((hoveredBarDay.algo / (hoveredBarDay.algo + hoveredBarDay.manual)) * 100)}% Automated</span>
+                <span className="text-[#0066FF] dark:text-[#38BDF8] font-semibold">{Math.round((hoveredBarDay.algo / (hoveredBarDay.algo + hoveredBarDay.manual)) * 100)}% Automated</span>
               </div>
             )}
 
-            <div className="w-full h-[155px] min-w-0">
+            <div className="w-full h-[145px] min-w-0">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={155}>
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={145}>
                   <BarChart
                     data={[
                       { day: "Mon", algo: 42, manual: 12 },
@@ -1042,9 +1075,33 @@ export default function DashboardOverviewPage() {
             </div>
           </div>
 
-          <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+          {/* Institutional Smart Order Routing (SOR) Telemetry */}
+          <div className="grid grid-cols-2 gap-2.5 py-3 border-y border-slate-100 dark:border-slate-800/80">
+            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#1E293B]/70 border border-slate-100 dark:border-slate-800/70">
+              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Fill Rate</div>
+              <div className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">99.4%</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">Zero fill rejections</div>
+            </div>
+            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#1E293B]/70 border border-slate-100 dark:border-slate-800/70">
+              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Slippage</div>
+              <div className="text-sm font-extrabold text-[#0066FF] dark:text-[#38BDF8] font-mono mt-0.5">0.82 bps</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">&lt; 1.5 bps ceiling</div>
+            </div>
+            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#1E293B]/70 border border-slate-100 dark:border-slate-800/70">
+              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Primary Venue</div>
+              <div className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono mt-0.5">NSE Co-Loc</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">Direct DMA feed</div>
+            </div>
+            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#1E293B]/70 border border-slate-100 dark:border-slate-800/70">
+              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Settlement</div>
+              <div className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono mt-0.5">T+1 DvP</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">SEBI clearing corp</div>
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-1">
             <div>
-              <div className="flex items-center justify-between text-xs mb-1">
+              <div className="flex items-center justify-between text-xs mb-1.5">
                 <span className="font-semibold text-slate-600 dark:text-slate-300">CVaR Budget Consumption</span>
                 <span className="font-mono text-slate-800 dark:text-slate-200 font-bold">3.28% / 6.00%</span>
               </div>
@@ -1054,7 +1111,7 @@ export default function DashboardOverviewPage() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between text-xs mb-1">
+              <div className="flex items-center justify-between text-xs mb-1.5">
                 <span className="font-semibold text-slate-600 dark:text-slate-300">Drawdown Circuit Breaker</span>
                 <span className="font-mono text-slate-800 dark:text-slate-200 font-bold">2.40% / 8.00%</span>
               </div>

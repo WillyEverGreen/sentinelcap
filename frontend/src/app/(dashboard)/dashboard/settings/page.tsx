@@ -54,7 +54,7 @@ export default function SettingsPage() {
   };
 
   const displayName = user?.fullName || demoUser?.name || "Aditya Sharma";
-  const displayEmail = user?.primaryEmailAddress?.emailAddress || demoUser?.email || "aditya.sharma@sentinelcap.ai";
+  const displayEmail = user?.primaryEmailAddress?.emailAddress || demoUser?.email || "aditya.sharma@capitalai.com";
   const displayRole = demoUser?.role || "Chief Investment Officer";
 
   return (
@@ -159,7 +159,7 @@ export default function SettingsPage() {
               <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Organization / Desk</label>
               <input
                 type="text"
-                defaultValue="Sentinel Capital Management Ltd."
+                defaultValue="CapitalAI Asset Management Ltd."
                 className="w-full h-8 px-3 rounded-lg bg-slate-50 dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#0066FF]"
               />
             </div>

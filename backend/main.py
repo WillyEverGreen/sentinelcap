@@ -3,6 +3,7 @@ SentinelCap Backend Application Entry Point.
 Institutional FinTech Platform for Automated Capital Management & Risk Optimization Controls.
 """
 from __future__ import annotations
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from data.market_data import load_portfolio_config, get_returns_df, get_prices_df
@@ -13,20 +14,28 @@ from routers.safeguard import router as safeguard_router
 from routers.live_feed import router as live_feed_router
 
 app = FastAPI(
-    title="SentinelCap — Asset & Capital Management Engine",
+    title="CapitalAI — Asset & Capital Management Engine",
     description="Institutional-grade autonomous capital optimization, tail-risk safeguards, and scenario stress testing.",
     version="1.0.0"
 )
 
-# Enable CORS for local Next.js frontend
+# Enable CORS for local Next.js, Vercel deployments, and production domains
+default_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+    "https://capitalai.com",
+]
+
+env_origins = os.environ.get("ALLOWED_ORIGINS", "")
+allowed_origins = [orig.strip() for orig in env_origins.split(",") if orig.strip()] if env_origins else []
+all_origins = list(set(default_origins + allowed_origins))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-    ],
+    allow_origins=all_origins,
+    allow_origin_regex=r"^https:\/\/.*\.vercel\.app$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,7 +52,7 @@ app.include_router(live_feed_router)
 async def health_check():
     return {
         "status": "HEALTHY",
-        "service": "SentinelCap Core Engine",
+        "service": "CapitalAI Core Engine",
         "version": "1.0.0"
     }
 
@@ -184,4 +193,5 @@ async def get_execution_trades():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)

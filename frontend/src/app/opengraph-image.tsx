@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Galedge — Free Stock Market Data";
+export const alt = "CapitalAI — AI for Asset & Capital Management";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -10,7 +10,7 @@ export default async function Image() {
     (
       <div
         style={{
-          background: "#09090b",
+          background: "#0A0F1D",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -20,63 +20,79 @@ export default async function Image() {
           fontFamily: "system-ui, sans-serif",
         }}
       >
-        {/* Chart bars */}
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 24, marginBottom: 48 }}>
-          {[120, 170, 230, 280, 350].map((h, i) => (
-            <div
-              key={i}
-              style={{
-                width: 64,
-                height: h,
-                borderRadius: 12,
-                background: `rgba(16, 185, 129, ${0.4 + i * 0.15})`,
-              }}
-            />
-          ))}
+        {/* Animated Brand 3-Bar Graphic */}
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 16, marginBottom: 36 }}>
+          <div
+            style={{
+              width: 24,
+              height: 48,
+              borderRadius: 12,
+              background: "#00D2FF",
+            }}
+          />
+          <div
+            style={{
+              width: 24,
+              height: 72,
+              borderRadius: 12,
+              background: "#0077FF",
+            }}
+          />
+          <div
+            style={{
+              width: 24,
+              height: 96,
+              borderRadius: 12,
+              background: "#0044FF",
+            }}
+          />
         </div>
 
         {/* Title */}
         <div
           style={{
-            fontSize: 80,
+            fontSize: 84,
             fontWeight: 800,
             color: "white",
             letterSpacing: "-2px",
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          Galedge
+          <span>Capital</span>
+          <span style={{ color: "#38BDF8" }}>AI</span>
         </div>
 
         {/* Subtitle */}
         <div
           style={{
-            fontSize: 32,
-            color: "#10b981",
+            fontSize: 30,
+            color: "#94A3B8",
             marginTop: 16,
+            fontWeight: 500,
           }}
         >
-          Free Stock Market Data Platform
+          AI for Asset &amp; Capital Management
         </div>
 
         {/* Features */}
         <div
           style={{
             display: "flex",
-            gap: 32,
+            gap: 28,
             marginTop: 40,
-            fontSize: 20,
-            color: "#71717a",
+            fontSize: 18,
+            color: "#64748B",
+            fontWeight: 600,
           }}
         >
-          <span>Charts</span>
-          <span style={{ color: "#27272a" }}>|</span>
-          <span>Screener</span>
-          <span style={{ color: "#27272a" }}>|</span>
-          <span>Heatmap</span>
-          <span style={{ color: "#27272a" }}>|</span>
-          <span>Options</span>
-          <span style={{ color: "#27272a" }}>|</span>
-          <span>Portfolio</span>
+          <span>Portfolio Optimizer</span>
+          <span style={{ color: "#334155" }}>•</span>
+          <span>Stress Testing</span>
+          <span style={{ color: "#334155" }}>•</span>
+          <span>Risk Safeguards</span>
+          <span style={{ color: "#334155" }}>•</span>
+          <span>FRTB Liquidity</span>
         </div>
       </div>
     ),

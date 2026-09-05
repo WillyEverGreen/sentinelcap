@@ -34,7 +34,7 @@ export default function SignUpPage() {
         JSON.stringify({
           name: name || "Aditya Sharma",
           role: "Chief Investment Officer",
-          email: email || "aditya.sharma@sentinelcap.ai",
+          email: email || "aditya.sharma@capitalai.com",
         })
       );
       document.cookie = "sentinel_demo=1; path=/; max-age=604800";
@@ -172,7 +172,7 @@ export default function SignUpPage() {
             <div className="absolute inset-4 bg-cyan-400/20 rounded-full filter blur-2xl transform scale-90" />
             <img
               src="/auth-main.png"
-              alt="SentinelCap AI Mascot"
+              alt="CapitalAI Mascot"
               className="relative z-10 max-h-[240px] sm:max-h-[300px] lg:max-h-[380px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(2,20,65,0.4)] hover:scale-105 transition-transform duration-500 ease-out pointer-events-auto"
             />
           </div>
@@ -357,7 +357,7 @@ export default function SignUpPage() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="e.g. SentinelCap2026!Secure"
+                      placeholder="e.g. CapitalAI2026!Secure"
                       className="w-full pl-11 pr-11 py-3 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#1C64F2] focus:ring-2 focus:ring-[#1C64F2]/15 transition-all bg-white shadow-2xs"
                     />
                     <button

@@ -28,7 +28,7 @@ export default function SignInPage() {
         JSON.stringify({
           name: "Aditya Sharma",
           role: "Chief Investment Officer",
-          email: "aditya.sharma@sentinelcap.ai",
+          email: "aditya.sharma@capitalai.com",
         })
       );
       document.cookie = "sentinel_demo=1; path=/; max-age=604800";
@@ -118,7 +118,7 @@ export default function SignInPage() {
             <div className="absolute inset-4 bg-cyan-400/20 rounded-full filter blur-2xl transform scale-90" />
             <img
               src="/auth-main.png"
-              alt="SentinelCap AI Mascot"
+              alt="CapitalAI Mascot"
               className="relative z-10 max-h-[240px] sm:max-h-[300px] lg:max-h-[380px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(2,20,65,0.4)] hover:scale-105 transition-transform duration-500 ease-out pointer-events-auto"
             />
           </div>
@@ -340,8 +340,8 @@ export default function SignInPage() {
               <button
                 type="button"
                 onClick={() => {
-                  setEmail("aditya.sharma@sentinelcap.ai");
-                  setPassword("SentinelCapital2026!");
+                  setEmail("aditya.sharma@capitalai.com");
+                  setPassword("CapitalAI2026!");
                 }}
                 className="text-xs text-slate-500 hover:text-[#1C64F2] font-medium underline cursor-pointer"
               >

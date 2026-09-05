@@ -61,11 +61,11 @@ export default function Sidebar() {
       <div>
         {/* Brand Logo matching Hero Page */}
         <Link href="/" className="flex items-center gap-2.5 px-3 mb-8 group">
-          <img
-            src="/logo-icon.png"
-            alt="CapitalAI"
-            className="h-6 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
-          />
+          <div className="flex items-end gap-[3px] h-6">
+            <span className="w-[5px] h-3 bg-[#00D2FF] rounded-full transition-all group-hover:h-5 duration-300" />
+            <span className="w-[5px] h-[18px] bg-[#0077FF] rounded-full transition-all group-hover:h-3.5 duration-300" />
+            <span className="w-[5px] h-6 bg-[#0044FF] rounded-full transition-all group-hover:h-6 duration-300" />
+          </div>
           <span className="text-[20px] font-extrabold tracking-[-0.03em] text-[#0A1128] dark:text-white">
             Capital<span className="text-[#0066FF] dark:text-[#38BDF8]">AI</span>
           </span>

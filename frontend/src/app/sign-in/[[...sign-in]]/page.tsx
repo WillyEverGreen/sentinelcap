@@ -112,9 +112,16 @@ export default function SignInPage() {
           </Link>
         </div>
 
-        {/* Center Area: Half screen reserved for 3D image (kept blank as instructed) */}
-        <div className="relative z-10 flex-1 flex items-center justify-center my-4 min-h-[160px]">
-          <div className="w-full h-full flex items-center justify-center" />
+        {/* Center Area: 3D Mascot Hero Graphic */}
+        <div className="relative z-10 flex-1 flex items-center justify-center my-auto min-h-[200px] max-h-[360px] lg:max-h-[440px] py-2">
+          <div className="relative w-full h-full max-w-[340px] lg:max-w-[400px] flex items-center justify-center">
+            <div className="absolute inset-4 bg-cyan-400/20 rounded-full filter blur-2xl transform scale-90" />
+            <img
+              src="/auth-main.png"
+              alt="SentinelCap AI Mascot"
+              className="relative z-10 max-h-[240px] sm:max-h-[300px] lg:max-h-[380px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(2,20,65,0.4)] hover:scale-105 transition-transform duration-500 ease-out pointer-events-auto"
+            />
+          </div>
         </div>
 
         {/* Bottom Section: Editorial Typography */}

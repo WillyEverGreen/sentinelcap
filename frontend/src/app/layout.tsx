@@ -12,8 +12,8 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://sentinelcap.ai"),
-  title: "SentinelCap - AI for Asset & Capital Management",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://capitalai.com"),
+  title: "CapitalAI - AI for Asset & Capital Management",
   description: "Optimize asset allocation, enforce risk controls, and adapt in real time to a changing market - all in one intelligent platform.",
   icons: {
     icon: [

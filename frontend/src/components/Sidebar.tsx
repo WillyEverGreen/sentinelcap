@@ -112,8 +112,8 @@ export default function Sidebar() {
       <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
         <div className="px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-xs shadow-emerald-500/50" />
-            <span className="text-[11.5px] font-semibold text-slate-700 dark:text-slate-300">Sentinel Engine</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs shadow-emerald-500/50 animate-pulse" />
+            <span className="text-[11.5px] font-semibold text-slate-700 dark:text-slate-300">CapitalAI Engine</span>
           </div>
           <span className="text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500 uppercase">Active</span>
         </div>

@@ -268,7 +268,7 @@ export default function StressTestPage() {
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                If max drawdown breaches 8.0%, SentinelCap automatically reallocates 25% of equity exposure into BIL / TREPS cash reserves.
+                If max drawdown breaches 8.0%, CapitalAI automatically reallocates 25% of equity exposure into BIL / TREPS cash reserves.
               </p>
             </div>
           </div>

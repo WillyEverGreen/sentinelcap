@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -93,8 +93,8 @@ export default function Navbar() {
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-bold tracking-tight text-white text-base">SENTINEL</span>
-                <span className="font-bold tracking-tight text-sky-400 text-base">CAP</span>
+                <span className="font-bold tracking-tight text-white text-base">CAPITAL</span>
+                <span className="font-bold tracking-tight text-sky-400 text-base">AI</span>
                 <span className="text-[10px] uppercase font-semibold px-1.5 py-0.2 bg-zinc-800 text-zinc-400 rounded">v1.0</span>
               </div>
               <p className="text-[10px] text-zinc-500 font-mono tracking-wider">INSTITUTIONAL CAPITAL CONTROL</p>

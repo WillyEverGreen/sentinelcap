@@ -223,7 +223,7 @@ export default function DashboardOverviewPage() {
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF] shadow-sm shadow-blue-500/50" />
                   <span className="text-slate-700 dark:text-slate-300 font-semibold">
-                    {marketScope === "cross_market" ? "NIFTY 50 (India):" : "Sentinel Portfolio:"}
+                    {marketScope === "cross_market" ? "NIFTY 50 (India):" : "CapitalAI Portfolio:"}
                   </span>
                 </div>
                 <div className="text-right">
@@ -574,10 +574,10 @@ export default function DashboardOverviewPage() {
                       className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all cursor-pointer ${
                         showPortfolio ? "bg-white border-blue-300 text-[#0066FF] font-bold shadow-xs" : "bg-slate-100 dark:bg-slate-800 border-slate-200 text-slate-400"
                       }`}
-                      title="Click to toggle Sentinel line"
+                      title="Click to toggle CapitalAI line"
                     >
                       <span className={`w-2.5 h-2.5 rounded-full ${showPortfolio ? "bg-[#0066FF]" : "bg-slate-300"}`} />
-                      <span>Sentinel</span>
+                      <span>CapitalAI</span>
                       {showPortfolio ? <Eye className="w-3 h-3 ml-0.5" /> : <EyeOff className="w-3 h-3 ml-0.5" />}
                     </button>
 
@@ -638,7 +638,7 @@ export default function DashboardOverviewPage() {
                       <Line
                         type="monotone"
                         dataKey="portfolio"
-                        name="Sentinel Portfolio"
+                        name="CapitalAI Portfolio"
                         stroke="#0066FF"
                         strokeWidth={3.5}
                         dot={{ r: 3.5, fill: "#0066FF", stroke: "#FFFFFF", strokeWidth: 2 }}

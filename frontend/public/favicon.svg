@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <rect width="128" height="128" rx="28" fill="#0A1128"/>
+  <rect x="1" y="1" width="126" height="126" rx="27" stroke="#1E293B" stroke-width="2" fill="none"/>
+  <radialGradient id="icon-glow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#0066FF" stop-opacity="0.25"/>
+    <stop offset="100%" stop-color="#0066FF" stop-opacity="0"/>
+  </radialGradient>
+  <circle cx="64" cy="64" r="54" fill="url(#icon-glow)"/>
+  
+  <!-- Ascending Signal Bars -->
+  <rect x="30" y="64" width="18" height="38" rx="9" fill="#00D2FF"/>
+  <rect x="55" y="44" width="18" height="58" rx="9" fill="#0077FF"/>
+  <rect x="80" y="26" width="18" height="76" rx="9" fill="#0044FF"/>
+</svg>

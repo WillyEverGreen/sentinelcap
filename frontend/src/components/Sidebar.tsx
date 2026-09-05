@@ -8,6 +8,7 @@ import {
   TrendingUp,
   ShieldAlert,
   Sliders,
+  SlidersHorizontal,
   History,
   Bell,
   Settings,
@@ -51,6 +52,11 @@ export default function Sidebar() {
     },
     {
       title: "Risk Parameters",
+      href: "/dashboard/risk",
+      icon: <SlidersHorizontal className="w-[18px] h-[18px]" />,
+    },
+    {
+      title: "Settings",
       href: "/dashboard/settings",
       icon: <Settings className="w-[18px] h-[18px]" />,
     },

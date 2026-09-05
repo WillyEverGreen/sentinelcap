@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { ShieldCheck, AlertCircle, BarChart3 } from "lucide-react";

@@ -1,5 +1,7 @@
 "use client";
 
+import { useTheme } from "@/components/ThemeProvider";
+
 import React, { useState, useRef, useMemo } from "react";
 import { Sliders, TrendingUp, ShieldCheck, Zap } from "lucide-react";
 
@@ -52,6 +54,7 @@ function catmullRomPath(points: { x: number; y: number }[]): string {
 }
 
 export default function EfficientFrontierChart({
+
   frontierPoints,
   currentPortfolio,
   maxSharpePortfolio,
@@ -60,6 +63,7 @@ export default function EfficientFrontierChart({
   currency = "$",
   onSelectPoint,
 }: EfficientFrontierChartProps) {
+  const { isDark } = useTheme();
   const [hoveredPoint, setHoveredPoint] = useState<FrontierPoint | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<FrontierPoint | null>(null);
   const [showCAL, setShowCAL] = useState<boolean>(false);
@@ -189,16 +193,16 @@ export default function EfficientFrontierChart({
   const yTicks = [0.02, 0.04, 0.06, 0.08, 0.10, 0.12, 0.14];
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4 select-none font-sans">
+    <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-4 select-none font-sans">
       
-      {/* ── ROW 1: Clean Institutional Header ── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+      {/* â”€â”€ ROW 1: Clean Institutional Header â”€â”€ */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
         <div>
           <div className="flex items-center gap-2.5">
-            <h3 className="text-base font-bold text-[#0A1128] tracking-tight">
+            <h3 className="text-base font-bold text-[#0A1128] dark:text-white tracking-tight">
               Markowitz Efficient Frontier
             </h3>
-            <span className="px-2 py-0.5 rounded-md bg-blue-50 text-[#0066FF] border border-blue-200/80 text-[10px] font-bold tracking-wide uppercase">
+            <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900/80 text-[10px] font-bold tracking-wide uppercase">
               Convex MPT
             </span>
           </div>
@@ -208,8 +212,8 @@ export default function EfficientFrontierChart({
         </div>
 
         {/* Live HUD Telemetry Strip - Clean, single-line, non-wrapping */}
-        <div className="flex items-center gap-2.5 bg-slate-50/90 border border-slate-200/80 px-3.5 py-1.5 rounded-xl text-xs font-mono shrink-0 shadow-xs">
-          <div className="flex items-center gap-1.5 font-bold font-sans text-slate-800 text-[11px] border-r border-slate-200 pr-2.5">
+        <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 rounded-xl text-xs font-mono shrink-0 shadow-xs">
+          <div className="flex items-center gap-1.5 font-bold font-sans text-slate-800 dark:text-slate-200 text-[11px] border-r border-slate-200 dark:border-slate-800 pr-2.5">
             <span className={`w-2 h-2 rounded-full ${activePointColor}`} />
             <span className="whitespace-nowrap">{activeShortTitle}</span>
           </div>
@@ -229,14 +233,14 @@ export default function EfficientFrontierChart({
           <span className="text-slate-300">|</span>
           <div className="flex items-center gap-1 whitespace-nowrap">
             <span className="text-slate-400 font-sans text-[11px]">Sharpe:</span>
-            <span className="font-bold text-slate-900 font-mono">
+            <span className="font-bold text-slate-900 dark:text-white font-mono">
               {activePt.sharpe.toFixed(2)}
             </span>
           </div>
         </div>
       </div>
 
-      {/* ── ROW 2: Minimalist Filter Tabs & CAL Toggle ── */}
+      {/* â”€â”€ ROW 2: Minimalist Filter Tabs & CAL Toggle â”€â”€ */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex flex-wrap items-center gap-2">
           
@@ -245,8 +249,8 @@ export default function EfficientFrontierChart({
             onClick={() => { setSelectedPoint(maxSharpePt); if (onSelectPoint) onSelectPoint(maxSharpePt); }}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs transition-all cursor-pointer ${
               (selectedPoint === maxSharpePt || !selectedPoint)
-                ? "bg-blue-50/80 border-blue-300 text-[#0066FF] font-bold shadow-xs"
-                : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
+                ? "bg-blue-50 dark:bg-blue-950/60 border-blue-300 dark:border-blue-700 text-[#0066FF] dark:text-[#38BDF8] font-bold shadow-xs"
+                : "bg-white dark:bg-[#1E293B] border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <span className="w-2 h-2 rounded-full bg-[#0066FF]" />
@@ -258,8 +262,8 @@ export default function EfficientFrontierChart({
             onClick={() => { setSelectedPoint(minVarPt); if (onSelectPoint) onSelectPoint(minVarPt); }}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs transition-all cursor-pointer ${
               selectedPoint === minVarPt
-                ? "bg-slate-100 border-slate-400 text-slate-900 font-bold shadow-xs"
-                : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
+                ? "bg-slate-100 dark:bg-[#1E293B] border-slate-400 dark:border-slate-600 text-slate-900 dark:text-white font-bold shadow-xs"
+                : "bg-white dark:bg-[#1E293B] border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <span className="w-2 h-2 rounded-full bg-[#0F172A]" />
@@ -271,8 +275,8 @@ export default function EfficientFrontierChart({
             onClick={() => { setSelectedPoint(currentPt); if (onSelectPoint) onSelectPoint(currentPt); }}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs transition-all cursor-pointer ${
               selectedPoint === currentPt
-                ? "bg-amber-50 border-amber-300 text-amber-900 font-bold shadow-xs"
-                : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
+                ? "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-300 font-bold shadow-xs"
+                : "bg-white dark:bg-[#1E293B] border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <span className="w-2 h-2 rounded-full bg-[#EA580C]" />
@@ -285,8 +289,8 @@ export default function EfficientFrontierChart({
           onClick={() => setShowCAL(!showCAL)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
             showCAL
-              ? "bg-amber-50 text-amber-800 border-amber-300 font-bold shadow-xs"
-              : "bg-white text-slate-500 border-slate-200 hover:text-slate-700"
+              ? "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700 font-bold shadow-xs"
+              : "bg-white dark:bg-[#1E293B] text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-slate-700 dark:hover:text-white"
           }`}
         >
           <span className={`w-1.5 h-1.5 rounded-full ${showCAL ? "bg-amber-500" : "bg-slate-300"}`} />
@@ -294,8 +298,8 @@ export default function EfficientFrontierChart({
         </button>
       </div>
 
-      {/* ── ROW 3: SVG Canvas ── */}
-      <div className="relative overflow-hidden w-full aspect-[2.2/1] max-h-[310px] bg-[#FAFBFD] rounded-2xl border border-slate-200/80 p-2">
+      {/* â”€â”€ ROW 3: SVG Canvas â”€â”€ */}
+      <div className="relative overflow-hidden w-full aspect-[2.2/1] max-h-[310px] bg-[#FAFBFD] dark:bg-[#0A0F1D] rounded-2xl border border-slate-200 dark:border-slate-800 p-2">
         <svg
           ref={svgRef}
           viewBox={`0 0 ${width} ${height}`}
@@ -332,14 +336,14 @@ export default function EfficientFrontierChart({
                   y1={y}
                   x2={width - padRight + 4}
                   y2={y}
-                  stroke="#F1F5F9"
+                  stroke={isDark ? "#1E293B" : "#F1F5F9"}
                   strokeWidth="0.8"
                   strokeDasharray="3 3"
                 />
                 <text
                   x={padLeft - 8}
                   y={y + 3.5}
-                  fill="#94A3B8"
+                  fill={isDark ? "#64748B" : "#94A3B8"}
                   fontSize="9"
                   fontFamily="monospace"
                   textAnchor="end"
@@ -363,7 +367,7 @@ export default function EfficientFrontierChart({
                   y1={padTop}
                   x2={x}
                   y2={base}
-                  stroke="#F1F5F9"
+                  stroke={isDark ? "#1E293B" : "#F1F5F9"}
                   strokeWidth="0.8"
                   strokeDasharray="3 3"
                 />
@@ -372,13 +376,13 @@ export default function EfficientFrontierChart({
                   y1={base}
                   x2={x}
                   y2={base + 5}
-                  stroke="#94A3B8"
+                  stroke={isDark ? "#64748B" : "#94A3B8"}
                   strokeWidth="0.9"
                 />
                 <text
                   x={x}
                   y={base + 16}
-                  fill="#64748B"
+                  fill={isDark ? "#94A3B8" : "#64748B"}
                   fontSize="9"
                   fontFamily="monospace"
                   textAnchor="middle"
@@ -404,7 +408,7 @@ export default function EfficientFrontierChart({
           <text
             x={padLeft}
             y={height - 8}
-            fill="#94A3B8"
+            fill={isDark ? "#64748B" : "#94A3B8"}
             fontSize="8"
             fontWeight="700"
             letterSpacing="0.06em"
@@ -414,7 +418,7 @@ export default function EfficientFrontierChart({
           <text
             x={width - padRight}
             y={height - 8}
-            fill="#94A3B8"
+            fill={isDark ? "#64748B" : "#94A3B8"}
             fontSize="8"
             fontWeight="700"
             letterSpacing="0.06em"
@@ -449,7 +453,7 @@ export default function EfficientFrontierChart({
             </g>
           )}
 
-          {/* ── Continuous Smooth Frontier Curve ── */}
+          {/* â”€â”€ Continuous Smooth Frontier Curve â”€â”€ */}
           <path
             d={pathD}
             fill="none"
@@ -458,7 +462,7 @@ export default function EfficientFrontierChart({
             strokeLinecap="round"
           />
 
-          {/* ── Plumb Lines ── */}
+          {/* â”€â”€ Plumb Lines â”€â”€ */}
 
           {/* Min Variance Plumb Line */}
           <g>
@@ -584,7 +588,7 @@ export default function EfficientFrontierChart({
               cx={mapX(minVarPt.volatility)}
               cy={mapY(minVarPt.expected_return)}
               r="4.5"
-              fill="#FFFFFF"
+              fill={isDark ? "#0A0F1D" : "#FFFFFF"}
               stroke="#0F172A"
               strokeWidth="2"
             />
@@ -661,24 +665,24 @@ export default function EfficientFrontierChart({
         </svg>
       </div>
 
-      {/* ── ROW 4: Signature Bottom Legend ── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 text-[11px] font-sans text-slate-500">
+      {/* â”€â”€ ROW 4: Signature Bottom Legend â”€â”€ */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-[11px] font-sans text-slate-500">
         <div className="flex items-center gap-4 text-xs">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-0.5 bg-[#0066FF] rounded-full" />
-            <span className="font-medium text-slate-600">Efficient Frontier</span>
+            <span className="font-medium text-slate-600 dark:text-slate-300">Efficient Frontier</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#0066FF]" />
-            <span className="font-semibold text-slate-800">Max Sharpe Target</span>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">Max Sharpe Target</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#0F172A]" />
-            <span className="font-semibold text-slate-800">Min Variance</span>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">Min Variance</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#EA580C]" />
-            <span className="font-semibold text-slate-800">Current Baseline</span>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">Current Baseline</span>
           </div>
         </div>
         <div className="text-[11px] text-slate-400 font-mono">

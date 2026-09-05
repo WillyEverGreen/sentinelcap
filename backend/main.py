@@ -13,7 +13,7 @@ from routers.safeguard import router as safeguard_router
 from routers.live_feed import router as live_feed_router
 
 app = FastAPI(
-    title="SentinelCap - Asset & Capital Management Engine",
+    title="SentinelCap — Asset & Capital Management Engine",
     description="Institutional-grade autonomous capital optimization, tail-risk safeguards, and scenario stress testing.",
     version="1.0.0"
 )

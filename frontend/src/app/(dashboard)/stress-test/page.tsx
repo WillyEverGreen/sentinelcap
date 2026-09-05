@@ -1,5 +1,7 @@
 "use client";
 
+import { useTheme } from "@/components/ThemeProvider";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
@@ -51,6 +53,7 @@ const PRESET_SCENARIOS = [
 ];
 
 export default function StressTestPage() {
+  const { isDark } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState("2008_GFC");
   const [scenariosList, setScenariosList] = useState<any[]>(PRESET_SCENARIOS);
@@ -131,9 +134,9 @@ export default function StressTestPage() {
       if (!item) return null;
 
       return (
-        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-4 shadow-xl text-xs space-y-2 select-none min-w-[220px]">
-          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
-            <span className="font-bold text-slate-900 text-xs uppercase tracking-wide">
+        <div className="bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-2xl p-4 shadow-xl text-xs space-y-2 select-none min-w-[220px]">
+          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+            <span className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wide">
               {label} Shock Impact
             </span>
             <span
@@ -150,7 +153,7 @@ export default function StressTestPage() {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-slate-400 font-medium">Portfolio Weight:</span>
-              <span className="font-mono font-bold text-slate-700">{item.weight}%</span>
+              <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{item.weight}%</span>
             </div>
 
             <div className="flex items-center justify-between">
@@ -160,7 +163,7 @@ export default function StressTestPage() {
               </span>
             </div>
 
-            <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between">
+            <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
               <span className="text-slate-400 font-medium">Estimated P&L Impact:</span>
               <span className={`font-mono font-black text-sm ${item.isPositive ? "text-emerald-600" : "text-rose-600"}`}>
                 {item.pnlUsd >= 0 ? `+$${item.pnlUsd.toLocaleString()}` : `-$${Math.abs(item.pnlUsd).toLocaleString()}`}
@@ -176,10 +179,10 @@ export default function StressTestPage() {
   return (
     <div className="space-y-6 select-none font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#0A1128] tracking-tight">Macro Scenario Stress Testing</h1>
+            <h1 className="text-2xl font-bold text-[#0A1128] dark:text-white tracking-tight">Macro Scenario Stress Testing</h1>
             <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200 text-[11px] font-bold">
               Tail-Risk Shocks
             </span>
@@ -210,19 +213,19 @@ export default function StressTestPage() {
               onClick={() => executeSimulation(sc.id)}
               className={`relative p-5 rounded-2xl border cursor-pointer transition-all ${
                 isSelected
-                  ? "bg-white border-[#0066FF] ring-2 ring-[#0066FF]/10 shadow-md"
-                  : "bg-white border-slate-100 hover:border-slate-200 shadow-sm"
+                  ? "bg-white dark:bg-[#131B2E] border-[#0066FF] dark:border-[#38BDF8] ring-2 ring-[#0066FF]/10 shadow-md"
+                  : "bg-white dark:bg-[#131B2E] border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 shadow-sm"
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isSelected ? "bg-blue-50 text-[#0066FF]" : "bg-slate-100 text-slate-500"}`}>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isSelected ? "bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8]" : "bg-slate-100 dark:bg-slate-800 text-slate-500"}`}>
                   <Icon className="w-5 h-5" />
                 </div>
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${isSelected ? "bg-blue-50 text-[#0066FF]" : "bg-slate-100 text-slate-500"}`}>
+                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${isSelected ? "bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8]" : "bg-slate-100 dark:bg-slate-800 text-slate-500"}`}>
                   {sc.tag}
                 </span>
               </div>
-              <h3 className="text-sm font-bold text-[#0A1128]">{sc.name}</h3>
+              <h3 className="text-sm font-bold text-[#0A1128] dark:text-white">{sc.name}</h3>
               <p className="text-xs text-slate-500 mt-1 leading-relaxed line-clamp-2">{sc.desc}</p>
             </div>
           );
@@ -234,32 +237,32 @@ export default function StressTestPage() {
         
         {/* Left Column: Simulated Drawdown (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-5">
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-5">
             <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-bold text-[#0A1128]">Projected Impact Summary</h3>
+              <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white">Projected Impact Summary</h3>
               <span className="text-xs font-mono font-bold text-slate-400">Base Capital: $10,000,000</span>
             </div>
 
-            <div className="p-5 rounded-xl border bg-rose-50/60 border-rose-200">
+            <div className="p-5 rounded-xl border bg-rose-50/60 dark:bg-rose-950/30 border-rose-200 dark:border-rose-900/60">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold text-slate-600">Simulated Portfolio Loss</p>
+                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Simulated Portfolio Loss</p>
                   <h2 className="text-3xl font-extrabold text-rose-600 tracking-tight mt-1">
                     -{lossPct}%
                   </h2>
-                  <p className="text-xs font-mono font-bold text-slate-700 mt-1">
+                  <p className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 mt-1">
                     -${lossUsd} USD
                   </p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-white border border-rose-200 flex items-center justify-center text-rose-600 shadow-sm">
+                <div className="w-12 h-12 rounded-xl bg-white dark:bg-[#1E293B] border border-rose-200 dark:border-rose-900/60 flex items-center justify-center text-rose-600 dark:text-rose-400 shadow-sm">
                   <TrendingDown className="w-6 h-6" />
                 </div>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-800 space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-slate-700">Autonomous Circuit Breaker</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Autonomous Circuit Breaker</span>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 font-bold text-[10px]">
                   TRIGGER READY
                 </span>
@@ -275,14 +278,14 @@ export default function StressTestPage() {
         <div className="lg:col-span-7 space-y-6">
           
           {/* Interactive Bar Chart of Asset P&L & Return Shock */}
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-800/80">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-[15px] font-bold text-[#0A1128] tracking-tight">
+                  <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white tracking-tight">
                     Asset Shock & Return Attribution
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[10px] font-extrabold">
+                  <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[10px] font-extrabold">
                     Interactive
                   </span>
                 </div>
@@ -292,11 +295,11 @@ export default function StressTestPage() {
               </div>
 
               {/* Mode Toggle */}
-              <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg text-xs font-bold">
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#0E1526] p-0.5 rounded-lg text-xs font-bold border border-slate-200/60 dark:border-slate-800">
                 <button
                   onClick={() => setChartMode("pct")}
                   className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                    chartMode === "pct" ? "bg-white text-[#0066FF] shadow-xs" : "text-slate-500 hover:text-slate-800"
+                    chartMode === "pct" ? "bg-white dark:bg-[#1E293B] text-[#0066FF] dark:text-[#38BDF8] shadow-xs" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
                   }`}
                 >
                   % Shock
@@ -304,7 +307,7 @@ export default function StressTestPage() {
                 <button
                   onClick={() => setChartMode("dollar")}
                   className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                    chartMode === "dollar" ? "bg-white text-[#0066FF] shadow-xs" : "text-slate-500 hover:text-slate-800"
+                    chartMode === "dollar" ? "bg-white dark:bg-[#1E293B] text-[#0066FF] dark:text-[#38BDF8] shadow-xs" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
                   }`}
                 >
                   $ P&L Impact
@@ -319,10 +322,10 @@ export default function StressTestPage() {
                     data={chartData}
                     margin={{ top: 15, right: 15, left: 15, bottom: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#F8FAFC" vertical={false} />
-                    <XAxis dataKey="ticker" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1E293B" : "#F8FAFC"} vertical={false} />
+                    <XAxis dataKey="ticker" stroke={isDark ? "#64748B" : "#94A3B8"} fontSize={11} tickLine={false} axisLine={false} />
                     <YAxis
-                      stroke="#94A3B8"
+                      stroke={isDark ? "#64748B" : "#94A3B8"}
                       fontSize={11}
                       tickLine={false}
                       axisLine={false}
@@ -332,7 +335,7 @@ export default function StressTestPage() {
                       }
                     />
                     <Tooltip content={<CustomStressTooltip />} cursor={{ fill: "rgba(0, 102, 255, 0.04)" }} />
-                    <ReferenceLine y={0} stroke="#94A3B8" strokeWidth={1} />
+                    <ReferenceLine y={0} stroke={isDark ? "#64748B" : "#94A3B8"} strokeWidth={1} />
                     <Bar
                       dataKey={chartMode === "pct" ? "shockPct" : "pnlUsd"}
                       radius={[4, 4, 0, 0]}
@@ -353,16 +356,16 @@ export default function StressTestPage() {
           </div>
 
           {/* Table Breakdown */}
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h3 className="text-[15px] font-bold text-[#0A1128]">Asset P&L Stress Breakdown</h3>
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
+              <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white">Asset P&L Stress Breakdown</h3>
               <span className="text-xs text-slate-400">Simulation Output</span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
+                  <tr className="border-b border-slate-100 dark:border-slate-800/80 text-slate-400 font-semibold uppercase tracking-wider">
                     <th className="pb-3">Asset</th>
                     <th className="pb-3 text-right">Base Allocation</th>
                     <th className="pb-3 text-right">Shock Return</th>
@@ -373,11 +376,11 @@ export default function StressTestPage() {
                   {assetList.map((item) => {
                     const isPositive = item.pnl >= 0;
                     return (
-                      <tr key={item.ticker} className="hover:bg-slate-50/60 transition-colors">
-                        <td className="py-3 font-semibold text-slate-800">
+                      <tr key={item.ticker} className="hover:bg-slate-50 dark:hover:bg-[#1E293B] dark:bg-[#1E293B]/60 transition-colors">
+                        <td className="py-3 font-semibold text-slate-800 dark:text-slate-200">
                           <span className="font-bold text-[#0066FF] mr-2">{item.ticker}</span>
                         </td>
-                        <td className="py-3 text-right font-mono text-slate-600">{(item.weight * 100).toFixed(0)}%</td>
+                        <td className="py-3 text-right font-mono text-slate-600 dark:text-slate-300">{(item.weight * 100).toFixed(0)}%</td>
                         <td className={`py-3 text-right font-mono font-bold ${item.shock > 0 ? "text-emerald-600" : "text-rose-600"}`}>
                           {item.shock > 0 ? `+${(item.shock * 100).toFixed(1)}%` : `${(item.shock * 100).toFixed(1)}%`}
                         </td>

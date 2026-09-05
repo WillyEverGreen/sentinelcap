@@ -322,7 +322,6 @@ export async function getAuditLog(limit = 100): Promise<AuditLogResponse> {
   return fetchJSON<AuditLogResponse>(`/api/safeguard/audit-log?limit=${limit}`);
 }
 
-
 export interface LiveQuote {
   symbol: string;
   price: number;

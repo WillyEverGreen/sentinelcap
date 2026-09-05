@@ -1,5 +1,7 @@
 "use client";
 
+import { useTheme } from "@/components/ThemeProvider";
+
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
@@ -50,6 +52,7 @@ import {
 } from "@/lib/api";
 
 export default function DashboardOverviewPage() {
+  const { isDark } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -197,9 +200,9 @@ export default function DashboardOverviewPage() {
       const benchName = marketScope === "india" ? "NIFTY 50" : (marketScope === "global" ? "S&P 500" : "Benchmark");
 
       return (
-        <div className="bg-white/95 backdrop-blur-md border border-slate-200/95 rounded-2xl p-4 shadow-2xl text-xs space-y-3 select-none min-w-[240px]">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-            <span className="font-extrabold text-slate-900 text-xs tracking-tight">
+        <div className="bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-md border border-slate-200/95 dark:border-slate-800 rounded-2xl p-4 shadow-2xl text-xs space-y-3 select-none min-w-[240px]">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
+            <span className="font-extrabold text-slate-900 dark:text-white text-xs tracking-tight">
               Evaluation: {label}
             </span>
             <span className={`px-2 py-0.5 rounded-full text-[10.5px] font-extrabold flex items-center gap-1 ${
@@ -219,12 +222,12 @@ export default function DashboardOverviewPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF] shadow-sm shadow-blue-500/50" />
-                  <span className="text-slate-700 font-semibold">
+                  <span className="text-slate-700 dark:text-slate-300 font-semibold">
                     {marketScope === "cross_market" ? "NIFTY 50 (India):" : "Sentinel Portfolio:"}
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="font-mono font-black text-slate-900 text-sm">
+                  <span className="font-mono font-black text-slate-900 dark:text-white text-sm">
                     {currSym}{portVal.toLocaleString()}
                   </span>
                   <span className="block text-[10px] font-bold text-emerald-600">
@@ -243,7 +246,7 @@ export default function DashboardOverviewPage() {
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="font-mono font-bold text-slate-700 text-xs">
+                  <span className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">
                     {currSym}{benchVal.toLocaleString()}
                   </span>
                   <span className="block text-[10px] font-semibold text-slate-400">
@@ -254,7 +257,7 @@ export default function DashboardOverviewPage() {
             )}
           </div>
 
-          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px]">
             <span className="text-slate-400 font-medium">Net Spread (Indexed):</span>
             <span className={`font-mono font-black ${isOutperforming ? "text-emerald-600" : "text-rose-600"}`}>
               {isOutperforming ? "+" : ""}{currSym}{diff.toLocaleString()} ({isOutperforming ? "+" : ""}{diffPct}%)
@@ -276,10 +279,10 @@ export default function DashboardOverviewPage() {
       const notionalEst = marketScope === "global" ? `$${(total * 14200).toLocaleString()}` : `₹${((total * 14200 * 84.1) / 10000000).toFixed(2)} Cr`;
 
       return (
-        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-4 shadow-xl text-xs space-y-2.5 min-w-[200px] select-none">
-          <div className="flex items-center justify-between font-bold text-slate-900 pb-1.5 border-b border-slate-100">
+        <div className="bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 shadow-xl text-xs space-y-2.5 min-w-[200px] select-none">
+          <div className="flex items-center justify-between font-bold text-slate-900 dark:text-white pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
             <span className="text-xs font-black uppercase tracking-tight">{label} Executions</span>
-            <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] font-mono text-[10.5px] font-black border border-blue-200">
+            <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0066FF] font-mono text-[10.5px] font-black border border-blue-200">
               {total} Fills
             </span>
           </div>
@@ -288,9 +291,9 @@ export default function DashboardOverviewPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-sm bg-[#0066FF]" />
-                <span className="text-slate-600 font-semibold">Algorithmic Smart:</span>
+                <span className="text-slate-600 dark:text-slate-300 font-semibold">Algorithmic Smart:</span>
               </div>
-              <span className="font-mono font-bold text-slate-900">{algo} ({algoPct}%)</span>
+              <span className="font-mono font-bold text-slate-900 dark:text-white">{algo} ({algoPct}%)</span>
             </div>
 
             <div className="flex items-center justify-between">
@@ -298,13 +301,13 @@ export default function DashboardOverviewPage() {
                 <span className="w-2.5 h-2.5 rounded-sm bg-[#38BDF8]" />
                 <span className="text-slate-500 font-medium">Discretionary / Manual:</span>
               </div>
-              <span className="font-mono font-bold text-slate-700">{manual} ({100 - algoPct}%)</span>
+              <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{manual} ({100 - algoPct}%)</span>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px]">
             <span className="text-slate-400 font-medium">Est. Daily Notional:</span>
-            <span className="font-mono font-bold text-slate-800">{notionalEst}</span>
+            <span className="font-mono font-bold text-slate-800 dark:text-slate-200">{notionalEst}</span>
           </div>
         </div>
       );
@@ -322,21 +325,21 @@ export default function DashboardOverviewPage() {
     <div className="space-y-6 select-none font-sans">
 
       {/* 0. MARKET SCOPE & GEOGRAPHY SWITCHER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-200/90 dark:border-slate-800 shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0066FF] shrink-0 font-bold text-base shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-[#0066FF] shrink-0 font-bold text-base shadow-sm">
             {marketScope === "india" && <Landmark className="w-5 h-5 text-[#0066FF]" />}
             {marketScope === "global" && <Globe className="w-5 h-5 text-[#0066FF]" />}
             {marketScope === "cross_market" && <ArrowLeftRight className="w-5 h-5 text-purple-600" />}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-extrabold text-[#0A1128] tracking-tight">
+              <h2 className="text-base font-extrabold text-[#0A1128] dark:text-white tracking-tight">
                 {marketScope === "india" && "Indian Institutional Market (NSE / BSE / RBI)"}
                 {marketScope === "global" && "Global Institutional Market (NYSE / Fed / USD)"}
                 {marketScope === "cross_market" && "Cross-Market Contagion (Nifty 50 vs S&P 500 & FPI Flows)"}
               </h2>
-              <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[10px] font-extrabold">
+              <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[10px] font-extrabold">
                 {marketScope === "india" ? "SEBI AIF Cat II/III" : marketScope === "global" ? "SEC Registered" : "Spillover Engine"}
               </span>
             </div>
@@ -349,13 +352,13 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* 3-Way Switcher Buttons with Professional Lucide Icons */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl shrink-0">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 dark:bg-[#1E293B] rounded-xl shrink-0">
           <button
             onClick={() => setMarketScope("india")}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               marketScope === "india"
-                ? "bg-white text-[#0A1128] shadow-sm"
-                : "text-slate-500 hover:text-slate-900"
+                ? "bg-white dark:bg-[#1E293B] text-[#0A1128] dark:text-[#38BDF8] shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <Landmark className={`w-3.5 h-3.5 ${marketScope === "india" ? "text-[#0066FF]" : "text-slate-400"}`} />
@@ -366,8 +369,8 @@ export default function DashboardOverviewPage() {
             onClick={() => setMarketScope("global")}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               marketScope === "global"
-                ? "bg-white text-[#0066FF] shadow-sm"
-                : "text-slate-500 hover:text-slate-900"
+                ? "bg-white dark:bg-[#1E293B] text-[#0066FF] dark:text-[#38BDF8] shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <Globe className={`w-3.5 h-3.5 ${marketScope === "global" ? "text-[#0066FF]" : "text-slate-400"}`} />
@@ -378,8 +381,8 @@ export default function DashboardOverviewPage() {
             onClick={() => setMarketScope("cross_market")}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               marketScope === "cross_market"
-                ? "bg-white text-purple-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-900"
+                ? "bg-white dark:bg-[#1E293B] text-purple-600 dark:text-purple-300 shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <ArrowLeftRight className={`w-3.5 h-3.5 ${marketScope === "cross_market" ? "text-purple-600" : "text-slate-400"}`} />
@@ -392,7 +395,7 @@ export default function DashboardOverviewPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
         {/* Card 1: Total AUM */}
-        <div className="relative overflow-hidden bg-white border border-slate-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,102,255,0.06)] hover:shadow-md transition-all group">
+        <div className="relative overflow-hidden bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,102,255,0.06)] hover:shadow-md transition-all group">
           <div className="pointer-events-none absolute -bottom-6 -left-6 w-32 h-32 bg-blue-100/60 rounded-full blur-2xl group-hover:scale-110 transition-transform" />
           
           <div className="relative z-10 flex items-start justify-between">
@@ -400,14 +403,14 @@ export default function DashboardOverviewPage() {
               <p className="text-[13px] font-medium text-slate-400">
                 {marketScope === "global" ? "Total Capital (USD AUM)" : "Total Capital (INR AUM)"}
               </p>
-              <h3 className="text-[25px] font-extrabold text-[#0A1128] tracking-tight mt-1">
+              <h3 className="text-[25px] font-extrabold text-[#0A1128] dark:text-white tracking-tight mt-1">
                 {marketScope === "global" ? "$10,000,000" : "₹100.00 Cr"}
                 <span className="text-[13px] font-semibold text-slate-400 ml-1.5">
                   {marketScope === "global" ? "USD" : "INR"}
                 </span>
               </h3>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0066FF] shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-[#0066FF] shadow-sm">
               <Landmark className="w-5 h-5" />
             </div>
           </div>
@@ -422,16 +425,16 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Card 2: Net Expected Yield */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group">
+        <div className="bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[13px] font-medium text-slate-400">Expected Annual Return</p>
-              <h3 className="text-[25px] font-extrabold text-[#0A1128] tracking-tight mt-1">
+              <h3 className="text-[25px] font-extrabold text-[#0A1128] dark:text-white tracking-tight mt-1">
                 {marketScope === "global" ? "+9.84%" : "+12.40%"}
                 <span className="text-[13px] font-semibold text-slate-400 ml-1">p.a.</span>
               </h3>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0066FF] shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-[#0066FF] shadow-sm">
               <TrendingUp className="w-5 h-5" />
             </div>
           </div>
@@ -444,18 +447,18 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Card 3: Tail Risk / VaR (99%) */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group">
+        <div className="bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[13px] font-medium text-slate-400">
                 Conditional VaR (99% / 10d)
               </p>
-              <h3 className="text-[25px] font-extrabold text-[#0A1128] tracking-tight mt-1">
+              <h3 className="text-[25px] font-extrabold text-[#0A1128] dark:text-white tracking-tight mt-1">
                 {marketScope === "global" ? "3.42%" : "3.28%"}
                 <span className="text-[13px] font-semibold text-slate-400 ml-1">max</span>
               </h3>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0066FF] shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-[#0066FF] shadow-sm">
               <ShieldAlert className="w-5 h-5" />
             </div>
           </div>
@@ -468,17 +471,17 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Card 4: Liquid Buffer */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group">
+        <div className="bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[13px] font-medium text-slate-400">
                 {marketScope === "global" ? "Liquid Buffer (US T-Bills)" : "Cash Buffer (LIQUIDBEES / TREPS)"}
               </p>
-              <h3 className="text-[25px] font-extrabold text-[#0A1128] tracking-tight mt-1">
+              <h3 className="text-[25px] font-extrabold text-[#0A1128] dark:text-white tracking-tight mt-1">
                 {marketScope === "global" ? "$500,000" : "₹10.00 Cr"}
               </h3>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0066FF] shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-[#0066FF] shadow-sm">
               <Lock className="w-5 h-5" />
             </div>
           </div>
@@ -495,15 +498,15 @@ export default function DashboardOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Dynamic Dual-Line Recharts Performance (Col Span 2) */}
-        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
+        <div className="lg:col-span-2 bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
           <div>
             {/* Header with Title, Live Value Tracker, Timeframe & Legends */}
-            <div className="flex flex-col gap-3 pb-3 border-b border-slate-100">
+            <div className="flex flex-col gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
               
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-[#0A1128]">
+                    <h3 className="text-base font-bold text-[#0A1128] dark:text-white">
                       {marketScope === "india" && "Portfolio Growth vs NIFTY 50 (NSE Benchmark)"}
                       {marketScope === "global" && "Portfolio Growth vs S&P 500 (US Benchmark)"}
                       {marketScope === "cross_market" && "NIFTY 50 vs S&P 500 Relative Trajectory"}
@@ -518,13 +521,13 @@ export default function DashboardOverviewPage() {
                 </div>
 
                 {/* Timeframe pills */}
-                <div className="flex items-center gap-1 bg-slate-100/90 p-0.5 rounded-lg text-[11px] font-bold self-start sm:self-auto">
+                <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/90 p-0.5 rounded-lg text-[11px] font-bold self-start sm:self-auto">
                   {(["1M", "3M", "6M", "YTD", "1Y", "ALL"] as const).map((tf) => (
                     <button
                       key={tf}
                       onClick={() => setTimeframe(tf)}
                       className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                        timeframe === tf ? "bg-white text-[#0066FF] shadow-xs" : "text-slate-500 hover:text-slate-800"
+                        timeframe === tf ? "bg-white text-[#0066FF] shadow-xs" : "text-slate-500 hover:text-slate-800 dark:text-slate-200"
                       }`}
                     >
                       {tf}
@@ -534,9 +537,9 @@ export default function DashboardOverviewPage() {
               </div>
 
               {/* LIVE VALUE READOUT BANNER */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 bg-slate-50/70 border border-slate-200/60 p-3 rounded-xl">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 bg-slate-50 dark:bg-[#1E293B] border border-slate-200/60 p-3 rounded-xl">
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="font-bold text-slate-600">
+                  <span className="font-bold text-slate-600 dark:text-slate-300">
                     {hoveredDataPoint ? `Live Point (${hoveredDataPoint.month}):` : `Current (${activeHeaderPoint.month}):`}
                   </span>
                   <div className="flex items-center gap-2 font-mono">
@@ -544,7 +547,7 @@ export default function DashboardOverviewPage() {
                       {currSym}{activeHeaderPoint.portfolio.toLocaleString()}
                     </span>
                     <span className="text-slate-400 font-sans text-[11px]">vs</span>
-                    <span className="font-bold text-slate-600 text-xs">
+                    <span className="font-bold text-slate-600 dark:text-slate-300 text-xs">
                       {marketScope === "india" ? "NIFTY" : "S&P"} {currSym}{activeHeaderPoint.benchmark.toLocaleString()}
                     </span>
                   </div>
@@ -569,7 +572,7 @@ export default function DashboardOverviewPage() {
                     <button
                       onClick={() => setShowPortfolio(!showPortfolio)}
                       className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all cursor-pointer ${
-                        showPortfolio ? "bg-white border-blue-300 text-[#0066FF] font-bold shadow-xs" : "bg-slate-100 border-slate-200 text-slate-400"
+                        showPortfolio ? "bg-white border-blue-300 text-[#0066FF] font-bold shadow-xs" : "bg-slate-100 dark:bg-slate-800 border-slate-200 text-slate-400"
                       }`}
                       title="Click to toggle Sentinel line"
                     >
@@ -581,7 +584,7 @@ export default function DashboardOverviewPage() {
                     <button
                       onClick={() => setShowBenchmark(!showBenchmark)}
                       className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all cursor-pointer ${
-                        showBenchmark ? "bg-white border-slate-300 text-slate-700 font-bold shadow-xs" : "bg-slate-100 border-slate-200 text-slate-400"
+                        showBenchmark ? "bg-white border-slate-300 text-slate-700 dark:text-slate-300 font-bold shadow-xs" : "bg-slate-100 dark:bg-slate-800 border-slate-200 text-slate-400"
                       }`}
                       title="Click to toggle Benchmark line"
                     >
@@ -610,16 +613,16 @@ export default function DashboardOverviewPage() {
                     }}
                     onMouseLeave={() => setHoveredDataPoint(null)}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1E293B" : "#F1F5F9"} vertical={false} />
                     <XAxis
                       dataKey="month"
-                      stroke="#94A3B8"
+                      stroke={isDark ? "#64748B" : "#94A3B8"}
                       fontSize={11}
                       tickLine={false}
                       axisLine={false}
                     />
                     <YAxis
-                      stroke="#94A3B8"
+                      stroke={isDark ? "#64748B" : "#94A3B8"}
                       fontSize={11}
                       tickLine={false}
                       axisLine={false}
@@ -648,7 +651,7 @@ export default function DashboardOverviewPage() {
                         type="monotone"
                         dataKey="benchmark"
                         name={marketScope === "india" ? "NIFTY 50" : "S&P 500"}
-                        stroke="#94A3B8"
+                        stroke={isDark ? "#64748B" : "#94A3B8"}
                         strokeWidth={2.5}
                         strokeDasharray="4 4"
                         dot={{ r: 3, fill: "#94A3B8", stroke: "#FFFFFF", strokeWidth: 1.5 }}
@@ -662,10 +665,10 @@ export default function DashboardOverviewPage() {
             </div>
           </div>
 
-          <div className="mt-2 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2 font-mono">
+          <div className="mt-2 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2 font-mono">
             <span>Dynamic Alpha: <strong className="text-emerald-600 font-bold font-sans">{marketScope === "india" ? "+3.24%" : "+2.65%"}</strong></span>
-            <span>Tracking Error: <strong className="text-slate-700 font-bold">1.75%</strong></span>
-            <span>Market Beta: <strong className="text-slate-700 font-bold">{marketScope === "cross_market" ? "0.64 (Nifty/SPX)" : "0.85"}</strong></span>
+            <span>Tracking Error: <strong className="text-slate-700 dark:text-slate-300 font-bold">1.75%</strong></span>
+            <span>Market Beta: <strong className="text-slate-700 dark:text-slate-300 font-bold">{marketScope === "cross_market" ? "0.64 (Nifty/SPX)" : "0.85"}</strong></span>
           </div>
         </div>
 
@@ -711,14 +714,14 @@ export default function DashboardOverviewPage() {
           <div className="relative z-10 pt-5 mt-4 border-t border-white/10 space-y-2">
             <Link
               href="/optimize"
-              className="w-full py-2.5 rounded-xl bg-white text-[#0066FF] hover:bg-blue-50 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-white text-[#0066FF] hover:bg-blue-50 dark:bg-blue-950/60 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
             >
               <Sliders className="w-3.5 h-3.5" />
               <span>Configure Mean-CVaR Engine</span>
             </Link>
             <Link
               href="/stress-test"
-              className="w-full py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border border-white/10 cursor-pointer"
+              className="w-full py-2 rounded-xl bg-white/10 hover:bg-white dark:hover:bg-[#2A374A]/15 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border border-white/10 cursor-pointer"
             >
               <Flame className="w-3.5 h-3.5 text-amber-300" />
               <span>Indian & Global Stress Tests</span>
@@ -729,8 +732,8 @@ export default function DashboardOverviewPage() {
       </div>
 
       {/* 3. LIVE MULTI-API TELEMETRY STRIP */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+      <div className="bg-white dark:bg-[#131B2E] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center gap-2.5">
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -738,7 +741,7 @@ export default function DashboardOverviewPage() {
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-[#0A1128] tracking-tight">
+                <h2 className="text-sm font-bold text-[#0A1128] dark:text-white tracking-tight">
                   {marketScope === "india" ? "Indian Market Sensors & Macro Telemetry (NSE / BSE / RBI)" : "Global Market & Cross-Contagion Telemetry"}
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-extrabold uppercase">
@@ -755,7 +758,7 @@ export default function DashboardOverviewPage() {
             <button
               onClick={fetchAllData}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-[#1E293B] hover:bg-slate-100 dark:bg-slate-800 border border-slate-200 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all cursor-pointer disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 text-[#0066FF] ${loading ? "animate-spin" : ""}`} />
               <span>{loading ? "Syncing..." : "Refresh Feeds"}</span>
@@ -767,7 +770,7 @@ export default function DashboardOverviewPage() {
         {marketScope === "india" || marketScope === "cross_market" ? (
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                 <span>NSE / BSE Benchmark Quotes</span>
                 <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-bold">
                   NSE Official
@@ -785,14 +788,14 @@ export default function DashboardOverviewPage() {
                 { sym: "GOLDBEES", name: "NSE Gold ETF", price: liveMarket?.india?.quotes?.GOLDBEES?.price || 62.80, chg: "+0.35%", isPos: true },
                 { sym: "USD / INR", name: "Forex Exchange", price: liveMarket?.india?.usd_inr?.rate || 84.10, chg: "₹84.10", isPos: false },
               ].map((item) => (
-                <div key={item.sym} className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:border-blue-200 hover:bg-white transition-all">
+                <div key={item.sym} className="p-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-200/70 dark:border-slate-800 hover:border-blue-300 dark:hover:border-sky-500 hover:bg-white dark:hover:bg-[#2A374A] transition-all shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-[#0A1128] text-xs">{item.sym}</span>
-                    <span className={`text-[10.5px] font-bold ${item.isPos ? "text-emerald-600" : "text-slate-600"}`}>
+                    <span className="font-extrabold text-[#0A1128] dark:text-white text-xs">{item.sym}</span>
+                    <span className={`text-[10.5px] font-bold ${item.isPos ? "text-emerald-600" : "text-slate-600 dark:text-slate-300"}`}>
                       {item.chg}
                     </span>
                   </div>
-                  <div className="text-base font-extrabold text-slate-900 mt-1 font-mono tracking-tight">
+                  <div className="text-base font-extrabold text-slate-900 dark:text-white mt-1 font-mono tracking-tight">
                     {typeof item.price === "number" ? item.price.toLocaleString() : item.price}
                   </div>
                   <div className="text-[10px] text-slate-400 truncate mt-0.5">
@@ -805,9 +808,9 @@ export default function DashboardOverviewPage() {
         ) : (
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                 <span>US Multi-Asset Quotes</span>
-                <span className="px-1.5 py-0.5 rounded bg-blue-50 text-[#0066FF] border border-blue-200 text-[9px] font-bold">
+                <span className="px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[9px] font-bold">
                   Finnhub Live API
                 </span>
               </span>
@@ -822,12 +825,12 @@ export default function DashboardOverviewPage() {
                 { sym: "VNQ", name: "Real Estate", price: liveMarket?.quotes?.VNQ?.price || 88.10, chg: "-0.18%" },
                 { sym: "BIL", name: "1-3M T-Bills", price: liveMarket?.quotes?.BIL?.price || 92.78, chg: "+0.02%" },
               ].map((item) => (
-                <div key={item.sym} className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:border-blue-200 hover:bg-white transition-all">
+                <div key={item.sym} className="p-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-200/70 dark:border-slate-800 hover:border-blue-300 dark:hover:border-sky-500 hover:bg-white dark:hover:bg-[#2A374A] transition-all shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-[#0A1128] text-xs">{item.sym}</span>
-                    <span className="text-[10.5px] font-bold text-slate-600">{item.chg}</span>
+                    <span className="font-extrabold text-[#0A1128] dark:text-white text-xs">{item.sym}</span>
+                    <span className="text-[10.5px] font-bold text-slate-600 dark:text-slate-300">{item.chg}</span>
                   </div>
-                  <div className="text-base font-extrabold text-slate-900 mt-1 font-mono tracking-tight">
+                  <div className="text-base font-extrabold text-slate-900 dark:text-white mt-1 font-mono tracking-tight">
                     ${item.price}
                   </div>
                   <div className="text-[10px] text-slate-400 truncate mt-0.5">{item.name}</div>
@@ -838,9 +841,9 @@ export default function DashboardOverviewPage() {
         )}
 
         {/* Macro & Cross-Market Contagion Grid */}
-        <div className="pt-2 border-t border-slate-100">
+        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
               <span>Macroeconomic & Cross-Market Risk Telemetry</span>
               <span className="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200 text-[9px] font-bold">
                 RBI + NSE + Yahoo Finance + Finnhub
@@ -850,14 +853,14 @@ export default function DashboardOverviewPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {/* India VIX */}
-            <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-800 ">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">India VIX Volatility</span>
+                <span className="text-slate-500 dark:text-slate-300 font-medium">India VIX Volatility</span>
                 <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold">
                   {liveMarket?.india?.india_vix?.regime || "CALM (<15)"}
                 </span>
               </div>
-              <div className="text-base font-extrabold text-slate-900 font-mono mt-1">
+              <div className="text-base font-extrabold text-slate-900 dark:text-white font-mono mt-1">
                 {liveMarket?.india?.india_vix?.value || "10.68"}
               </div>
               <div className="text-[10.5px] text-slate-400 mt-0.5">
@@ -866,12 +869,12 @@ export default function DashboardOverviewPage() {
             </div>
 
             {/* RBI Repo Rate */}
-            <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-800 ">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">RBI Repo Rate</span>
-                <span className="text-[10px] font-bold text-blue-600">Monetary Policy</span>
+                <span className="text-slate-500 dark:text-slate-300 font-medium">RBI Repo Rate</span>
+                <span className="text-[10px] font-bold text-blue-600 dark:text-sky-400">Monetary Policy</span>
               </div>
-              <div className="text-base font-extrabold text-slate-900 font-mono mt-1">
+              <div className="text-base font-extrabold text-slate-900 dark:text-white font-mono mt-1">
                 {liveMarket?.india?.rbi_repo_rate?.value || "6.50"}%
               </div>
               <div className="text-[10.5px] text-slate-400 mt-0.5">
@@ -880,12 +883,12 @@ export default function DashboardOverviewPage() {
             </div>
 
             {/* India 10-Yr G-Sec */}
-            <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-800 ">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">India 10-Yr G-Sec</span>
-                <span className="text-[10px] font-bold text-blue-600">Sovereign YTM</span>
+                <span className="text-slate-500 dark:text-slate-300 font-medium">India 10-Yr G-Sec</span>
+                <span className="text-[10px] font-bold text-blue-600 dark:text-sky-400">Sovereign YTM</span>
               </div>
-              <div className="text-base font-extrabold text-slate-900 font-mono mt-1">
+              <div className="text-base font-extrabold text-slate-900 dark:text-white font-mono mt-1">
                 {liveMarket?.india?.gsec_10y?.value || "6.85"}%
               </div>
               <div className="text-[10.5px] text-slate-400 mt-0.5">
@@ -894,12 +897,12 @@ export default function DashboardOverviewPage() {
             </div>
 
             {/* Cross-Market Correlation */}
-            <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-800 ">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Nifty vs S&P 500</span>
-                <span className="text-[9px] font-bold text-purple-600">Correlation</span>
+                <span className="text-slate-500 dark:text-slate-300 font-medium">Nifty vs S&P 500</span>
+                <span className="text-[9px] font-bold text-purple-600 dark:text-purple-300">Correlation</span>
               </div>
-              <div className="text-base font-extrabold text-slate-900 font-mono mt-1">
+              <div className="text-base font-extrabold text-slate-900 dark:text-white font-mono mt-1">
                 +0.64
               </div>
               <div className="text-[10.5px] text-slate-400 mt-0.5">
@@ -908,10 +911,10 @@ export default function DashboardOverviewPage() {
             </div>
 
             {/* FPI Net Inflows */}
-            <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-800 ">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">FPI Net Institutional</span>
-                <span className="text-[9px] font-bold text-emerald-600">Monthly</span>
+                <span className="text-slate-500 dark:text-slate-300 font-medium">FPI Net Institutional</span>
+                <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400">Monthly</span>
               </div>
               <div className="text-base font-extrabold text-emerald-600 font-mono mt-1">
                 +₹1,420 Cr
@@ -928,10 +931,10 @@ export default function DashboardOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Dynamic Asset Holdings Table (Col Span 2) */}
-        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-2xl p-6 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+        <div className="lg:col-span-2 bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
             <div>
-              <h3 className="text-base font-bold text-[#0A1128]">
+              <h3 className="text-base font-bold text-[#0A1128] dark:text-white">
                 {marketScope === "global" ? "Global Asset Allocation & Risk Attribution" : "Domestic Indian Portfolio Allocation (₹100 Cr AUM)"}
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
@@ -944,9 +947,9 @@ export default function DashboardOverviewPage() {
             </Link>
           </div>
 
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
             {activeAssets.map((asset) => (
-              <div key={asset.ticker} className="py-3 flex items-center justify-between hover:bg-slate-50/70 px-2.5 rounded-xl transition-all">
+              <div key={asset.ticker} className="py-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-[#1E293B] dark:bg-[#1E293B] px-2.5 rounded-xl transition-all">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black text-white shadow-xs"
@@ -956,21 +959,21 @@ export default function DashboardOverviewPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-extrabold text-[#0A1128]">{asset.ticker}</span>
+                      <span className="text-xs font-extrabold text-[#0A1128] dark:text-white">{asset.ticker}</span>
                       <span className="text-[10px] text-slate-400 font-medium">({asset.name})</span>
                     </div>
                     <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
                       <span>{asset.class}</span>
-                      <span>•</span>
+                      <span>â€¢</span>
                       <span>LH: {asset.lh}</span>
-                      <span>•</span>
-                      <span className="font-semibold text-slate-600">Risk Contrib: {asset.riskContrib}</span>
+                      <span>â€¢</span>
+                      <span className="font-semibold text-slate-600 dark:text-slate-300">Risk Contrib: {asset.riskContrib}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <div className="text-xs font-extrabold text-[#0A1128] font-mono">
+                  <div className="text-xs font-extrabold text-[#0A1128] dark:text-white font-mono">
                     {marketScope === "global" ? `$${(asset.notional).toLocaleString()}` : `₹${(asset.notional / 10000000).toFixed(2)} Cr`}
                   </div>
                   <div className="text-[11px] text-slate-500 font-semibold mt-0.5">
@@ -984,23 +987,23 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Daily Execution Volume & Safeguard Progress */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm space-y-5 flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-sm space-y-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 mb-3">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80 mb-3">
               <div>
-                <h3 className="text-base font-bold text-[#0A1128]">Daily Execution Volume</h3>
+                <h3 className="text-base font-bold text-[#0A1128] dark:text-white">Daily Execution Volume</h3>
                 <p className="text-xs text-slate-400 mt-0.5">
                   {marketScope === "global" ? "Algorithmic vs Manual tickets" : "NSE Smart Order Routing (SOR)"}
                 </p>
               </div>
-              <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0066FF] text-[10px] font-bold">
                 Smart Routed
               </span>
             </div>
 
             {/* Readout when hovering bar */}
             {hoveredBarDay && (
-              <div className="mb-2 p-2 rounded-lg bg-blue-50/70 border border-blue-200/60 text-[11px] flex items-center justify-between text-slate-700">
+              <div className="mb-2 p-2 rounded-lg bg-blue-50 dark:bg-blue-950/60/70 border border-blue-200/60 text-[11px] flex items-center justify-between text-slate-700 dark:text-slate-300">
                 <span className="font-bold">{hoveredBarDay.day}: {hoveredBarDay.algo + hoveredBarDay.manual} Fills</span>
                 <span className="text-[#0066FF] font-semibold">{Math.round((hoveredBarDay.algo / (hoveredBarDay.algo + hoveredBarDay.manual)) * 100)}% Automated</span>
               </div>
@@ -1028,8 +1031,8 @@ export default function DashboardOverviewPage() {
                     }}
                     onMouseLeave={() => setHoveredBarDay(null)}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#F8FAFC" vertical={false} />
-                    <XAxis dataKey="day" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1E293B" : "#F8FAFC"} vertical={false} />
+                    <XAxis dataKey="day" stroke={isDark ? "#64748B" : "#94A3B8"} fontSize={11} tickLine={false} axisLine={false} />
                     <Tooltip content={<CustomActivityTooltip />} cursor={{ fill: "rgba(0, 102, 255, 0.05)" }} />
                     <Bar dataKey="algo" fill="#0066FF" radius={[3, 3, 0, 0]} maxBarSize={12} isAnimationActive={false} />
                     <Bar dataKey="manual" fill="#38BDF8" radius={[3, 3, 0, 0]} maxBarSize={12} isAnimationActive={false} />
@@ -1039,23 +1042,23 @@ export default function DashboardOverviewPage() {
             </div>
           </div>
 
-          <div className="space-y-3 pt-3 border-t border-slate-100">
+          <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800/80">
             <div>
               <div className="flex items-center justify-between text-xs mb-1">
-                <span className="font-semibold text-slate-600">CVaR Budget Consumption</span>
-                <span className="font-mono text-slate-800 font-bold">3.28% / 6.00%</span>
+                <span className="font-semibold text-slate-600 dark:text-slate-300">CVaR Budget Consumption</span>
+                <span className="font-mono text-slate-800 dark:text-slate-200 font-bold">3.28% / 6.00%</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                 <div className="h-full bg-[#0066FF] rounded-full" style={{ width: "54.6%" }} />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between text-xs mb-1">
-                <span className="font-semibold text-slate-600">Drawdown Circuit Breaker</span>
-                <span className="font-mono text-slate-800 font-bold">2.40% / 8.00%</span>
+                <span className="font-semibold text-slate-600 dark:text-slate-300">Drawdown Circuit Breaker</span>
+                <span className="font-mono text-slate-800 dark:text-slate-200 font-bold">2.40% / 8.00%</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                 <div className="h-full bg-emerald-500 rounded-full" style={{ width: "30.0%" }} />
               </div>
             </div>

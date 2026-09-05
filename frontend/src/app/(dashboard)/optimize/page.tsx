@@ -1,5 +1,7 @@
 "use client";
 
+import { useTheme } from "@/components/ThemeProvider";
+
 import React, { useState, useEffect } from "react";
 import { Sliders, TrendingUp, ShieldCheck, CheckCircle2, Play, RefreshCw, BarChart3, ArrowRight } from "lucide-react";
 import {
@@ -25,6 +27,7 @@ const SAMPLE_TRADES: TradeItem[] = [
 ];
 
 export default function OptimizePage() {
+  const { isDark } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [strategy, setStrategy] = useState<OptimizeRequest["strategy"]>("mean_cvar");
   const [riskTolerance, setRiskTolerance] = useState(0.5);
@@ -88,9 +91,9 @@ export default function OptimizePage() {
       const item = weightComparisonData.find((w) => w.ticker === label);
 
       return (
-        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-4 shadow-xl text-xs space-y-2 select-none min-w-[210px]">
-          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
-            <span className="font-bold text-slate-800 text-xs uppercase tracking-wide">
+        <div className="bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-2xl p-4 shadow-xl text-xs space-y-2 select-none min-w-[210px]">
+          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+            <span className="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wide">
               {label} Rebalance
             </span>
             <span
@@ -99,7 +102,7 @@ export default function OptimizePage() {
                   ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                   : item?.action === "SELL"
                   ? "bg-rose-50 text-rose-700 border border-rose-200"
-                  : "bg-slate-50 text-slate-600 border border-slate-200"
+                  : "bg-slate-50 dark:bg-[#1E293B] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800"
               }`}
             >
               {item?.action}
@@ -112,7 +115,7 @@ export default function OptimizePage() {
                 <span className="w-2.5 h-2.5 rounded-sm bg-slate-400" />
                 <span className="text-slate-500 font-medium">Current Weight:</span>
               </div>
-              <span className="font-mono font-bold text-slate-700">{current}%</span>
+              <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{current}%</span>
             </div>
 
             <div className="flex items-center justify-between">
@@ -120,10 +123,10 @@ export default function OptimizePage() {
                 <span className="w-2.5 h-2.5 rounded-sm bg-[#0066FF]" />
                 <span className="text-[#0066FF] font-semibold">Target Weight:</span>
               </div>
-              <span className="font-mono font-black text-slate-900">{optimal}%</span>
+              <span className="font-mono font-black text-slate-900 dark:text-white">{optimal}%</span>
             </div>
 
-            <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between">
+            <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
               <span className="text-slate-400 font-medium">Weight Shift:</span>
               <span className={`font-mono font-bold ${Number(delta) >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                 {Number(delta) >= 0 ? `+${delta}%` : `${delta}%`}
@@ -133,7 +136,7 @@ export default function OptimizePage() {
             {item?.dollarChange !== undefined && (
               <div className="flex items-center justify-between text-[11px]">
                 <span className="text-slate-400">Target Rebalance:</span>
-                <span className="font-mono font-bold text-slate-700">
+                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">
                   ${Math.abs(item.dollarChange).toLocaleString()} USD
                 </span>
               </div>
@@ -148,11 +151,11 @@ export default function OptimizePage() {
   return (
     <div className="space-y-6 select-none font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#0A1128] tracking-tight">Autonomous Portfolio Optimizer</h1>
-            <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[11px] font-bold">
+            <h1 className="text-2xl font-bold text-[#0A1128] dark:text-white tracking-tight">Autonomous Portfolio Optimizer</h1>
+            <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[11px] font-bold">
               Mean-CVaR & HRP
             </span>
           </div>
@@ -175,19 +178,19 @@ export default function OptimizePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left Form: Controls & Parameters (4 cols) */}
-        <div className="lg:col-span-4 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 text-[#0A1128] font-bold text-sm">
+        <div className="lg:col-span-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-5">
+          <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
             <Sliders className="w-4 h-4 text-[#0066FF]" />
             <h3>Optimization Parameters</h3>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1.5">Model / Strategy</label>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">Model / Strategy</label>
               <select
                 value={strategy}
                 onChange={(e) => setStrategy(e.target.value as any)}
-                className="w-full rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-[#0066FF] font-medium"
+                className="w-full rounded-xl bg-slate-50 dark:bg-[#1E293B] dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 dark:border-slate-800 px-3.5 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#0066FF] font-medium"
               >
                 <option value="mean_cvar">Mean-CVaR Optimization (Tail Risk)</option>
                 <option value="hrp">Hierarchical Risk Parity (HRP)</option>
@@ -198,8 +201,8 @@ export default function OptimizePage() {
 
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700">Risk Tolerance (λ)</span>
-                <span className="font-mono text-slate-900 font-bold">{(riskTolerance * 100).toFixed(0)}%</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Risk Tolerance (λ)</span>
+                <span className="font-mono text-slate-900 dark:text-white font-bold">{(riskTolerance * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -208,14 +211,14 @@ export default function OptimizePage() {
                 step="0.05"
                 value={riskTolerance}
                 onChange={(e) => setRiskTolerance(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700">Max Single-Asset Weight</span>
-                <span className="font-mono text-slate-900 font-bold">{(maxWeight * 100).toFixed(0)}%</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Max Single-Asset Weight</span>
+                <span className="font-mono text-slate-900 dark:text-white font-bold">{(maxWeight * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -224,14 +227,14 @@ export default function OptimizePage() {
                 step="0.05"
                 value={maxWeight}
                 onChange={(e) => setMaxWeight(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700">Minimum Cash Reserve (BIL)</span>
-                <span className="font-mono text-slate-900 font-bold">{(minCashBuffer * 100).toFixed(0)}%</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Minimum Cash Reserve (BIL)</span>
+                <span className="font-mono text-slate-900 dark:text-white font-bold">{(minCashBuffer * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -240,14 +243,14 @@ export default function OptimizePage() {
                 step="0.02"
                 value={minCashBuffer}
                 onChange={(e) => setMinCashBuffer(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700">Turnover Friction Penalty</span>
-                <span className="font-mono text-slate-900 font-bold">{(turnoverPenalty * 10000).toFixed(0)} bps</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Turnover Friction Penalty</span>
+                <span className="font-mono text-slate-900 dark:text-white font-bold">{(turnoverPenalty * 10000).toFixed(0)} bps</span>
               </div>
               <input
                 type="range"
@@ -256,12 +259,12 @@ export default function OptimizePage() {
                 step="0.0005"
                 value={turnoverPenalty}
                 onChange={(e) => setTurnoverPenalty(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-blue-50/50 border border-blue-100 text-[11px] text-slate-600 space-y-1">
+          <div className="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/60/50 border border-blue-100 text-[11px] text-slate-600 dark:text-slate-300 space-y-1">
             <p className="font-bold text-[#0066FF] flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" /> Enforced Constraints
             </p>
@@ -275,25 +278,25 @@ export default function OptimizePage() {
         <div className="lg:col-span-8 space-y-6">
           
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm">
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm">
               <p className="text-xs text-slate-400 font-medium">Optimal Exp. Return</p>
               <h4 className="text-lg font-extrabold text-emerald-600 mt-1">+{expReturn}%</h4>
               <p className="text-[10.5px] text-slate-400 mt-0.5">Annualized p.a.</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm">
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm">
               <p className="text-xs text-slate-400 font-medium">Optimal Volatility</p>
               <h4 className="text-lg font-extrabold text-[#0066FF] mt-1">{vol}%</h4>
               <p className="text-[10.5px] text-slate-400 mt-0.5">Standard Dev</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm">
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm">
               <p className="text-xs text-slate-400 font-medium">Sharpe Ratio</p>
-              <h4 className="text-lg font-extrabold text-[#0A1128] mt-1">{sharpe}</h4>
+              <h4 className="text-lg font-extrabold text-[#0A1128] dark:text-white mt-1">{sharpe}</h4>
               <p className="text-[10.5px] text-emerald-600 font-bold mt-0.5">Risk-adjusted</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm">
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm">
               <p className="text-xs text-slate-400 font-medium">Tail Risk (CVaR 95%)</p>
               <h4 className="text-lg font-extrabold text-amber-600 mt-1">{cvar}%</h4>
               <p className="text-[10.5px] text-slate-400 mt-0.5">10-Day Drawdown</p>
@@ -310,10 +313,10 @@ export default function OptimizePage() {
           />
 
           {/* Interactive Weight Rebalancing Comparison BarChart */}
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100 dark:border-slate-800/80">
               <div>
-                <h3 className="text-[15px] font-bold text-[#0A1128] tracking-tight">
+                <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white tracking-tight">
                   Asset Allocation Shift: Current vs Optimal Weights
                 </h3>
                 <p className="text-xs text-slate-400">
@@ -336,10 +339,10 @@ export default function OptimizePage() {
               {mounted && (
                 <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={220}>
                   <BarChart data={weightComparisonData} margin={{ top: 15, right: 15, left: 10, bottom: 5 }} barGap={6}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#F8FAFC" vertical={false} />
-                    <XAxis dataKey="ticker" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1E293B" : "#F8FAFC"} vertical={false} />
+                    <XAxis dataKey="ticker" stroke={isDark ? "#64748B" : "#94A3B8"} fontSize={11} tickLine={false} axisLine={false} />
                     <YAxis
-                      stroke="#94A3B8"
+                      stroke={isDark ? "#64748B" : "#94A3B8"}
                       fontSize={11}
                       tickLine={false}
                       axisLine={false}
@@ -356,16 +359,16 @@ export default function OptimizePage() {
           </div>
 
           {/* Weights & Rebalance Trades Table */}
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h3 className="text-[15px] font-bold text-[#0A1128]">Required Rebalance Orders</h3>
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
+              <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white">Required Rebalance Orders</h3>
               <span className="text-xs font-mono text-slate-400">6 Recommended Orders</span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
+                  <tr className="border-b border-slate-100 dark:border-slate-800/80 text-slate-400 font-semibold uppercase tracking-wider">
                     <th className="pb-3">Asset</th>
                     <th className="pb-3 text-right">Current</th>
                     <th className="pb-3 text-right">Optimal</th>
@@ -379,14 +382,14 @@ export default function OptimizePage() {
                     const isBuy = trade.action === "BUY";
                     const isSell = trade.action === "SELL";
                     return (
-                      <tr key={trade.ticker} className="hover:bg-slate-50/60 transition-colors">
-                        <td className="py-3 font-semibold text-slate-800">
+                      <tr key={trade.ticker} className="hover:bg-slate-50 dark:hover:bg-[#1E293B] dark:bg-[#1E293B]/60 transition-colors">
+                        <td className="py-3 font-semibold text-slate-800 dark:text-slate-200">
                           <span className="font-bold text-[#0066FF] mr-2">{trade.ticker}</span>
                         </td>
-                        <td className="py-3 text-right font-mono text-slate-600">
+                        <td className="py-3 text-right font-mono text-slate-600 dark:text-slate-300">
                           {(trade.current_weight * 100).toFixed(1)}%
                         </td>
-                        <td className="py-3 text-right font-mono font-bold text-slate-900">
+                        <td className="py-3 text-right font-mono font-bold text-slate-900 dark:text-white">
                           {(trade.optimal_weight * 100).toFixed(1)}%
                         </td>
                         <td className={`py-3 text-right font-mono font-bold ${
@@ -394,7 +397,7 @@ export default function OptimizePage() {
                         }`}>
                           {trade.delta_weight > 0 ? `+${(trade.delta_weight * 100).toFixed(1)}%` : `${(trade.delta_weight * 100).toFixed(1)}%`}
                         </td>
-                        <td className="py-3 text-right font-mono text-slate-700">
+                        <td className="py-3 text-right font-mono text-slate-700 dark:text-slate-300">
                           ${Math.abs(trade.dollar_change).toLocaleString()}
                         </td>
                         <td className="py-3 text-center">
@@ -403,7 +406,7 @@ export default function OptimizePage() {
                               ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                               : isSell
                               ? "bg-rose-50 text-rose-700 border border-rose-200"
-                              : "bg-slate-50 text-slate-500 border border-slate-200"
+                              : "bg-slate-50 dark:bg-[#1E293B] text-slate-500 border border-slate-200 dark:border-slate-800"
                           }`}>
                             {trade.action}
                           </span>

@@ -121,10 +121,10 @@ export default function AuditLogPage() {
   return (
     <div className="space-y-6 select-none font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#0A1128] tracking-tight">Safeguard Controls &amp; Audit Log</h1>
+            <h1 className="text-2xl font-bold text-[#0A1128] dark:text-white tracking-tight">Safeguard Controls &amp; Audit Log</h1>
             <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 text-[11px] font-bold">
               CIRCUIT BREAKER: ARMED
             </span>
@@ -137,7 +137,7 @@ export default function AuditLogPage() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setOverrideModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white hover:bg-slate-50 dark:hover:bg-[#1E293B] dark:bg-[#1E293B] text-slate-700 dark:text-slate-300 text-xs font-semibold shadow-sm transition-all cursor-pointer"
           >
             <KeyRound className="w-4 h-4 text-slate-500" />
             <span>Officer Override</span>
@@ -156,7 +156,7 @@ export default function AuditLogPage() {
 
       {/* Top 3 Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-between">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-slate-400">Circuit Breaker Status</p>
             <h3 className="text-xl font-extrabold text-emerald-600 mt-1">ARMED &amp; MONITORING</h3>
@@ -167,36 +167,36 @@ export default function AuditLogPage() {
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-between">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-slate-400">Current Drawdown</p>
-            <h3 className="text-xl font-extrabold text-[#0A1128] mt-1">2.40% <span className="text-xs font-normal text-slate-400">/ 8.00% cap</span></h3>
+            <h3 className="text-xl font-extrabold text-[#0A1128] dark:text-white mt-1">2.40% <span className="text-xs font-normal text-slate-400">/ 8.00% cap</span></h3>
             <p className="text-xs text-emerald-600 font-bold mt-0.5">5.60% Buffer to Circuit Breaker</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0066FF] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] flex items-center justify-center">
             <Lock className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-between">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-slate-400">Audit Verification</p>
-            <h3 className="text-xl font-extrabold text-[#0A1128] mt-1">100% VERIFIED</h3>
+            <h3 className="text-xl font-extrabold text-[#0A1128] dark:text-white mt-1">100% VERIFIED</h3>
             <p className="text-xs text-slate-400 mt-0.5">SHA-256 Block Chain Hash</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0066FF] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] flex items-center justify-center">
             <CheckCircle2 className="w-5 h-5" />
           </div>
         </div>
       </div>
 
       {/* SEC EDGAR Official Institutional Disclosures */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm space-y-3">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-5 shadow-sm space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-blue-600" />
-            <h3 className="text-sm font-bold text-[#0A1128]">Official SEC EDGAR Regulatory Telemetry</h3>
-            <span className="px-2 py-0.5 rounded bg-blue-50 text-[#0066FF] border border-blue-200 text-[10px] font-bold">
+            <h3 className="text-sm font-bold text-[#0A1128] dark:text-white">Official SEC EDGAR Regulatory Telemetry</h3>
+            <span className="px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[10px] font-bold">
               SEC EDGAR Public API
             </span>
           </div>
@@ -209,15 +209,15 @@ export default function AuditLogPage() {
             { entity: "iShares Core U.S. Aggregate Bond", form: "485BPOS", filing_date: "2026-08-28", description: "Post-effective amendment prospectus for institutional fund", api_source: "SEC EDGAR Public API" },
             { entity: "Vanguard Real Estate Index Fund", form: "N-PORT", filing_date: "2026-08-20", description: "Monthly portfolio investments report & liquidity partition", api_source: "SEC EDGAR Public API" },
           ]).map((item: SecFilingItem, idx: number) => (
-            <div key={idx} className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-100 hover:border-blue-200 hover:bg-white transition-all">
+            <div key={idx} className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-sky-500 hover:bg-white dark:hover:bg-[#2A374A] transition-all">
               <div className="flex items-center justify-between text-xs mb-1">
-                <span className="font-extrabold text-[#0A1128]">{item.entity}</span>
+                <span className="font-extrabold text-[#0A1128] dark:text-white">{item.entity}</span>
                 <span className="px-1.5 py-0.5 rounded bg-blue-100 text-[#0066FF] font-mono font-bold text-[10px]">
                   {item.form}
                 </span>
               </div>
               <p className="text-xs text-slate-500 line-clamp-2 mt-1">{item.description}</p>
-              <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-[10.5px] text-slate-400 font-mono">
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-[10.5px] text-slate-400 font-mono">
                 <span>Filed: {item.filing_date}</span>
                 <span className="text-[9.5px] text-slate-400">{item.api_source}</span>
               </div>
@@ -227,22 +227,22 @@ export default function AuditLogPage() {
       </div>
 
       {/* Main Audit Log Table */}
-      <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
+      <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-[15px] font-bold text-[#0A1128]">Immutable Event Blotter</h3>
+            <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white">Immutable Event Blotter</h3>
             <p className="text-xs text-slate-400">Chronological log of algorithmic decisions, breaches, and adjustments</p>
           </div>
 
-          <div className="flex items-center gap-1.5 p-1 bg-slate-50 border border-slate-200/80 rounded-xl text-xs">
+          <div className="flex items-center gap-1.5 p-1 bg-slate-50 dark:bg-[#0E1526] border border-slate-200 dark:border-slate-800 rounded-xl text-xs">
             {["ALL", "NORMAL", "AMBER", "RED"].map((lvl) => (
               <button
                 key={lvl}
                 onClick={() => setFilterLevel(lvl)}
                 className={`px-3 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
                   filterLevel === lvl
-                    ? "bg-white text-[#0066FF] shadow-sm"
-                    : "text-slate-500 hover:text-slate-900"
+                    ? "bg-white dark:bg-[#1E293B] text-[#0066FF] dark:text-[#38BDF8] shadow-sm"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 {lvl}
@@ -254,7 +254,7 @@ export default function AuditLogPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
+              <tr className="border-b border-slate-100 dark:border-slate-800/80 text-slate-400 font-semibold uppercase tracking-wider">
                 <th className="pb-3">Event ID</th>
                 <th className="pb-3">Timestamp</th>
                 <th className="pb-3">Level</th>
@@ -264,13 +264,13 @@ export default function AuditLogPage() {
             </thead>
             <tbody className="divide-y divide-slate-50 font-mono">
               {filtered.map((e) => {
-                let badgeClass = "bg-slate-100 text-slate-600";
-                if (e.level === "NORMAL") badgeClass = "bg-blue-50 text-[#0066FF]";
+                let badgeClass = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300";
+                if (e.level === "NORMAL") badgeClass = "bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8]";
                 if (e.level === "AMBER") badgeClass = "bg-amber-50 text-amber-600";
                 if (e.level === "RED") badgeClass = "bg-rose-50 text-rose-600";
 
                 return (
-                  <tr key={e.id} className="hover:bg-slate-50/60 transition-colors font-sans">
+                  <tr key={e.id} className="hover:bg-slate-50 dark:hover:bg-[#1E293B]/80 transition-colors font-sans">
                     <td className="py-3 font-mono font-bold text-[#0066FF]">{e.id}</td>
                     <td className="py-3 font-mono text-slate-500 text-[11px]">{new Date(e.timestamp).toLocaleTimeString()}</td>
                     <td className="py-3">
@@ -278,8 +278,8 @@ export default function AuditLogPage() {
                         {e.level}
                       </span>
                     </td>
-                    <td className="py-3 font-mono text-slate-700 font-medium text-[11px]">{e.metric_name} ({e.metric_value})</td>
-                    <td className="py-3 text-slate-700 max-w-lg leading-relaxed">{e.action_taken}</td>
+                    <td className="py-3 font-mono text-slate-700 dark:text-slate-300 font-medium text-[11px]">{e.metric_name} ({e.metric_value})</td>
+                    <td className="py-3 text-slate-700 dark:text-slate-300 max-w-lg leading-relaxed">{e.action_taken}</td>
                   </tr>
                 );
               })}
@@ -291,15 +291,15 @@ export default function AuditLogPage() {
       {/* Override Modal */}
       {overrideModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setOverrideModal(false)}>
-          <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 space-y-4" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80">
               <div className="flex items-center gap-2">
                 <span className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
                   <KeyRound className="w-4 h-4" />
                 </span>
-                <h3 className="text-base font-bold text-slate-900">Officer Safeguard Override</h3>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Officer Safeguard Override</h3>
               </div>
-              <button onClick={() => setOverrideModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer p-1 rounded-lg hover:bg-slate-100" title="Close"><X className="w-4 h-4" /></button>
+              <button onClick={() => setOverrideModal(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-300 cursor-pointer p-1 rounded-lg hover:bg-slate-100 dark:bg-slate-800" title="Close"><X className="w-4 h-4" /></button>
             </div>
 
             <p className="text-xs text-slate-500 leading-relaxed">
@@ -308,22 +308,22 @@ export default function AuditLogPage() {
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">Chief Risk Officer ID</label>
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Chief Risk Officer ID</label>
                 <input
                   type="text"
                   value={officerId}
                   onChange={(e) => setOfficerId(e.target.value)}
-                  className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono font-bold text-slate-800"
+                  className="w-full h-9 px-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 dark:border-slate-800 text-xs font-mono font-bold text-slate-800 dark:text-slate-200"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">Override Rationale / Justification</label>
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Override Rationale / Justification</label>
                 <textarea
                   rows={3}
                   value={overrideReason}
                   onChange={(e) => setOverrideReason(e.target.value)}
-                  className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-[#0066FF]"
+                  className="w-full p-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#0066FF]"
                 />
               </div>
             </div>
@@ -331,7 +331,7 @@ export default function AuditLogPage() {
             <div className="flex items-center justify-end gap-2.5 pt-2">
               <button
                 onClick={() => setOverrideModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-200"
               >
                 Cancel
               </button>

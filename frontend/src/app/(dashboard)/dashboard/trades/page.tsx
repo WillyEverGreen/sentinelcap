@@ -1,5 +1,7 @@
 "use client";
 
+import { useTheme } from "@/components/ThemeProvider";
+
 import React, { useState, useEffect } from "react";
 import { History, ArrowUpRight, ArrowDownRight, Filter, Search, CheckCircle2, Clock, ShieldCheck, Download, Plus, BarChart3, Activity } from "lucide-react";
 import {
@@ -47,6 +49,7 @@ const HOURLY_VOLUME_DATA = [
 ];
 
 export default function TradesPage() {
+  const { isDark } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [trades, setTrades] = useState<Trade[]>(SAMPLE_TRADES);
   const [filterSide, setFilterSide] = useState<string>("ALL");
@@ -72,10 +75,10 @@ export default function TradesPage() {
       const item = HOURLY_VOLUME_DATA.find((h) => h.hour === label);
 
       return (
-        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-4 shadow-xl text-xs space-y-2 min-w-[210px] select-none">
-          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 font-bold text-slate-800">
+        <div className="bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-2xl p-4 shadow-xl text-xs space-y-2 min-w-[210px] select-none">
+          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-slate-800/80 font-bold text-slate-800 dark:text-slate-200">
             <span className="text-xs font-black uppercase">Window: {label} EST</span>
-            <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] font-mono text-[10.5px] font-bold border border-blue-200">
+            <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] font-mono text-[10.5px] font-bold border border-blue-200">
               {item?.orders} Orders
             </span>
           </div>
@@ -85,7 +88,7 @@ export default function TradesPage() {
                 <span className="w-2.5 h-2.5 rounded-sm bg-[#0066FF]" />
                 <span className="text-slate-500 font-medium">Executed Volume:</span>
               </div>
-              <span className="font-mono font-bold text-slate-900">${vol.toLocaleString()} USD</span>
+              <span className="font-mono font-bold text-slate-900 dark:text-white">${vol.toLocaleString()} USD</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
@@ -95,7 +98,7 @@ export default function TradesPage() {
               <span className="font-mono font-bold text-emerald-600">{slip} bps</span>
             </div>
           </div>
-          <div className="pt-1.5 border-t border-slate-100 text-[10px] text-slate-400">
+          <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] text-slate-400">
             Smart routed via TWAP algorithm
           </div>
         </div>
@@ -107,11 +110,11 @@ export default function TradesPage() {
   return (
     <div className="space-y-6 select-none font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#0A1128] tracking-tight">Institutional Execution Blotter</h1>
-            <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[11px] font-bold">
+            <h1 className="text-2xl font-bold text-[#0A1128] dark:text-white tracking-tight">Institutional Execution Blotter</h1>
+            <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[11px] font-bold">
               Prime Custody
             </span>
           </div>
@@ -120,7 +123,7 @@ export default function TradesPage() {
           </p>
         </div>
 
-        <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-all cursor-pointer">
+        <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-[#1E293B] dark:bg-[#1E293B] transition-all cursor-pointer">
           <Download className="w-4 h-4 text-slate-400" />
           <span>Export Blotter CSV</span>
         </button>
@@ -128,38 +131,38 @@ export default function TradesPage() {
 
       {/* Top 4 KPI Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm">
           <p className="text-xs font-semibold text-slate-400">Total Filled Volume (Today)</p>
-          <h3 className="text-2xl font-extrabold text-[#0A1128] mt-1">$697,872 <span className="text-xs font-normal text-slate-400">USD</span></h3>
+          <h3 className="text-2xl font-extrabold text-[#0A1128] dark:text-white mt-1">$697,872 <span className="text-xs font-normal text-slate-400">USD</span></h3>
           <p className="text-xs text-emerald-600 font-bold mt-1">6/6 Algorithmic Orders</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm">
           <p className="text-xs font-semibold text-slate-400">Average Execution Slippage</p>
           <h3 className="text-2xl font-extrabold text-[#0066FF] mt-1">0.88 bps</h3>
           <p className="text-xs text-slate-400 mt-1">Target: &lt; 2.5 bps</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm">
           <p className="text-xs font-semibold text-slate-400">Fill Completion Rate</p>
           <h3 className="text-2xl font-extrabold text-emerald-600 mt-1">100.0%</h3>
           <p className="text-xs text-slate-400 mt-1">Zero unfulfilled orders</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
+        <div className="p-5 rounded-2xl bg-white dark:bg-[#131B2E] border border-slate-100 dark:border-slate-800/80 dark:border-slate-800 shadow-sm">
           <p className="text-xs font-semibold text-slate-400">Primary Execution Venue</p>
-          <h3 className="text-2xl font-extrabold text-[#0A1128] mt-1">Goldman Sachs</h3>
+          <h3 className="text-2xl font-extrabold text-[#0A1128] dark:text-white mt-1">Goldman Sachs</h3>
           <p className="text-xs text-slate-400 mt-1">Direct Prime Route</p>
         </div>
       </div>
 
       {/* Interactive Execution Volume & Slippage Chart with Proper Padding & Clear Dual Y-Axes */}
-      <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4 overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+      <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-4 overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-[15px] font-bold text-[#0A1128] tracking-tight">Intraday Execution Volume & Slippage Curve</h3>
-              <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[10px] font-extrabold">
+              <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white tracking-tight">Intraday Execution Volume & Slippage Curve</h3>
+              <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[10px] font-extrabold">
                 TWAP / VWAP Routed
               </span>
             </div>
@@ -169,16 +172,16 @@ export default function TradesPage() {
           </div>
 
           {/* Live Hover Readout Strip */}
-          <div className="flex flex-wrap items-center gap-4 bg-slate-50 border border-slate-200/70 px-3.5 py-1.5 rounded-xl text-xs">
+          <div className="flex flex-wrap items-center gap-4 bg-slate-50 dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 rounded-xl text-xs">
             <div className="flex items-center gap-1.5">
               <span className="text-slate-400 font-medium">Window:</span>
-              <span className="font-bold font-mono text-slate-800">{activeHour.hour} EST</span>
+              <span className="font-bold font-mono text-slate-800 dark:text-slate-200">{activeHour.hour} EST</span>
             </div>
             <span className="w-1 h-1 rounded-full bg-slate-300" />
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-sm bg-[#0066FF]" />
               <span className="text-slate-400 font-medium">Volume:</span>
-              <span className="font-bold font-mono text-slate-900">${activeHour.volume.toLocaleString()}</span>
+              <span className="font-bold font-mono text-slate-900 dark:text-white">${activeHour.volume.toLocaleString()}</span>
             </div>
             <span className="w-1 h-1 rounded-full bg-slate-300" />
             <div className="flex items-center gap-1.5">
@@ -203,8 +206,8 @@ export default function TradesPage() {
                 }}
                 onMouseLeave={() => setHoveredHour(null)}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis dataKey="hour" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1E293B" : "#F1F5F9"} vertical={false} />
+                <XAxis dataKey="hour" stroke={isDark ? "#64748B" : "#94A3B8"} fontSize={11} tickLine={false} axisLine={false} />
                 <YAxis
                   yAxisId="left"
                   width={55}
@@ -252,7 +255,7 @@ export default function TradesPage() {
       </div>
 
       {/* Main Table Card */}
-      <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
+      <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="relative w-72">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -261,7 +264,7 @@ export default function TradesPage() {
               placeholder="Search ticker (SPY, GLD)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-9 pl-9 pr-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-[#0066FF]"
+              className="w-full h-9 pl-9 pr-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#0066FF] dark:focus:border-sky-500"
             />
           </div>
 
@@ -273,7 +276,7 @@ export default function TradesPage() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   filterSide === side
                     ? "bg-[#0066FF] text-white shadow-sm"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    : "bg-slate-100 dark:bg-[#1E293B] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#2A374A]"
                 }`}
               >
                 {side}
@@ -285,7 +288,7 @@ export default function TradesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
+              <tr className="border-b border-slate-100 dark:border-slate-800/80 text-slate-400 font-semibold uppercase tracking-wider">
                 <th className="pb-3">Order ID</th>
                 <th className="pb-3">Asset</th>
                 <th className="pb-3 text-center">Side</th>
@@ -300,10 +303,10 @@ export default function TradesPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filtered.map((t) => (
-                <tr key={t.order_id} className="hover:bg-slate-50/60 transition-colors">
+                <tr key={t.order_id} className="hover:bg-slate-50 dark:hover:bg-[#1E293B]/80 transition-colors">
                   <td className="py-3 font-mono text-slate-500 font-semibold">{t.order_id}</td>
                   <td className="py-3">
-                    <div className="font-bold text-[#0A1128]">{t.ticker}</div>
+                    <div className="font-bold text-[#0A1128] dark:text-white">{t.ticker}</div>
                     <div className="text-[10px] text-slate-400">{t.asset_name}</div>
                   </td>
                   <td className="py-3 text-center">
@@ -313,9 +316,9 @@ export default function TradesPage() {
                       {t.side}
                     </span>
                   </td>
-                  <td className="py-3 text-right font-mono text-slate-700">{t.shares.toLocaleString()}</td>
-                  <td className="py-3 text-right font-mono text-slate-700">${t.price.toFixed(2)}</td>
-                  <td className="py-3 text-right font-mono font-bold text-slate-900">${t.notional.toLocaleString()}</td>
+                  <td className="py-3 text-right font-mono text-slate-700 dark:text-slate-300">{t.shares.toLocaleString()}</td>
+                  <td className="py-3 text-right font-mono text-slate-700 dark:text-slate-300">${t.price.toFixed(2)}</td>
+                  <td className="py-3 text-right font-mono font-bold text-slate-900 dark:text-white">${t.notional.toLocaleString()}</td>
                   <td className="py-3 text-right font-mono text-emerald-600 font-bold">{t.slippage_bps} bps</td>
                   <td className="py-3 text-slate-500">{t.venue}</td>
                   <td className="py-3 font-mono text-slate-400 text-[11px]">{t.time}</td>

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Settings, Sliders, Shield, Lock, Bell, CheckCircle2, Save, Key, Database, RefreshCw } from "lucide-react";
+import { Settings, Sliders, Shield, Lock, Bell, CheckCircle2, Save, Key, Database, RefreshCw, Sun, Moon, Laptop } from "lucide-react";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function SettingsPage() {
   const [maxDrawdown, setMaxDrawdown] = useState(8.0);
@@ -12,6 +13,8 @@ export default function SettingsPage() {
   const [autoHedge, setAutoHedge] = useState(true);
   const [saved, setSaved] = useState(false);
 
+  const { theme, setTheme } = useTheme();
+
   const handleSave = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
@@ -20,15 +23,15 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6 select-none font-sans max-w-5xl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100 dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#0A1128] tracking-tight">Risk Parameters &amp; Engine Governance</h1>
-            <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[11px] font-bold">
+            <h1 className="text-2xl font-bold text-[#0A1128] dark:text-white tracking-tight">Risk Parameters &amp; Engine Governance</h1>
+            <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[11px] font-bold">
               Institutional Limits
             </span>
           </div>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             Define institutional risk limits, circuit breaker trigger ceilings, and automated optimization constraints.
           </p>
         </div>
@@ -46,17 +49,17 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Card 1: Safeguard Circuit Breaker Limits */}
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 text-[#0A1128] font-bold text-sm">
-            <Shield className="w-4 h-4 text-[#0066FF]" />
+        <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-xs dark:shadow-none space-y-5 transition-colors">
+          <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
+            <Shield className="w-4 h-4 text-[#0066FF] dark:text-[#38BDF8]" />
             <h3>Safeguard Circuit Breakers</h3>
           </div>
 
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700">Max Drawdown Limit</span>
-                <span className="font-mono text-slate-900 font-bold">{maxDrawdown.toFixed(1)}%</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Max Drawdown Limit</span>
+                <span className="font-mono text-slate-900 dark:text-white font-bold">{maxDrawdown.toFixed(1)}%</span>
               </div>
               <input
                 type="range"
@@ -65,15 +68,15 @@ export default function SettingsPage() {
                 step="0.5"
                 value={maxDrawdown}
                 onChange={(e) => setMaxDrawdown(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+                className="w-full accent-[#0066FF] dark:accent-[#38BDF8] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
-              <p className="text-[11px] text-slate-400 mt-1">Triggers automated 25% cash buffer liquidation when breached.</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Triggers automated 25% cash buffer liquidation when breached.</p>
             </div>
 
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700">CVaR Tail-Risk Confidence (α)</span>
-                <span className="font-mono text-slate-900 font-bold">{cvarAlpha}%</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">CVaR Tail-Risk Confidence (α)</span>
+                <span className="font-mono text-slate-900 dark:text-white font-bold">{cvarAlpha}%</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {[95, 99].map((val) => (
@@ -83,8 +86,8 @@ export default function SettingsPage() {
                     onClick={() => setCvarAlpha(val)}
                     className={`py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
                       cvarAlpha === val
-                        ? "bg-blue-50 border-[#0066FF] text-[#0066FF]"
-                        : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"
+                        ? "bg-blue-50 dark:bg-blue-950/60 border-[#0066FF] dark:border-[#38BDF8] text-[#0066FF] dark:text-[#38BDF8]"
+                        : "bg-slate-50 dark:bg-[#1E293B] border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                     }`}
                   >
                     CVaR {val}%
@@ -93,40 +96,86 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-700">
               <div>
-                <p className="text-xs font-bold text-slate-800">Autonomous De-risking Protocol</p>
-                <p className="text-[11px] text-slate-400">Execute emergency liquidity rebalance automatically</p>
+                <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Autonomous De-risking Protocol</p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-400">Execute emergency liquidity rebalance automatically</p>
               </div>
-              <button
-                type="button"
-                onClick={() => setAutoHedge(!autoHedge)}
-                className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer ${
-                  autoHedge ? "bg-[#0066FF]" : "bg-slate-300"
-                }`}
-              >
-                <div
-                  className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                    autoHedge ? "translate-x-5" : "translate-x-0"
-                  }`}
-                />
-              </button>
+              <input
+                type="checkbox"
+                checked={autoHedge}
+                onChange={(e) => setAutoHedge(e.target.checked)}
+                className="w-4 h-4 accent-[#0066FF] dark:accent-[#38BDF8] rounded cursor-pointer"
+              />
             </div>
           </div>
         </div>
 
-        {/* Card 2: Optimization & Asset Caps */}
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 text-[#0A1128] font-bold text-sm">
-            <Sliders className="w-4 h-4 text-[#0066FF]" />
-            <h3>Asset Allocation Constraints</h3>
+        {/* Card 2: Appearance & Theme Settings */}
+        <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-xs dark:shadow-none space-y-5 transition-colors">
+          <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
+            <Sun className="w-4 h-4 text-[#0066FF] dark:text-[#38BDF8]" />
+            <h3>Appearance &amp; Display Theme</h3>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Choose your interface color mode. System mode automatically adapts to your operating system day/night preferences.
+            </p>
+
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { id: "light", label: "Light", icon: <Sun className="w-5 h-5 text-amber-500" />, desc: "High contrast daytime" },
+                { id: "dark", label: "Dark", icon: <Moon className="w-5 h-5 text-blue-400" />, desc: "Eye comfort obsidian" },
+                { id: "system", label: "System", icon: <Laptop className="w-5 h-5 text-slate-400" />, desc: "Auto OS sync" },
+              ].map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setTheme(opt.id as any)}
+                  className={`p-3.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center gap-2 ${
+                    theme === opt.id
+                      ? "bg-blue-50/60 dark:bg-blue-950/60 border-[#0066FF] dark:border-[#38BDF8] shadow-xs"
+                      : "bg-slate-50 dark:bg-[#1E293B] border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                  }`}
+                >
+                  <div className="p-2 rounded-xl bg-white dark:bg-[#131B2E] shadow-2xs">
+                    {opt.icon}
+                  </div>
+                  <div>
+                    <p className={`text-xs font-bold ${theme === opt.id ? "text-[#0066FF] dark:text-[#38BDF8]" : "text-slate-800 dark:text-slate-200"}`}>
+                      {opt.label}
+                    </p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-400 mt-0.5">{opt.desc}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300">
+              <div className="flex items-center justify-between font-semibold">
+                <span>Active Theme Mode</span>
+                <span className="font-mono uppercase text-[#0066FF] dark:text-[#38BDF8]">{theme}</span>
+              </div>
+              <p className="text-[11px] text-slate-400 dark:text-slate-400 mt-1">
+                Persisted in localStorage with instant pre-render theme stamping (zero screen flash).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Portfolio Constraints */}
+        <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-xs dark:shadow-none space-y-5 transition-colors">
+          <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
+            <Sliders className="w-4 h-4 text-[#0066FF] dark:text-[#38BDF8]" />
+            <h3>Portfolio Bounds</h3>
           </div>
 
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700">Max Single-Asset Concentration Cap</span>
-                <span className="font-mono text-slate-900 font-bold">{assetCap.toFixed(0)}%</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Max Single Asset Allocation</span>
+                <span className="font-mono text-slate-900 dark:text-white font-bold">{assetCap.toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -135,71 +184,55 @@ export default function SettingsPage() {
                 step="5.0"
                 value={assetCap}
                 onChange={(e) => setAssetCap(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+                className="w-full accent-[#0066FF] dark:accent-[#38BDF8] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
-              <p className="text-[11px] text-slate-400 mt-1">Prevents portfolio overexposure to individual tickers (e.g. SPY).</p>
             </div>
 
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700">Minimum Cash &amp; T-Bill Reserve (BIL)</span>
-                <span className="font-mono text-slate-900 font-bold">{minCash.toFixed(1)}%</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Minimum Cash Buffer</span>
+                <span className="font-mono text-slate-900 dark:text-white font-bold">{minCash.toFixed(1)}%</span>
               </div>
               <input
                 type="range"
-                min="0.0"
-                max="25.0"
+                min="2.0"
+                max="20.0"
                 step="1.0"
                 value={minCash}
                 onChange={(e) => setMinCash(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+                className="w-full accent-[#0066FF] dark:accent-[#38BDF8] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
-              <p className="text-[11px] text-slate-400 mt-1">Guarantees immediate liquidity for margin calls and sweeps.</p>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700">Turnover Penalty (Friction Model)</span>
-                <span className="font-mono text-slate-900 font-bold">{turnoverBps} bps</span>
-              </div>
-              <input
-                type="range"
-                min="1"
-                max="50"
-                step="1"
-                value={turnoverBps}
-                onChange={(e) => setTurnoverBps(parseInt(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 rounded-lg cursor-pointer"
-              />
-              <p className="text-[11px] text-slate-400 mt-1">Penalizes excessive churn to minimize institutional execution costs.</p>
             </div>
           </div>
         </div>
 
-        {/* Card 3: Custody & Engine Integrations */}
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4 md:col-span-2">
-          <div className="flex items-center gap-2 text-[#0A1128] font-bold text-sm">
-            <Database className="w-4 h-4 text-[#0066FF]" />
-            <h3>Institutional Custody &amp; Execution Feeds</h3>
+        {/* Card 4: Execution & Friction */}
+        <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-xs dark:shadow-none space-y-5 transition-colors">
+          <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
+            <Database className="w-4 h-4 text-[#0066FF] dark:text-[#38BDF8]" />
+            <h3>Execution &amp; Prime Brokerage</h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <p className="text-[11px] font-semibold text-slate-400 uppercase">Prime Custody Partner</p>
-              <h4 className="text-sm font-bold text-slate-800 mt-1">Goldman Sachs Prime</h4>
-              <p className="text-[11px] text-emerald-600 font-semibold mt-1">Connected &amp; Synced</p>
+          <div className="space-y-4">
+            <div>
+              <div className="flex items-center justify-between text-xs mb-1.5">
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Turnover Friction Cost</span>
+                <span className="font-mono text-slate-900 dark:text-white font-bold">{turnoverBps} bps</span>
+              </div>
+              <input
+                type="range"
+                min="2"
+                max="50"
+                step="1"
+                value={turnoverBps}
+                onChange={(e) => setTurnoverBps(parseInt(e.target.value))}
+                className="w-full accent-[#0066FF] dark:accent-[#38BDF8] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
+              />
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <p className="text-[11px] font-semibold text-slate-400 uppercase">Smart Routing DMA</p>
-              <h4 className="text-sm font-bold text-slate-800 mt-1">IEX &amp; Direct Dark Pools</h4>
-              <p className="text-[11px] text-emerald-600 font-semibold mt-1">Sub-millisecond Latency</p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <p className="text-[11px] font-semibold text-slate-400 uppercase">Markov Regime Sensor</p>
-              <h4 className="text-sm font-bold text-slate-800 mt-1">Eigenfactor Covariance</h4>
-              <p className="text-[11px] text-blue-600 font-semibold mt-1">Real-Time Continuous Feed</p>
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-700 text-xs">
+              <span className="font-bold text-slate-800 dark:text-slate-200 block">Primary Execution Venue</span>
+              <span className="text-slate-500 dark:text-slate-400 mt-0.5 block">Goldman Sachs Prime Custody (Automated DMA routing)</span>
             </div>
           </div>
         </div>

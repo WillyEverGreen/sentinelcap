@@ -1,130 +1,152 @@
-# SentinelCap - Autonomous Capital Management & Risk Optimization Engine
+<p align="center">
+  <img src="./frontend/public/logo.png" width="120" alt="SentinelCap Logo" />
+</p>
 
-> **FinTech Hackathon Submission: Asset & Capital Management / Optimization Controls**  
-> An institutional-grade platform designed for treasury desks, asset managers, and Chief Risk Officers to optimize multi-asset capital allocation while enforcing autonomous real-time risk controls.
+<h1 align="center">CapitalAI</h1>
 
----
-
-## Executive Summary
-
-Financial institutions manage complex balance sheets across diverse asset classes, tight liquidity horizons, and shifting macroeconomic regimes. During periods of market volatility, traditional static risk limits and manual rebalancing break down—causing delayed execution, severe capital drawdowns, and unexpected tail-risk exposure.
-
-**SentinelCap** solves this by unifying:
-1. **Convex Tail-Risk Optimization**: Rockafellar-Uryasev Mean-CVaR linear programming via CVXPY and Hierarchical Risk Parity (HRP) with liquidity reserves and $L_1$ turnover dampeners.
-2. **Autonomous 3-Tier Safeguard & Circuit Breaker**: Continuous telemetry detecting threshold breaches (CVaR, Drawdowns, Markov Regime shifts, Liquidity Coverage) and executing defensive capital preservation.
-3. **Institutional Decision Command Center & War Room**: Real-time visualization of multi-method VaR/ES, risk attribution, interactive Efficient Frontier, and historical crisis scenario stress testing (2008 Lehman, 2020 COVID, Fed Tightening, 1970s Stagflation).
+<p align="center">
+  <b>Institutional Portfolio Optimizer & Autonomous Safeguard System</b><br/>
+  <i>Advanced Quantitative Telemetry and Tail Risk Management</i>
+</p>
 
 ---
 
-## Problem Statement & Deliverables Alignment
+## 📋 Table of Contents
 
-| Problem Statement Requirement | SentinelCap Implementation | Where in Code |
+1. [Executive Summary](#-executive-summary)
+2. [Problem Statement](#-problem-statement)
+3. [The SentinelCap Solution](#-the-sentinelcap-solution)
+4. [System Architecture](#-system-architecture)
+5. [Unique Value Proposition](#-unique-value-proposition)
+6. [Software Directory Map](#-software-directory-map)
+7. [Local Setup & Deployment Guide](#-local-setup--deployment-guide)
+8. [Future Roadmap](#-future-roadmap)
+
+---
+
+## 🎯 Executive Summary
+
+**SentinelCap** is a next-generation quantitative portfolio management and autonomous risk safeguard system designed for institutional asset managers. It integrates advanced mathematical optimization (Mean-CVaR, HRP), real-time global market telemetry, and automated multi-tier circuit breakers to dynamically protect capital against extreme tail events and volatility regime shifts.
+
+---
+
+## ⚠️ Problem Statement
+
+Institutional asset managers face compounding challenges in dynamic market environments:
+
+1. **Reactive Risk Management**: Traditional VaR (Value at Risk) fails to capture the true magnitude of tail-end losses (black swan events). By the time human analysts calculate drawdowns and convene a risk committee, catastrophic capital destruction has already occurred.
+2. **Sub-optimal Asset Allocation**: Classical Markowitz Mean-Variance optimization suffers from extreme sensitivity to input estimates and often results in highly concentrated, ill-conditioned portfolios that require massive turnover to rebalance.
+3. **Information Fragmentation**: Execution blotters, macro-economic telemetry, and crisis scenario simulations are isolated across disjointed Bloomberg terminal screens and Excel spreadsheets, slowing down CIO decision-making.
+
+---
+
+## 💡 The SentinelCap Solution
+
+SentinelCap centralizes quantitative asset allocation and embeds autonomous safeguards directly into the execution workflow.
+
+### 🌟 Core Capabilities
+
+* **Advanced Mathematical Optimization**: Utilizes Rockafellar-Uryasev Mean-CVaR linear programming via CVXPY and Hierarchical Risk Parity (HRP) graph clustering to construct robust portfolios that inherently penalize fat-tailed skewness and minimize turnover friction.
+* **Autonomous 3-Tier Circuit Breaker**: Continuously monitors real-time market data to detect risk breaches. It dynamically transitions through NORMAL, AMBER (warning), RED (auto-rebalance), and FROZEN (liquidity halt) states without human delay.
+* **Regime-Conditioned Telemetry**: Employs 2-State Markov Switching (Hamilton 1989) to identify latent volatility shifts before traditional drawdowns occur, adjusting capital allocations proactively.
+* **Live Global Telemetry**: Ingests real-time pricing, NSE/BSE feeds, RBI repo rates, US Treasury fiscal data, and Finnhub news wires to drive live analytics.
+
+---
+
+## 🏗️ System Architecture
+
+### 1. Backend Architecture (FastAPI Quant Engine)
+
+* **API Framework**: **FastAPI** providing high-performance ASGI REST endpoints.
+* **Quant Engine**: **Python 3.12**, utilizing `CVXPY` (Clarabel/SCS solvers), `NumPy`, `SciPy`, and `Statsmodels`.
+* **Live Data Ingestion**: `yfinance`, `Finnhub`, and official US Treasury APIs for live market pricing, macro sensors, and EDGAR SEC Filings.
+* **Safeguard Engine**: In-memory Append-Only Cryptographic Audit Ledger logging every autonomous and manual intervention.
+
+### 2. Frontend Architecture (Next.js Command Center)
+
+* **Framework**: **Next.js 16 (App Router)** and React 19.
+* **UI/UX**: Tailwind CSS v4, Lucide-React for iconography.
+* **Data Visualization**: **Recharts** for interactive Efficient Frontiers and Drawdown curves; COBE 3D Interactive Globe for the landing hero.
+* **Authentication**: **Clerk** Identity integration for Role-Based Access Control (RBAC).
+
+---
+
+## 💎 Unique Value Proposition
+
+| Dimension | Traditional Portfolio Management | SentinelCap |
 | :--- | :--- | :--- |
-| **1. Optimization Strategy** | • Rockafellar-Uryasev Mean-CVaR linear program via CVXPY<br>• Hierarchical Risk Parity (HRP) graph clustering<br>• Classical Markowitz (Max Sharpe & Min Variance)<br>• Box concentration caps, cash buffers, $L_1$ turnover penalization | [`backend/engine/optimizer.py`](backend/engine/optimizer.py)<br>[`backend/routers/optimize.py`](backend/routers/optimize.py)<br>[`frontend/src/app/(dashboard)/optimize/page.tsx`](frontend/src/app/(dashboard)/optimize/page.tsx) |
-| **2. Control & Safeguard System** | • 3-Tier Circuit Breaker (NORMAL, AMBER warning, RED auto-rebalance, FROZEN liquidity halt)<br>• 2-State Markov Regime Switching (Hamilton 1989)<br>• FRTB MAR33.12 liquidity horizon scaling ($\sqrt{LH/10}$)<br>• Kupiec POF & Christoffersen Independence statistical tests<br>• Autonomous vs Manual CRO approval modes | [`backend/controls/circuit_breaker.py`](backend/controls/circuit_breaker.py)<br>[`backend/engine/regime.py`](backend/engine/regime.py)<br>[`backend/engine/liquidity.py`](backend/engine/liquidity.py)<br>[`backend/engine/breach_detector.py`](backend/engine/breach_detector.py)<br>[`frontend/src/app/(dashboard)/audit-log/page.tsx`](frontend/src/app/(dashboard)/audit-log/page.tsx) |
-| **3. Decision Dashboard & War Room** | • Capital Overview with $10M AUM telemetry & dual-line Recharts curve<br>• 4-Method VaR & ES benchmark table<br>• Interactive Efficient Frontier with Capital Allocation Line<br>• War Room crisis scenario stress simulator (2008 Lehman, COVID Flash Crash, Fed Rate Shock)<br>• Institutional Execution Blotter with slippage and venue tracking<br>• Immutable cryptographic audit log & CIO Emergency Override | [`frontend/src/app/page.tsx`](frontend/src/app/page.tsx)<br>[`frontend/src/app/(dashboard)/dashboard/page.tsx`](frontend/src/app/(dashboard)/dashboard/page.tsx)<br>[`frontend/src/app/(dashboard)/optimize/page.tsx`](frontend/src/app/(dashboard)/optimize/page.tsx)<br>[`frontend/src/app/(dashboard)/stress-test/page.tsx`](frontend/src/app/(dashboard)/stress-test/page.tsx)<br>[`frontend/src/app/(dashboard)/dashboard/trades/page.tsx`](frontend/src/app/(dashboard)/dashboard/trades/page.tsx)<br>[`frontend/src/app/(dashboard)/dashboard/alerts/page.tsx`](frontend/src/app/(dashboard)/dashboard/alerts/page.tsx)<br>[`frontend/src/app/(dashboard)/dashboard/settings/page.tsx`](frontend/src/app/(dashboard)/dashboard/settings/page.tsx) |
+| **Risk Metric** | Variance / Standard Deviation. Ignores tail severity. | **CVaR (Expected Shortfall)**. Penalizes extreme black swan tail risks. |
+| **Crisis Response** | Human-driven. Hours or days to convene risk committees. | **Autonomous Circuit Breaker**. Millisecond response to breaches. |
+| **Liquidity Awareness** | Static assumptions based on market cap. | **FRTB Liquidity Horizons**. Dynamic scaling based on Basel MAR33.12 bands. |
+| **Portfolio Stability** | Markowitz inverse covariance matrices (highly unstable). | **Hierarchical Risk Parity**. Machine learning graph clustering for stable allocations. |
+| **Data Silos** | Disjointed terminals and spreadsheets. | **Unified War Room**. Optimizations, stress-tests, and blotters in one pane. |
 
 ---
 
-## Evaluation Criteria Scorecard
+## 📁 Software Directory Map
 
-### 1. Financial & Control Logic (35% Weight)
-- **Coherent Risk Minimization**: Uses CVaR (Expected Shortfall) instead of variance, satisfying sub-additivity and penalizing fat-tailed skewness.
-- **Hierarchical Risk Parity (HRP)**: Machine-learning tree clustering avoids the mathematical instability of inverting ill-conditioned covariance matrices ($\Sigma^{-1}$).
-- **FRTB Liquidity Horizons**: Maps assets to Basel MAR33.12 liquidity bands (10d, 20d, 40d, 60d) with square-root horizon scaling.
-- **Model Validation**: Calibrates Kupiec POF Likelihood Ratio and Christoffersen Markov Independence tests to evaluate VaR model accuracy.
+### Backend (`/backend`)
 
-### 2. Technical Architecture (30% Weight)
-- **Backend**: Python 3.12, FastAPI ASGI, CVXPY (Clarabel/SCS solvers), NumPy, SciPy, Statsmodels.
-- **Frontend**: Next.js 16 (App Router), React 19, Tailwind CSS v4, Lucide React, Recharts, COBE 3D Interactive Globe.
-- **Speed & Isolation**: Built and managed with `uv` (installs and executes in seconds).
-- **100% Automated Test Suite**: 30 passing unit and integration tests across optimizers, risk engines, circuit breakers, and APIs.
+* ⚙️ **`engine/`**: The core quantitative brain containing `optimizer.py`, `regime.py`, `risk_metrics.py`, and `liquidity.py`.
+* 🛡️ **`controls/`**: Contains the `circuit_breaker.py` logic and `audit_log.py` ledger.
+* 🌐 **`routers/`**: FastAPI route definitions for `live_feed.py`, `optimize.py`, and `stress_test.py`.
+* 🧪 **`tests/`**: 100% passing automated test suite validating all mathematical models.
 
-### 3. User Experience & Clarity (20% Weight)
-- **Executive Institutional Design**: Crisp light mode, high-contrast typography, live status badges (NORMAL, AMBER, RED, FROZEN).
-- **Actionable Execution Lists**: Rebalancing translates mathematical weight deltas directly into executable buy/sell tickets with dollar values, slippage bps, and venues.
-- **Interactive Visualizations**: Interactive Efficient Frontier with coordinate tooltips, dynamic multi-asset allocation bars, and drawdown shock gauges.
+### Frontend (`/frontend`)
 
-### 4. Innovation & Problem Approach (15% Weight)
-- **Autonomous Multi-Threshold Circuit Breaker**: Dynamically transitions through 3 protective tiers without human delay, while maintaining a complete immutable audit trail.
-- **Regime-Conditioned Telemetry**: Markov Switching Model identifies latent volatility shifts before traditional drawdowns occur.
+* 📊 **`src/app/(dashboard)/dashboard/page.tsx`**: Capital Overview with $10M AUM telemetry and live gauges.
+* 📈 **`src/app/(dashboard)/optimize/page.tsx`**: Portfolio Optimizer rendering the Efficient Frontier and target rebalancing weights.
+* 💥 **`src/app/(dashboard)/stress-test/page.tsx`**: War Room crisis scenario stress simulator (e.g., 2008 Lehman, COVID Flash Crash).
+* 📝 **`src/app/(dashboard)/dashboard/trades/page.tsx`**: Institutional Execution Blotter tracking slippage and venue routing.
+* 🔐 **`src/app/(dashboard)/audit-log/page.tsx`**: Safeguard Controls & Immutable Audit Trail for CRO oversight.
 
 ---
 
-## Quick Start & Verification
+## 🛠️ Local Setup & Deployment Guide
 
-### 1. Start Backend
+### Prerequisites
+
+- Node.js (v18.x or later) & npm
+* Python 3.12 & `uv` package manager
+
+### 1. Start the Backend Quant Engine
 
 ```bash
 cd backend
-# With virtual environment activated:
+# Create and activate a virtual environment, then run:
 uvicorn main:app --host 127.0.0.1 --port 8000
 ```
-Backend API will be live at `http://localhost:8000` with interactive Swagger docs at `http://localhost:8000/docs`.
 
-### 2. Start Frontend
+*The API will be live at `http://localhost:8000` with Swagger docs at `/docs`.*
+
+### 2. Start the Frontend Command Center
 
 ```bash
 cd frontend
 npm install
+# Initialize Clerk Authentication Keys
+npx clerk@latest init -y
+# Run the development server
 npm run dev -- -p 3001
 ```
-Frontend will be live at `http://localhost:3001`.
+
+*The dashboard will be live at `http://localhost:3001`.*
 
 ### 3. Run Automated Tests
 
 ```bash
 cd backend
-.venv\Scripts\pytest -v
+pytest -v
 ```
-Validates all 30 tests covering optimization math, risk metrics, and circuit breaker logic.
+
+*Validates all 30 tests covering optimization math, risk metrics, and circuit breaker logic.*
 
 ---
 
-## Project Structure
+## 🛣️ Future Roadmap
 
-```
-sentinelcap/
-├── backend/
-│   ├── main.py                     # FastAPI entry point & CORS configuration
-│   ├── engine/
-│   │   ├── optimizer.py            # Mean-CVaR, HRP, Markowitz, Efficient Frontier
-│   │   ├── regime.py               # 2-State Markov Switching & GARCH(1,1)
-│   │   ├── risk_metrics.py         # 4-Method VaR/ES, Drawdowns, Component-VaR
-│   │   ├── liquidity.py            # Basel FRTB liquidity horizons (10d, 20d)
-│   │   └── breach_detector.py      # Kupiec POF & Christoffersen backtests
-│   ├── controls/
-│   │   ├── circuit_breaker.py      # 3-Tier Autonomous Safeguard
-│   │   └── audit_log.py            # In-memory append-only audit ledger
-│   ├── data/
-│   │   ├── sample_portfolio.json   # 6-Asset portfolio specification
-│   │   ├── scenarios.json          # Preset macroeconomic shock scenarios
-│   │   └── market_data.py          # Covariance matrices and price generator
-│   └── tests/                      # 30 Unit & Integration Tests (100% passing)
-│
-├── frontend/
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx            # Hero Landing Page with 3D Globe & Concentric Rays
-│   │   │   ├── layout.tsx          # Root Layout & Typography
-│   │   │   └── (dashboard)/
-│   │   │       ├── layout.tsx      # Dashboard Shell (Sidebar + Header)
-│   │   │       ├── dashboard/
-│   │   │       │   ├── page.tsx    # Capital Overview ($10M AUM Telemetry)
-│   │   │       │   ├── trades/     # Institutional Execution Blotter
-│   │   │       │   ├── alerts/     # War Room Alert Center
-│   │   │       │   └── settings/   # Risk Parameters & Governance
-│   │   │       ├── optimize/       # Portfolio Optimizer & Efficient Frontier
-│   │   │       ├── stress-test/    # Historical Crisis Scenario Stress Simulator
-│   │   │       └── audit-log/      # Safeguard Controls & Immutable Audit Trail
-│   │   ├── components/             # Reusable UI components (Sidebar, Header, EF Chart)
-│   │   └── lib/api.ts              # Typed async API client
-│
-├── docs/
-│   ├── ARCHITECTURE.md             # System architecture & specs
-│   ├── FINANCIAL_LOGIC.md          # Comprehensive quant math & formulas
-│   └── SETUP.md                    # Detailed installation guide
-│
-├── docker-compose.yml              # One-command full-stack containerization
-└── README.md                       # Project documentation
-```
+1. **Live Brokerage Execution (Alpaca / Interactive Brokers)**: Transition from generating trade blotters to direct autonomous execution routing via API.
+2. **Database Persistence (PostgreSQL)**: Implement SQLAlchemy to persistently store user portfolios, multi-tenant accounts, and historical audit ledgers.
+3. **AI "Risk Copilot" (LLM Integration)**: Add an integrated ChatGPT-style side panel hooked into the live FastAPI telemetry to answer on-the-fly portfolio questions (e.g., *"Why did the circuit breaker trigger to AMBER?"*).
+4. **Historical Backtesting Engine**: Build a robust engine to simulate and chart optimized weight performance over rolling 10-year historical windows.
+5. **Factor Exposure Analysis**: Implement Fama-French 5-factor regression analysis to automatically decompose portfolio returns into specific market factors (Value, Size, Quality, Momentum).

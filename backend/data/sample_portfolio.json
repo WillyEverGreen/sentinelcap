@@ -1,0 +1,77 @@
+﻿{
+  "portfolio_id": "PORT-INST-001",
+  "total_value": 10000000.0,
+  "currency": "USD",
+  "risk_budget_cvar_99": 0.06,
+  "max_drawdown_limit": 0.08,
+  "critical_drawdown_limit": 0.15,
+  "min_liquidity_ratio": 0.80,
+  "assets": [
+    {
+      "ticker": "SPY",
+      "name": "SPDR S&P 500 ETF Trust",
+      "asset_class": "US Large Cap Equity",
+      "category": "Equity",
+      "weight": 0.35,
+      "current_value": 3500000.0,
+      "liquidity_horizon_days": 10,
+      "expected_annual_return": 0.105,
+      "annual_volatility": 0.165
+    },
+    {
+      "ticker": "EFA",
+      "name": "iShares MSCI EAFE ETF",
+      "asset_class": "Dev International Equity",
+      "category": "Equity",
+      "weight": 0.15,
+      "current_value": 1500000.0,
+      "liquidity_horizon_days": 10,
+      "expected_annual_return": 0.082,
+      "annual_volatility": 0.175
+    },
+    {
+      "ticker": "AGG",
+      "name": "iShares Core US Aggregate Bond ETF",
+      "asset_class": "US Investment Grade Bonds",
+      "category": "Fixed Income",
+      "weight": 0.25,
+      "current_value": 2500000.0,
+      "liquidity_horizon_days": 20,
+      "expected_annual_return": 0.048,
+      "annual_volatility": 0.065
+    },
+    {
+      "ticker": "GLD",
+      "name": "SPDR Gold Shares",
+      "asset_class": "Precious Metals / Commodity",
+      "category": "Commodity",
+      "weight": 0.10,
+      "current_value": 1000000.0,
+      "liquidity_horizon_days": 20,
+      "expected_annual_return": 0.075,
+      "annual_volatility": 0.145
+    },
+    {
+      "ticker": "VNQ",
+      "name": "Vanguard Real Estate ETF",
+      "asset_class": "Real Estate Investment Trusts",
+      "category": "Real Estate",
+      "weight": 0.10,
+      "current_value": 1000000.0,
+      "liquidity_horizon_days": 20,
+      "expected_annual_return": 0.078,
+      "annual_volatility": 0.190
+    },
+    {
+      "ticker": "BIL",
+      "name": "SPDR Bloomberg 1-3 Month T-Bill ETF",
+      "asset_class": "Short-Term Cash & Equivalents",
+      "category": "Cash",
+      "weight": 0.05,
+      "current_value": 500000.0,
+      "liquidity_horizon_days": 10,
+      "expected_annual_return": 0.045,
+      "annual_volatility": 0.008
+    }
+  ]
+}

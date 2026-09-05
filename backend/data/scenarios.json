@@ -1,0 +1,82 @@
+﻿{
+  "2008_GFC": {
+    "id": "2008_GFC",
+    "name": "2008 Global Financial Crisis (Lehman Collapse)",
+    "description": "Systemic credit seizure, equity crash, massive flight to high-quality sovereigns and gold.",
+    "asset_shocks": {
+      "SPY": -0.38,
+      "EFA": -0.43,
+      "AGG": 0.05,
+      "GLD": 0.25,
+      "VNQ": -0.37,
+      "BIL": 0.02
+    },
+    "volatility_multiplier": 3.5,
+    "liquidity_freeze": true,
+    "estimated_duration_months": 12
+  },
+  "2020_COVID": {
+    "id": "2020_COVID",
+    "name": "March 2020 COVID-19 Flash Crash",
+    "description": "Unprecedented velocity of equity drops, sudden dash for cash across all asset classes.",
+    "asset_shocks": {
+      "SPY": -0.34,
+      "EFA": -0.32,
+      "AGG": 0.03,
+      "GLD": 0.04,
+      "VNQ": -0.25,
+      "BIL": 0.01
+    },
+    "volatility_multiplier": 4.0,
+    "liquidity_freeze": false,
+    "estimated_duration_months": 3
+  },
+  "Fed_Rate_Shock": {
+    "id": "Fed_Rate_Shock",
+    "name": "Hawkish Fed Tightening (+300 bps)",
+    "description": "Rapid monetary policy rate surge simultaneously devaluing equities, REITs, and duration bonds.",
+    "asset_shocks": {
+      "SPY": -0.15,
+      "EFA": -0.12,
+      "AGG": -0.18,
+      "GLD": -0.05,
+      "VNQ": -0.22,
+      "BIL": 0.045
+    },
+    "volatility_multiplier": 2.0,
+    "liquidity_freeze": false,
+    "estimated_duration_months": 9
+  },
+  "Stagflation_1970s": {
+    "id": "Stagflation_1970s",
+    "name": "1970s Stagflation & Supply Shock",
+    "description": "Persistent inflation combined with economic contraction, gold surging while financial assets suffer.",
+    "asset_shocks": {
+      "SPY": -0.20,
+      "EFA": -0.24,
+      "AGG": -0.14,
+      "GLD": 0.40,
+      "VNQ": -0.10,
+      "BIL": 0.06
+    },
+    "volatility_multiplier": 2.5,
+    "liquidity_freeze": false,
+    "estimated_duration_months": 18
+  },
+  "Custom": {
+    "id": "Custom",
+    "name": "Custom Stress Scenario",
+    "description": "Bespoke scenario defined by risk management controls and custom shock parameters.",
+    "asset_shocks": {
+      "SPY": 0.0,
+      "EFA": 0.0,
+      "AGG": 0.0,
+      "GLD": 0.0,
+      "VNQ": 0.0,
+      "BIL": 0.0
+    },
+    "volatility_multiplier": 1.0,
+    "liquidity_freeze": false,
+    "estimated_duration_months": 1
+  }
+}

@@ -1,4 +1,4 @@
-﻿"""
+"""
 SentinelCap Backend Application Entry Point.
 Institutional FinTech Platform for Automated Capital Management & Risk Optimization Controls.
 """
@@ -10,9 +10,10 @@ from routers.optimize import router as optimize_router
 from routers.risk import router as risk_router
 from routers.stress_test import router as stress_test_router
 from routers.safeguard import router as safeguard_router
+from routers.live_feed import router as live_feed_router
 
 app = FastAPI(
-    title="SentinelCap — Asset & Capital Management Engine",
+    title="SentinelCap - Asset & Capital Management Engine",
     description="Institutional-grade autonomous capital optimization, tail-risk safeguards, and scenario stress testing.",
     version="1.0.0"
 )
@@ -31,6 +32,7 @@ app.include_router(optimize_router)
 app.include_router(risk_router)
 app.include_router(stress_test_router)
 app.include_router(safeguard_router)
+app.include_router(live_feed_router)
 
 @app.get("/health")
 async def health_check():

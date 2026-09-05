@@ -6,7 +6,7 @@ import {
   AlertTriangle, ShieldAlert, ShieldCheck, ShieldX, TrendingDown, 
   Flame, Skull, Activity, ArrowRight, Play, RefreshCw, Zap, CheckCircle2
 } from "lucide-react";
-import { runStressTest, StressTestResponse } from "@/lib/api";
+import { runStressTest, getStressScenarios, StressTestResponse } from "@/lib/api";
 
 const PRESET_SCENARIOS = [
   {
@@ -41,6 +41,22 @@ const PRESET_SCENARIOS = [
 
 export default function StressTestPage() {
   const [selectedScenario, setSelectedScenario] = useState("2008_GFC");
+  const [scenariosList, setScenariosList] = useState<any[]>(PRESET_SCENARIOS);
+
+  useEffect(() => {
+    getStressScenarios().then(res => {
+      if (res && typeof res === "object") {
+        const loaded = Object.entries(res).filter(([k]) => k !== "Custom").map(([k, v]: [string, any]) => ({
+          id: k,
+          name: v.name || k,
+          icon: k.includes("2008") ? Skull : (k.includes("COVID") ? Flame : (k.includes("Rate") ? Zap : Activity)),
+          tag: v.category || "Macro Stress",
+          desc: v.description || "Historical crisis shock scenario."
+        }));
+        if (loaded.length > 0) setScenariosList(loaded);
+      }
+    }).catch(err => console.error("Scenarios load error:", err));
+  }, []);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<StressTestResponse | null>(null);
 
@@ -108,7 +124,7 @@ export default function StressTestPage() {
 
       {/* Preset Scenario Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {PRESET_SCENARIOS.map((sc) => {
+        {scenariosList.map((sc) => {
           const Icon = sc.icon;
           const isSelected = selectedScenario === sc.id;
           return (

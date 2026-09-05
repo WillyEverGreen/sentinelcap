@@ -321,3 +321,137 @@ export async function resetCircuitBreaker(officer_id = "CRO-AUTH-01", reason = "
 export async function getAuditLog(limit = 100): Promise<AuditLogResponse> {
   return fetchJSON<AuditLogResponse>(`/api/safeguard/audit-log?limit=${limit}`);
 }
+
+
+export interface LiveQuote {
+  symbol: string;
+  price: number;
+  change: number;
+  change_pct: number;
+  high: number;
+  low: number;
+  prev_close: number;
+  source: string;
+}
+
+export interface MacroSensor {
+  name: string;
+  symbol: string;
+  value: number;
+  unit?: string;
+  regime?: string;
+  source: string;
+}
+
+export interface TreasuryRate {
+  record_date: string;
+  security: string;
+  rate: number;
+  source: string;
+}
+
+export interface IndianMarketTelemetry {
+  benchmark: {
+    name: string;
+    symbol: string;
+    price: number;
+    change: number;
+    change_pct: number;
+    currency: string;
+    source: string;
+  };
+  sensex: {
+    name: string;
+    symbol: string;
+    price: number;
+    change: number;
+    change_pct: number;
+    currency: string;
+    source: string;
+  };
+  india_vix: {
+    name: string;
+    symbol: string;
+    value: number;
+    regime: string;
+    source: string;
+  };
+  usd_inr: {
+    name: string;
+    symbol: string;
+    rate: number;
+    source: string;
+  };
+  rbi_repo_rate: {
+    name: string;
+    value: number;
+    unit: string;
+    source: string;
+  };
+  gsec_10y: {
+    name: string;
+    value: number;
+    unit: string;
+    source: string;
+  };
+  quotes: Record<string, { name: string; price: number; change_pct: number }>;
+  cross_market_correlation: {
+    nifty_vs_sp500: number;
+    fpi_net_flow_cr: string;
+    brent_crude_usd: number;
+    spillover_status: string;
+  };
+}
+
+export interface MarketOverviewResponse {
+  status: string;
+  timestamp: string;
+  quotes: Record<string, LiveQuote>;
+  macro: Record<string, MacroSensor>;
+  india?: IndianMarketTelemetry;
+  treasury_rates: TreasuryRate[];
+  active_data_sources: string[];
+}
+
+export interface LiveNewsItem {
+  id: string;
+  headline: string;
+  summary: string;
+  source: string;
+  url: string;
+  timestamp: string;
+  category: string;
+  api_source: string;
+}
+
+export interface LiveNewsResponse {
+  count: number;
+  source: string;
+  items: LiveNewsItem[];
+}
+
+export interface SecFilingItem {
+  entity: string;
+  form: string;
+  filing_date: string;
+  description: string;
+  api_source: string;
+}
+
+export interface SecFilingsResponse {
+  count: number;
+  source: string;
+  items: SecFilingItem[];
+}
+
+export async function getLiveMarketOverview(): Promise<MarketOverviewResponse> {
+  return fetchJSON<MarketOverviewResponse>("/api/live-feed/market-overview");
+}
+
+export async function getLiveNews(): Promise<LiveNewsResponse> {
+  return fetchJSON<LiveNewsResponse>("/api/live-feed/news");
+}
+
+export async function getSecFilings(): Promise<SecFilingsResponse> {
+  return fetchJSON<SecFilingsResponse>("/api/live-feed/sec-filings");
+}

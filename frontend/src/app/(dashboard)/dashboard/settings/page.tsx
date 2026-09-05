@@ -101,12 +101,19 @@ export default function SettingsPage() {
                 <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Autonomous De-risking Protocol</p>
                 <p className="text-[11px] text-slate-400 dark:text-slate-400">Execute emergency liquidity rebalance automatically</p>
               </div>
-              <input
-                type="checkbox"
-                checked={autoHedge}
-                onChange={(e) => setAutoHedge(e.target.checked)}
-                className="w-4 h-4 accent-[#0066FF] dark:accent-[#38BDF8] rounded cursor-pointer"
-              />
+              <button
+                type="button"
+                onClick={() => setAutoHedge(!autoHedge)}
+                className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer ${
+                  autoHedge ? "bg-[#0066FF] dark:bg-[#38BDF8]" : "bg-slate-300 dark:bg-slate-700"
+                }`}
+              >
+                <div
+                  className={`w-5 h-5 rounded-full bg-white dark:bg-[#0E1526] transition-transform ${
+                    autoHedge ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -164,17 +171,17 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Card 3: Portfolio Constraints */}
+        {/* Card 2: Optimization & Asset Caps */}
         <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-xs dark:shadow-none space-y-5 transition-colors">
           <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
             <Sliders className="w-4 h-4 text-[#0066FF] dark:text-[#38BDF8]" />
-            <h3>Portfolio Bounds</h3>
+            <h3>Asset Allocation Constraints</h3>
           </div>
 
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">Max Single Asset Allocation</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Max Single-Asset Concentration Cap</span>
                 <span className="font-mono text-slate-900 dark:text-white font-bold">{assetCap.toFixed(0)}%</span>
               </div>
               <input
@@ -186,53 +193,69 @@ export default function SettingsPage() {
                 onChange={(e) => setAssetCap(parseFloat(e.target.value))}
                 className="w-full accent-[#0066FF] dark:accent-[#38BDF8] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
+              <p className="text-[11px] text-slate-400 dark:text-slate-400 mt-1">Prevents portfolio overexposure to individual tickers (e.g. SPY).</p>
             </div>
 
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">Minimum Cash Buffer</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Minimum Cash &amp; T-Bill Reserve (BIL)</span>
                 <span className="font-mono text-slate-900 dark:text-white font-bold">{minCash.toFixed(1)}%</span>
               </div>
               <input
                 type="range"
-                min="2.0"
-                max="20.0"
+                min="0.0"
+                max="25.0"
                 step="1.0"
                 value={minCash}
                 onChange={(e) => setMinCash(parseFloat(e.target.value))}
                 className="w-full accent-[#0066FF] dark:accent-[#38BDF8] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
+              <p className="text-[11px] text-slate-400 dark:text-slate-400 mt-1">Guarantees immediate liquidity for margin calls and sweeps.</p>
             </div>
-          </div>
-        </div>
 
-        {/* Card 4: Execution & Friction */}
-        <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-xs dark:shadow-none space-y-5 transition-colors">
-          <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
-            <Database className="w-4 h-4 text-[#0066FF] dark:text-[#38BDF8]" />
-            <h3>Execution &amp; Prime Brokerage</h3>
-          </div>
-
-          <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">Turnover Friction Cost</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Turnover Penalty (Friction Model)</span>
                 <span className="font-mono text-slate-900 dark:text-white font-bold">{turnoverBps} bps</span>
               </div>
               <input
                 type="range"
-                min="2"
+                min="1"
                 max="50"
                 step="1"
                 value={turnoverBps}
                 onChange={(e) => setTurnoverBps(parseInt(e.target.value))}
                 className="w-full accent-[#0066FF] dark:accent-[#38BDF8] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
               />
+              <p className="text-[11px] text-slate-400 dark:text-slate-400 mt-1">Penalizes excessive churn to minimize institutional execution costs.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 4: Custody & Engine Integrations */}
+        <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-xs dark:shadow-none space-y-4 md:col-span-2 transition-colors">
+          <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
+            <Database className="w-4 h-4 text-[#0066FF] dark:text-[#38BDF8]" />
+            <h3>Institutional Custody &amp; Execution Feeds</h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-700">
+              <p className="text-[11px] font-semibold text-slate-400 uppercase">Prime Custody Partner</p>
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">Goldman Sachs Prime</h4>
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">Connected &amp; Synced</p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-700 text-xs">
-              <span className="font-bold text-slate-800 dark:text-slate-200 block">Primary Execution Venue</span>
-              <span className="text-slate-500 dark:text-slate-400 mt-0.5 block">Goldman Sachs Prime Custody (Automated DMA routing)</span>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-700">
+              <p className="text-[11px] font-semibold text-slate-400 uppercase">Smart Routing DMA</p>
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">IEX &amp; Direct Dark Pools</h4>
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">Sub-millisecond Latency</p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-700">
+              <p className="text-[11px] font-semibold text-slate-400 uppercase">Markov Regime Sensor</p>
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">Eigenfactor Covariance</h4>
+              <p className="text-[11px] text-blue-600 dark:text-[#38BDF8] font-semibold mt-1">Real-Time Continuous Feed</p>
             </div>
           </div>
         </div>

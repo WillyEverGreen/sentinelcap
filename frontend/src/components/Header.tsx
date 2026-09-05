@@ -144,46 +144,34 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-30 h-16 bg-white/90 dark:bg-[#0A0F1D]/90 backdrop-blur-md px-6 flex items-center justify-between gap-4 select-none font-sans border-b border-slate-100/90 dark:border-slate-800/80 transition-all">
       
-      {/* Left: Global Regulatory & Market State Banner */}
+      {/* Left: Clean Brand & Institutional Status */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-tight hidden sm:inline">
-            NSE Live Feed
-          </span>
-        </div>
-
-        <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
-
-        <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] text-[10px] font-extrabold tracking-wide border border-blue-200/60 dark:border-blue-900/60 uppercase">
-          <span>• NSE • BSE • SEBI Regulated</span>
+        <h1 className="text-[17px] font-extrabold tracking-tight text-[#0A1128] dark:text-white">
+          Capital Overview
+        </h1>
+        <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100/80 dark:bg-[#1E293B] border border-slate-200/60 dark:border-slate-800 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span>NSE • BSE • SEBI Regulated</span>
         </div>
       </div>
 
-      {/* Right: Search, Live Tickers, Theme Toggle & Controls */}
+      {/* Right Controls: Streamlined & Balanced */}
       <div className="flex items-center gap-3 md:gap-4">
         
-        {/* Live Index Tickers */}
-        <div className="hidden lg:flex items-center gap-3 text-xs">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-[#1E293B] border border-slate-200/60 dark:border-slate-800">
-            <span className="text-slate-400 dark:text-slate-500 font-medium">NIFTY 50</span>
-            <span className="font-mono font-extrabold text-slate-900 dark:text-white">
-              {niftyPrice ? niftyPrice.toLocaleString() : "..."}
-            </span>
-            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">+0.48%</span>
+        {/* Live Market Micro-Ticker */}
+        <div className="hidden lg:flex items-center gap-2.5 px-3 py-1 rounded-full bg-slate-50 dark:bg-[#1E293B] border border-slate-200/70 dark:border-slate-800 text-[11.5px] font-medium text-slate-600 dark:text-slate-300">
+          <div className="flex items-center gap-1">
+            <span className="text-slate-400 dark:text-slate-500">NIFTY</span>
+            <span className="font-mono font-bold text-slate-900 dark:text-white">{Math.round(niftyPrice).toLocaleString()}</span>
           </div>
-
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-[#1E293B] border border-slate-200/60 dark:border-slate-800">
-            <span className="text-slate-400 dark:text-slate-500 font-medium">India VIX</span>
+          <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
+          <div className="flex items-center gap-1">
+            <span className="text-slate-400 dark:text-slate-500">VIX</span>
             <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">{inVix}</span>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500">Low Vol</span>
           </div>
-
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-[#1E293B] border border-slate-200/60 dark:border-slate-800">
-            <span className="text-slate-400 dark:text-slate-500 font-medium">USD/INR</span>
+          <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
+          <div className="flex items-center gap-1">
+            <span className="text-slate-400 dark:text-slate-500">USD/INR</span>
             <span className="font-mono font-bold text-slate-800 dark:text-slate-200">₹{usdInr}</span>
           </div>
         </div>

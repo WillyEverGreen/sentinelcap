@@ -15,6 +15,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://sentinelcap.ai"),
   title: "SentinelCap - AI for Asset & Capital Management",
   description: "Optimize asset allocation, enforce risk controls, and adapt in real time to a changing market - all in one intelligent platform.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

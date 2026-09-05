@@ -1,10 +1,19 @@
 <p align="center">
-  <img src="./frontend/public/logo.png" width="120" alt="SentinelCap Logo" />
+  <img src="./frontend/public/logo.png" width="120" alt="CapitalAI Logo" />
 </p>
+
+<h1 align="center">CapitalAI</h1>
 
 <p align="center">
   <b>Institutional Portfolio Optimizer & Autonomous Safeguard System</b><br/>
   <i>Advanced Quantitative Telemetry and Tail Risk Management</i>
+</p>
+
+
+<p align="center">
+  <img src="./docs/assets/landing.png" width="800" alt="CapitalAI Landing Page" />
+  <br/><br/>
+  <img src="./docs/assets/dashboard.png" width="800" alt="CapitalAI Dashboard" />
 </p>
 
 ---
@@ -13,7 +22,7 @@
 
 1. [Executive Summary](#-executive-summary)
 2. [Problem Statement](#-problem-statement)
-3. [The SentinelCap Solution](#-the-sentinelcap-solution)
+3. [The CapitalAI Solution](#-the-capitalai-solution)
 4. [System Architecture](#-system-architecture)
 5. [Unique Value Proposition](#-unique-value-proposition)
 6. [Software Directory Map](#-software-directory-map)
@@ -24,7 +33,7 @@
 
 ## 🎯 Executive Summary
 
-**SentinelCap** is a next-generation quantitative portfolio management and autonomous risk safeguard system designed for institutional asset managers. It integrates advanced mathematical optimization (Mean-CVaR, HRP), real-time global market telemetry, and automated multi-tier circuit breakers to dynamically protect capital against extreme tail events and volatility regime shifts.
+**CapitalAI** is a next-generation quantitative portfolio management and autonomous risk safeguard system designed for institutional asset managers. It integrates advanced mathematical optimization (Mean-CVaR, HRP), real-time global market telemetry, and automated multi-tier circuit breakers to dynamically protect capital against extreme tail events and volatility regime shifts.
 
 ---
 
@@ -38,9 +47,9 @@ Institutional asset managers face compounding challenges in dynamic market envir
 
 ---
 
-## 💡 The SentinelCap Solution
+## 💡 The CapitalAI Solution
 
-SentinelCap centralizes quantitative asset allocation and embeds autonomous safeguards directly into the execution workflow.
+CapitalAI centralizes quantitative asset allocation and embeds autonomous safeguards directly into the execution workflow.
 
 ### 🌟 Core Capabilities
 
@@ -71,7 +80,7 @@ SentinelCap centralizes quantitative asset allocation and embeds autonomous safe
 
 ## 💎 Unique Value Proposition
 
-| Dimension | Traditional Portfolio Management | SentinelCap |
+| Dimension | Traditional Portfolio Management | CapitalAI |
 | :--- | :--- | :--- |
 | **Risk Metric** | Variance / Standard Deviation. Ignores tail severity. | **CVaR (Expected Shortfall)**. Penalizes extreme black swan tail risks. |
 | **Crisis Response** | Human-driven. Hours or days to convene risk committees. | **Autonomous Circuit Breaker**. Millisecond response to breaches. |

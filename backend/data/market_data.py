@@ -77,7 +77,7 @@ def generate_historical_data(n_days: int = 504, seed: int = 42) -> tuple[pd.Data
 _RETURNS_DF, _PRICES_DF = generate_historical_data()
 
 def get_returns_df() -> pd.DataFrame:
-    return _RETURNS_DF.copy()
+    return _RETURNS_DF
 
 def get_prices_df() -> pd.DataFrame:
-    return _PRICES_DF.copy()
+    return _PRICES_DF

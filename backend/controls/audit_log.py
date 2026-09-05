@@ -1,4 +1,4 @@
-﻿"""
+"""
 Audit Log System: Records every safeguard event, threshold evaluation,
 circuit breaker state transition, and trade intervention with cryptographic timestamps.
 """
@@ -6,6 +6,7 @@ from __future__ import annotations
 import datetime
 import uuid
 from dataclasses import dataclass, asdict
+from collections import deque
 
 @dataclass
 class AuditEntry:
@@ -23,7 +24,7 @@ class AuditEntry:
 class AuditLogger:
     def __init__(self, max_entries: int = 1000):
         self.max_entries = max_entries
-        self._entries: list[AuditEntry] = []
+        self._entries: deque[AuditEntry] = deque(maxlen=max_entries)
         # Seed with initial system startup entry
         self.log(
             level="NORMAL",
@@ -59,13 +60,12 @@ class AuditLogger:
             action_taken=action_taken,
             details=details or {}
         )
-        self._entries.insert(0, entry)  # Prepend newest
-        if len(self._entries) > self.max_entries:
-            self._entries.pop()
+        self._entries.appendleft(entry)  # O(1) prepend
         return entry
 
     def get_entries(self, limit: int = 100) -> list[dict]:
-        return [asdict(e) for e in self._entries[:limit]]
+        # deque supports slicing in some ways, but it's easier to iterate
+        return [asdict(e) for i, e in enumerate(self._entries) if i < limit]
 
     def clear(self):
         self._entries.clear()

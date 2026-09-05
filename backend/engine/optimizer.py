@@ -290,10 +290,9 @@ def generate_efficient_frontier(
     max_ret = max(mu) * 0.95
     target_returns = np.linspace(min_ret, max_ret, n_points)
 
-    curve_points = []
     bounds = [(0.0, 0.50) for _ in range(n)]
 
-    for r_target in target_returns:
+    def _solve_point(r_target):
         cons = [
             {"type": "eq", "fun": lambda w: np.sum(w) - 1.0},
             {"type": "eq", "fun": lambda w, rt=r_target: np.sum(mu * w) - rt}
@@ -303,12 +302,20 @@ def generate_efficient_frontier(
             vol = float(np.sqrt(max(res.x.T @ cov @ res.x, 1e-8)))
             port_daily = returns_df.values @ (res.x / np.sum(res.x))
             cvar = float(np.mean(np.sort(-port_daily)[int(0.95 * len(port_daily)):]) * np.sqrt(10))
-            curve_points.append({
+            return {
                 "expected_return": round(float(r_target), 4),
                 "volatility": round(vol, 4),
                 "sharpe": round((float(r_target) - 0.04) / max(vol, 1e-4), 3),
                 "cvar_95_10d": round(cvar, 4)
-            })
+            }
+        return None
+
+    from concurrent.futures import ThreadPoolExecutor
+    curve_points = []
+    with ThreadPoolExecutor() as executor:
+        for r in executor.map(_solve_point, target_returns):
+            if r is not None:
+                curve_points.append(r)
 
     current_point = None
     if current_weights:

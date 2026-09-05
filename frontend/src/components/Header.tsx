@@ -58,6 +58,8 @@ export default function Header() {
   const [liveData, setLiveData] = useState<MarketOverviewResponse | null>(null);
 
   const getPageTitle = () => {
+    if (pathname === "/chat") return "CapitalAI Copilot";
+    if (pathname === "/news") return "Market News & Macro Intelligence";
     if (pathname === "/dashboard") return "Capital Overview";
     if (pathname === "/optimize") return "Portfolio Optimizer";
     if (pathname === "/stress-test") return "Stress Testing";

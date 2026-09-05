@@ -13,7 +13,9 @@ import {
   Bell,
   Settings,
   HelpCircle,
-  LogOut
+  LogOut,
+  Sparkles,
+  Newspaper
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -59,6 +61,16 @@ export default function Sidebar() {
       title: "Settings",
       href: "/dashboard/settings",
       icon: <Settings className="w-[18px] h-[18px]" />,
+    },
+    {
+      title: "Market News",
+      href: "/news",
+      icon: <Newspaper className="w-[18px] h-[18px]" />,
+    },
+    {
+      title: "CapitalAI Copilot",
+      href: "/chat",
+      icon: <Sparkles className="w-[18px] h-[18px]" />,
     },
   ];
 

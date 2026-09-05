@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { 
-  History, ShieldAlert, ShieldCheck, ShieldX, RefreshCw, Lock, 
+  History, X, ShieldAlert, ShieldCheck, ShieldX, RefreshCw, Lock, 
   Unlock, Filter, Terminal, FileText, CheckCircle2, AlertTriangle, KeyRound
 } from "lucide-react";
 import { getAuditLog, toggleSafeguardMode, resetCircuitBreaker, getSafeguardStatus, AuditLogEntry, CircuitBreakerStatus, getSecFilings, SecFilingItem } from "@/lib/api";
@@ -299,7 +299,7 @@ export default function AuditLogPage() {
                 </span>
                 <h3 className="text-base font-bold text-slate-900">Officer Safeguard Override</h3>
               </div>
-              <button onClick={() => setOverrideModal(false)} className="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+              <button onClick={() => setOverrideModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer p-1 rounded-lg hover:bg-slate-100" title="Close"><X className="w-4 h-4" /></button>
             </div>
 
             <p className="text-xs text-slate-500 leading-relaxed">

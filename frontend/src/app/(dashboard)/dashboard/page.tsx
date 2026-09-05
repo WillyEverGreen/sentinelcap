@@ -9,6 +9,7 @@ import {
   Lock,
   ArrowUpRight,
   ArrowDownRight,
+  ArrowLeftRight,
   ChevronDown,
   Plus,
   Wifi,
@@ -21,7 +22,10 @@ import {
   BarChart3,
   RefreshCw,
   Globe,
-  Flame
+  Flame,
+  PieChart as PieIcon,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -33,6 +37,7 @@ import {
   CartesianGrid,
   BarChart,
   Bar,
+  Cell
 } from "recharts";
 import {
   getPortfolio,
@@ -50,6 +55,13 @@ export default function DashboardOverviewPage() {
 
   // Market Scope Toggle: "india" | "global" | "cross_market"
   const [marketScope, setMarketScope] = useState<"india" | "global" | "cross_market">("india");
+  const [timeframe, setTimeframe] = useState<"1M" | "3M" | "6M" | "YTD" | "1Y" | "ALL">("1Y");
+
+  // Chart visibility & hover states
+  const [showPortfolio, setShowPortfolio] = useState(true);
+  const [showBenchmark, setShowBenchmark] = useState(true);
+  const [hoveredDataPoint, setHoveredDataPoint] = useState<any | null>(null);
+  const [hoveredBarDay, setHoveredBarDay] = useState<any | null>(null);
 
   // Dynamic Backend State
   const [portfolio, setPortfolio] = useState<PortfolioResponse | null>(null);
@@ -86,60 +98,73 @@ export default function DashboardOverviewPage() {
   }, []);
 
   // Compute dynamic performance curves
-  const chartData = useMemo(() => {
-    // 12 data points representing recent quarters / months
+  const rawChartData = useMemo(() => {
     if (marketScope === "india") {
       return [
-        { month: "Jan", portfolio: 10000, benchmark: 10000 },
-        { month: "Feb", portfolio: 10240, benchmark: 10120 },
-        { month: "Mar", portfolio: 10410, benchmark: 10080 },
-        { month: "Apr", portfolio: 10680, benchmark: 10350 },
-        { month: "May", portfolio: 10620, benchmark: 10290 },
-        { month: "Jun", portfolio: 10940, benchmark: 10580 },
-        { month: "Jul", portfolio: 11150, benchmark: 10720 },
-        { month: "Aug", portfolio: 11480, benchmark: 10940 },
-        { month: "Sep", portfolio: 11390, benchmark: 10850 },
-        { month: "Oct", portfolio: 11820, benchmark: 11210 },
-        { month: "Nov", portfolio: 11750, benchmark: 11140 },
-        { month: "Dec", portfolio: 12240, benchmark: 11520 },
+        { month: "Jan", portfolio: 10000, benchmark: 10000, date: "Jan 2026" },
+        { month: "Feb", portfolio: 10240, benchmark: 10120, date: "Feb 2026" },
+        { month: "Mar", portfolio: 10410, benchmark: 10080, date: "Mar 2026" },
+        { month: "Apr", portfolio: 10680, benchmark: 10350, date: "Apr 2026" },
+        { month: "May", portfolio: 10620, benchmark: 10290, date: "May 2026" },
+        { month: "Jun", portfolio: 10940, benchmark: 10580, date: "Jun 2026" },
+        { month: "Jul", portfolio: 11150, benchmark: 10720, date: "Jul 2026" },
+        { month: "Aug", portfolio: 11480, benchmark: 10940, date: "Aug 2026" },
+        { month: "Sep", portfolio: 11390, benchmark: 10850, date: "Sep 2026" },
+        { month: "Oct", portfolio: 11820, benchmark: 11210, date: "Oct 2026" },
+        { month: "Nov", portfolio: 11750, benchmark: 11140, date: "Nov 2026" },
+        { month: "Dec", portfolio: 12240, benchmark: 11520, date: "Dec 2026" },
       ];
     } else if (marketScope === "cross_market") {
       return [
-        { month: "Jan", portfolio: 10000, benchmark: 10000 },
-        { month: "Feb", portfolio: 10240, benchmark: 9920 },
-        { month: "Mar", portfolio: 10410, benchmark: 9850 },
-        { month: "Apr", portfolio: 10680, benchmark: 10050 },
-        { month: "May", portfolio: 10620, benchmark: 10120 },
-        { month: "Jun", portfolio: 10940, benchmark: 10240 },
-        { month: "Jul", portfolio: 11150, benchmark: 10180 },
-        { month: "Aug", portfolio: 11480, benchmark: 10390 },
-        { month: "Sep", portfolio: 11390, benchmark: 10290 },
-        { month: "Oct", portfolio: 11820, benchmark: 10480 },
-        { month: "Nov", portfolio: 11750, benchmark: 10410 },
-        { month: "Dec", portfolio: 12240, benchmark: 10620 },
+        { month: "Jan", portfolio: 10000, benchmark: 10000, date: "Jan 2026" },
+        { month: "Feb", portfolio: 10240, benchmark: 9920, date: "Feb 2026" },
+        { month: "Mar", portfolio: 10410, benchmark: 9850, date: "Mar 2026" },
+        { month: "Apr", portfolio: 10680, benchmark: 10050, date: "Apr 2026" },
+        { month: "May", portfolio: 10620, benchmark: 10120, date: "May 2026" },
+        { month: "Jun", portfolio: 10940, benchmark: 10240, date: "Jun 2026" },
+        { month: "Jul", portfolio: 11150, benchmark: 10180, date: "Jul 2026" },
+        { month: "Aug", portfolio: 11480, benchmark: 10390, date: "Aug 2026" },
+        { month: "Sep", portfolio: 11390, benchmark: 10290, date: "Sep 2026" },
+        { month: "Oct", portfolio: 11820, benchmark: 10480, date: "Oct 2026" },
+        { month: "Nov", portfolio: 11750, benchmark: 10410, date: "Nov 2026" },
+        { month: "Dec", portfolio: 12240, benchmark: 10620, date: "Dec 2026" },
       ];
     } else {
       // Global USD
       return [
-        { month: "Jan", portfolio: 10000, benchmark: 10000 },
-        { month: "Feb", portfolio: 10180, benchmark: 9920 },
-        { month: "Mar", portfolio: 10250, benchmark: 9850 },
-        { month: "Apr", portfolio: 10420, benchmark: 10050 },
-        { month: "May", portfolio: 10390, benchmark: 10120 },
-        { month: "Jun", portfolio: 10610, benchmark: 10240 },
-        { month: "Jul", portfolio: 10540, benchmark: 10180 },
-        { month: "Aug", portfolio: 10820, benchmark: 10390 },
-        { month: "Sep", portfolio: 10760, benchmark: 10290 },
-        { month: "Oct", portfolio: 11050, benchmark: 10480 },
-        { month: "Nov", portfolio: 10980, benchmark: 10410 },
-        { month: "Dec", portfolio: 11250, benchmark: 10620 },
+        { month: "Jan", portfolio: 10000, benchmark: 10000, date: "Jan 2026" },
+        { month: "Feb", portfolio: 10180, benchmark: 9920, date: "Feb 2026" },
+        { month: "Mar", portfolio: 10250, benchmark: 9850, date: "Mar 2026" },
+        { month: "Apr", portfolio: 10420, benchmark: 10050, date: "Apr 2026" },
+        { month: "May", portfolio: 10390, benchmark: 10120, date: "May 2026" },
+        { month: "Jun", portfolio: 10610, benchmark: 10240, date: "Jun 2026" },
+        { month: "Jul", portfolio: 10540, benchmark: 10180, date: "Jul 2026" },
+        { month: "Aug", portfolio: 10820, benchmark: 10390, date: "Aug 2026" },
+        { month: "Sep", portfolio: 10760, benchmark: 10290, date: "Sep 2026" },
+        { month: "Oct", portfolio: 11050, benchmark: 10480, date: "Oct 2026" },
+        { month: "Nov", portfolio: 10980, benchmark: 10410, date: "Nov 2026" },
+        { month: "Dec", portfolio: 11250, benchmark: 10620, date: "Dec 2026" },
       ];
     }
   }, [marketScope]);
 
+  const chartData = useMemo(() => {
+    if (timeframe === "1M") return rawChartData.slice(-2);
+    if (timeframe === "3M") return rawChartData.slice(-4);
+    if (timeframe === "6M") return rawChartData.slice(-6);
+    if (timeframe === "YTD") return rawChartData.slice(-8);
+    return rawChartData; // 1Y or ALL
+  }, [rawChartData, timeframe]);
+
+  // Active point displayed in header: hoveredDataPoint || latest point in current timeframe
+  const activeHeaderPoint = useMemo(() => {
+    if (hoveredDataPoint) return hoveredDataPoint;
+    return chartData[chartData.length - 1] || rawChartData[rawChartData.length - 1];
+  }, [hoveredDataPoint, chartData, rawChartData]);
+
   // Asset lists for Indian vs Global scope
   const indianAssets = [
-    { ticker: "NIFTY 50", name: "Nippon India Nifty 50 BeES", class: "Large Cap Equity", weight: 0.35, notional: 350000000, lh: "10d", color: "#0066FF", price: "₹262.40", riskContrib: "54.2%" },
+    { ticker: "NIFTY 50", name: "Nippon India Nifty 50 BeES", class: "Large Cap Equity", weight: 0.35, notional: 350000000, lh: "10d", color: "#0066FF", price: "₹1,262.40", riskContrib: "54.2%" },
     { ticker: "HDFCBANK", name: "HDFC Bank Ltd (Financial Core)", class: "Banking Anchor", weight: 0.15, notional: 150000000, lh: "10d", color: "#38BDF8", price: `₹${liveMarket?.india?.quotes?.HDFCBANK?.price || 712.10}`, riskContrib: "22.5%" },
     { ticker: "10Y G-SEC", name: "Govt of India 10-Yr Sovereign Bond", class: "Sovereign Debt", weight: 0.20, notional: 200000000, lh: "20d", color: "#10B981", price: "6.85% YTM", riskContrib: "1.4%" },
     { ticker: "GOLDBEES", name: "Nippon India Gold BeES", class: "Commodity Hedge", weight: 0.10, notional: 100000000, lh: "20d", color: "#F59E0B", price: "₹62.80", riskContrib: "4.1%" },
@@ -158,14 +183,151 @@ export default function DashboardOverviewPage() {
 
   const activeAssets = marketScope === "global" ? globalAssets : indianAssets;
 
+  // Custom Interactive Performance Tooltip
+  const CustomPerformanceTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const portVal = payload.find((p: any) => p.dataKey === "portfolio")?.value || payload[0]?.value || 0;
+      const benchVal = payload.find((p: any) => p.dataKey === "benchmark")?.value || payload[1]?.value || 0;
+      const diff = portVal - benchVal;
+      const diffPct = benchVal > 0 ? ((diff / benchVal) * 100).toFixed(2) : "0.00";
+      const portReturn = (((portVal - 10000) / 10000) * 100).toFixed(2);
+      const benchReturn = (((benchVal - 10000) / 10000) * 100).toFixed(2);
+      const isOutperforming = diff >= 0;
+      const currSym = marketScope === "global" ? "$" : "₹";
+      const benchName = marketScope === "india" ? "NIFTY 50" : (marketScope === "global" ? "S&P 500" : "Benchmark");
+
+      return (
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200/95 rounded-2xl p-4 shadow-2xl text-xs space-y-3 select-none min-w-[240px]">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <span className="font-extrabold text-slate-900 text-xs tracking-tight">
+              Evaluation: {label}
+            </span>
+            <span className={`px-2 py-0.5 rounded-full text-[10.5px] font-extrabold flex items-center gap-1 ${
+              isOutperforming ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-rose-50 text-rose-700 border border-rose-200"
+            }`}>
+              {isOutperforming ? (
+                <ArrowUpRight className="w-3 h-3 text-emerald-700 stroke-[2.5]" />
+              ) : (
+                <ArrowDownRight className="w-3 h-3 text-rose-700 stroke-[2.5]" />
+              )}
+              <span>{isOutperforming ? `+${diffPct}% Alpha` : `${diffPct}% Under`}</span>
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            {showPortfolio && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF] shadow-sm shadow-blue-500/50" />
+                  <span className="text-slate-700 font-semibold">
+                    {marketScope === "cross_market" ? "NIFTY 50 (India):" : "Sentinel Portfolio:"}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="font-mono font-black text-slate-900 text-sm">
+                    {currSym}{portVal.toLocaleString()}
+                  </span>
+                  <span className="block text-[10px] font-bold text-emerald-600">
+                    +{portReturn}% p.a.
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {showBenchmark && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
+                  <span className="text-slate-500 font-medium">
+                    {benchName}:
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="font-mono font-bold text-slate-700 text-xs">
+                    {currSym}{benchVal.toLocaleString()}
+                  </span>
+                  <span className="block text-[10px] font-semibold text-slate-400">
+                    +{benchReturn}% p.a.
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+            <span className="text-slate-400 font-medium">Net Spread (Indexed):</span>
+            <span className={`font-mono font-black ${isOutperforming ? "text-emerald-600" : "text-rose-600"}`}>
+              {isOutperforming ? "+" : ""}{currSym}{diff.toLocaleString()} ({isOutperforming ? "+" : ""}{diffPct}%)
+            </span>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Custom Interactive Activity Bar Tooltip
+  const CustomActivityTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const algo = payload.find((p: any) => p.dataKey === "algo")?.value || payload[0]?.value || 0;
+      const manual = payload.find((p: any) => p.dataKey === "manual")?.value || payload[1]?.value || 0;
+      const total = algo + manual;
+      const algoPct = total > 0 ? Math.round((algo / total) * 100) : 0;
+      const notionalEst = marketScope === "global" ? `$${(total * 14200).toLocaleString()}` : `₹${((total * 14200 * 84.1) / 10000000).toFixed(2)} Cr`;
+
+      return (
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-4 shadow-xl text-xs space-y-2.5 min-w-[200px] select-none">
+          <div className="flex items-center justify-between font-bold text-slate-900 pb-1.5 border-b border-slate-100">
+            <span className="text-xs font-black uppercase tracking-tight">{label} Executions</span>
+            <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] font-mono text-[10.5px] font-black border border-blue-200">
+              {total} Fills
+            </span>
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#0066FF]" />
+                <span className="text-slate-600 font-semibold">Algorithmic Smart:</span>
+              </div>
+              <span className="font-mono font-bold text-slate-900">{algo} ({algoPct}%)</span>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#38BDF8]" />
+                <span className="text-slate-500 font-medium">Discretionary / Manual:</span>
+              </div>
+              <span className="font-mono font-bold text-slate-700">{manual} ({100 - algoPct}%)</span>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+            <span className="text-slate-400 font-medium">Est. Daily Notional:</span>
+            <span className="font-mono font-bold text-slate-800">{notionalEst}</span>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Computed values for header readout
+  const currSym = marketScope === "global" ? "$" : "₹";
+  const activeDiff = activeHeaderPoint.portfolio - activeHeaderPoint.benchmark;
+  const activeDiffPct = activeHeaderPoint.benchmark > 0 ? ((activeDiff / activeHeaderPoint.benchmark) * 100).toFixed(2) : "0.00";
+  const isHeaderOutperforming = activeDiff >= 0;
+
   return (
     <div className="space-y-6 select-none font-sans">
 
-      {/* ───────── 0. MARKET SCOPE & GEOGRAPHY SWITCHER ───────── */}
+      {/* 0. MARKET SCOPE & GEOGRAPHY SWITCHER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0066FF] shrink-0 font-bold text-base shadow-sm">
-            {marketScope === "india" ? "🇮🇳" : (marketScope === "global" ? "🌐" : "🔄")}
+            {marketScope === "india" && <Landmark className="w-5 h-5 text-[#0066FF]" />}
+            {marketScope === "global" && <Globe className="w-5 h-5 text-[#0066FF]" />}
+            {marketScope === "cross_market" && <ArrowLeftRight className="w-5 h-5 text-purple-600" />}
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -175,7 +337,7 @@ export default function DashboardOverviewPage() {
                 {marketScope === "cross_market" && "Cross-Market Contagion (Nifty 50 vs S&P 500 & FPI Flows)"}
               </h2>
               <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[10px] font-extrabold">
-                {marketScope === "india" ? "SEBI AIF Cat II/III" : (marketScope === "global" ? "SEC Registered" : "Spillover Engine")}
+                {marketScope === "india" ? "SEBI AIF Cat II/III" : marketScope === "global" ? "SEC Registered" : "Spillover Engine"}
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
@@ -186,47 +348,47 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        {/* 3-Way Switcher Buttons */}
+        {/* 3-Way Switcher Buttons with Professional Lucide Icons */}
         <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl shrink-0">
           <button
             onClick={() => setMarketScope("india")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               marketScope === "india"
                 ? "bg-white text-[#0A1128] shadow-sm"
                 : "text-slate-500 hover:text-slate-900"
             }`}
           >
-            <span>🇮🇳</span>
+            <Landmark className={`w-3.5 h-3.5 ${marketScope === "india" ? "text-[#0066FF]" : "text-slate-400"}`} />
             <span>Indian Market</span>
           </button>
 
           <button
             onClick={() => setMarketScope("global")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               marketScope === "global"
                 ? "bg-white text-[#0066FF] shadow-sm"
                 : "text-slate-500 hover:text-slate-900"
             }`}
           >
-            <span>🌐</span>
+            <Globe className={`w-3.5 h-3.5 ${marketScope === "global" ? "text-[#0066FF]" : "text-slate-400"}`} />
             <span>Global Market</span>
           </button>
 
           <button
             onClick={() => setMarketScope("cross_market")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               marketScope === "cross_market"
                 ? "bg-white text-purple-600 shadow-sm"
                 : "text-slate-500 hover:text-slate-900"
             }`}
           >
-            <span>🔄</span>
+            <ArrowLeftRight className={`w-3.5 h-3.5 ${marketScope === "cross_market" ? "text-purple-600" : "text-slate-400"}`} />
             <span>Cross Contagion</span>
           </button>
         </div>
       </div>
 
-      {/* ───────── 1. TOP 4 METRIC KPI CARDS ───────── */}
+      {/* 1. TOP 4 METRIC KPI CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
         {/* Card 1: Total AUM */}
@@ -286,7 +448,7 @@ export default function DashboardOverviewPage() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[13px] font-medium text-slate-400">
-                {marketScope === "global" ? "Conditional VaR (99% / 10d)" : "Conditional VaR (99% / 10d)"}
+                Conditional VaR (99% / 10d)
               </p>
               <h3 className="text-[25px] font-extrabold text-[#0A1128] tracking-tight mt-1">
                 {marketScope === "global" ? "3.42%" : "3.28%"}
@@ -305,7 +467,7 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        {/* Card 4: Liquid Cash Buffer */}
+        {/* Card 4: Liquid Buffer */}
         <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group">
           <div className="flex items-start justify-between">
             <div>
@@ -329,92 +491,179 @@ export default function DashboardOverviewPage() {
 
       </div>
 
-      {/* ───────── 2. MAIN CHARTS & VAULT ROW ───────── */}
+      {/* 2. MAIN CHARTS & VAULT ROW */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Dynamic Dual-Line Recharts Performance (Col Span 2) */}
-        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-[#0A1128]">
-                    {marketScope === "india" && "Portfolio Growth vs NIFTY 50 (NSE Benchmark)"}
-                    {marketScope === "global" && "Portfolio Growth vs S&P 500 (US Benchmark)"}
-                    {marketScope === "cross_market" && "NIFTY 50 vs S&P 500 Relative Trajectory"}
-                  </h3>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-extrabold">
-                    {marketScope === "india" ? "NSE Real Ticks" : (marketScope === "global" ? "US Real Series" : "Correlation 0.64")}
-                  </span>
+            {/* Header with Title, Live Value Tracker, Timeframe & Legends */}
+            <div className="flex flex-col gap-3 pb-3 border-b border-slate-100">
+              
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-[#0A1128]">
+                      {marketScope === "india" && "Portfolio Growth vs NIFTY 50 (NSE Benchmark)"}
+                      {marketScope === "global" && "Portfolio Growth vs S&P 500 (US Benchmark)"}
+                      {marketScope === "cross_market" && "NIFTY 50 vs S&P 500 Relative Trajectory"}
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-extrabold">
+                      {marketScope === "india" ? "NSE Real Ticks" : marketScope === "global" ? "US Real Series" : "Correlation 0.64"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Dynamic cumulative performance indexed to base 10,000
+                  </p>
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Dynamic cumulative performance indexed to base 10,000
-                </p>
+
+                {/* Timeframe pills */}
+                <div className="flex items-center gap-1 bg-slate-100/90 p-0.5 rounded-lg text-[11px] font-bold self-start sm:self-auto">
+                  {(["1M", "3M", "6M", "YTD", "1Y", "ALL"] as const).map((tf) => (
+                    <button
+                      key={tf}
+                      onClick={() => setTimeframe(tf)}
+                      className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                        timeframe === tf ? "bg-white text-[#0066FF] shadow-xs" : "text-slate-500 hover:text-slate-800"
+                      }`}
+                    >
+                      {tf}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Legend */}
-              <div className="flex items-center gap-4 text-xs font-semibold">
-                <div className="flex items-center gap-1.5 text-slate-700">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF]" />
-                  <span>{marketScope === "cross_market" ? "NIFTY 50 (India)" : "Sentinel Portfolio"}</span>
+              {/* LIVE VALUE READOUT BANNER */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 bg-slate-50/70 border border-slate-200/60 p-3 rounded-xl">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="font-bold text-slate-600">
+                    {hoveredDataPoint ? `Live Point (${hoveredDataPoint.month}):` : `Current (${activeHeaderPoint.month}):`}
+                  </span>
+                  <div className="flex items-center gap-2 font-mono">
+                    <span className="font-extrabold text-[#0066FF] text-sm">
+                      {currSym}{activeHeaderPoint.portfolio.toLocaleString()}
+                    </span>
+                    <span className="text-slate-400 font-sans text-[11px]">vs</span>
+                    <span className="font-bold text-slate-600 text-xs">
+                      {marketScope === "india" ? "NIFTY" : "S&P"} {currSym}{activeHeaderPoint.benchmark.toLocaleString()}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-400">
-                  <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-                  <span>{marketScope === "india" ? "NIFTY 50 Benchmark" : "S&P 500 Benchmark"}</span>
+
+                <div className="flex items-center gap-3">
+                  {/* Alpha badge */}
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-black flex items-center gap-1.5 font-mono ${
+                    isHeaderOutperforming ? "bg-emerald-100 text-emerald-800 border border-emerald-300" : "bg-rose-100 text-rose-800 border border-rose-300"
+                  }`}>
+                    {isHeaderOutperforming ? (
+                      <ArrowUpRight className="w-3.5 h-3.5 text-emerald-700 stroke-[2.5]" />
+                    ) : (
+                      <ArrowDownRight className="w-3.5 h-3.5 text-rose-700 stroke-[2.5]" />
+                    )}
+                    <span>{isHeaderOutperforming ? "+" : ""}{activeDiffPct}% Alpha</span>
+                    <span className="text-[10px] font-sans font-medium text-slate-500">({isHeaderOutperforming ? "+" : ""}{currSym}{activeDiff.toLocaleString()})</span>
+                  </span>
+
+                  {/* Interactive series toggles */}
+                  <div className="flex items-center gap-2 text-xs">
+                    <button
+                      onClick={() => setShowPortfolio(!showPortfolio)}
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all cursor-pointer ${
+                        showPortfolio ? "bg-white border-blue-300 text-[#0066FF] font-bold shadow-xs" : "bg-slate-100 border-slate-200 text-slate-400"
+                      }`}
+                      title="Click to toggle Sentinel line"
+                    >
+                      <span className={`w-2.5 h-2.5 rounded-full ${showPortfolio ? "bg-[#0066FF]" : "bg-slate-300"}`} />
+                      <span>Sentinel</span>
+                      {showPortfolio ? <Eye className="w-3 h-3 ml-0.5" /> : <EyeOff className="w-3 h-3 ml-0.5" />}
+                    </button>
+
+                    <button
+                      onClick={() => setShowBenchmark(!showBenchmark)}
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all cursor-pointer ${
+                        showBenchmark ? "bg-white border-slate-300 text-slate-700 font-bold shadow-xs" : "bg-slate-100 border-slate-200 text-slate-400"
+                      }`}
+                      title="Click to toggle Benchmark line"
+                    >
+                      <span className={`w-2.5 h-2.5 rounded-full ${showBenchmark ? "bg-slate-400" : "bg-slate-300"}`} />
+                      <span>{marketScope === "india" ? "NIFTY 50" : "S&P 500"}</span>
+                      {showBenchmark ? <Eye className="w-3 h-3 ml-0.5" /> : <EyeOff className="w-3 h-3 ml-0.5" />}
+                    </button>
+                  </div>
                 </div>
+
               </div>
+
             </div>
 
             {/* Recharts Dual-Line Chart */}
-            <div className="w-full h-[260px] min-w-0">
+            <div className="w-full h-[270px] min-w-0 pt-2">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={260}>
-                  <LineChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={270}>
+                  <LineChart
+                    data={chartData}
+                    margin={{ top: 15, right: 15, left: 10, bottom: 0 }}
+                    onMouseMove={(e: any) => {
+                      if (e && e.activePayload && e.activePayload.length) {
+                        setHoveredDataPoint(e.activePayload[0].payload);
+                      }
+                    }}
+                    onMouseLeave={() => setHoveredDataPoint(null)}
+                  >
                     <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                    <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                    <XAxis
+                      dataKey="month"
+                      stroke="#94A3B8"
+                      fontSize={11}
+                      tickLine={false}
+                      axisLine={false}
+                    />
                     <YAxis
                       stroke="#94A3B8"
                       fontSize={11}
                       tickLine={false}
                       axisLine={false}
-                      domain={['auto', 'auto']}
-                      tickFormatter={(val) => `${(val / 1000).toFixed(1)}k`}
+                      width={55}
+                      domain={['dataMin - 150', 'dataMax + 150']}
+                      tickFormatter={(val) => `${currSym}${(val / 1000).toFixed(1)}k`}
                     />
                     <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#FFFFFF",
-                        borderColor: "#E2E8F0",
-                        borderRadius: "12px",
-                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-                        fontSize: "12px",
-                        fontWeight: 600,
-                      }}
+                      content={<CustomPerformanceTooltip />}
+                      cursor={{ stroke: "#0066FF", strokeWidth: 1.5, strokeDasharray: "4 4" }}
                     />
-                    <Line
-                      type="monotone"
-                      dataKey="portfolio"
-                      stroke="#0066FF"
-                      strokeWidth={3}
-                      dot={false}
-                      activeDot={{ r: 5, fill: "#0066FF" }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="benchmark"
-                      stroke="#CBD5E1"
-                      strokeWidth={2}
-                      strokeDasharray="4 4"
-                      dot={false}
-                      activeDot={{ r: 4, fill: "#94A3B8" }}
-                    />
+                    {showPortfolio && (
+                      <Line
+                        type="monotone"
+                        dataKey="portfolio"
+                        name="Sentinel Portfolio"
+                        stroke="#0066FF"
+                        strokeWidth={3.5}
+                        dot={{ r: 3.5, fill: "#0066FF", stroke: "#FFFFFF", strokeWidth: 2 }}
+                        activeDot={{ r: 7, fill: "#0066FF", stroke: "#FFFFFF", strokeWidth: 3 }}
+                        isAnimationActive={false}
+                      />
+                    )}
+                    {showBenchmark && (
+                      <Line
+                        type="monotone"
+                        dataKey="benchmark"
+                        name={marketScope === "india" ? "NIFTY 50" : "S&P 500"}
+                        stroke="#94A3B8"
+                        strokeWidth={2.5}
+                        strokeDasharray="4 4"
+                        dot={{ r: 3, fill: "#94A3B8", stroke: "#FFFFFF", strokeWidth: 1.5 }}
+                        activeDot={{ r: 6, fill: "#64748B", stroke: "#FFFFFF", strokeWidth: 2 }}
+                        isAnimationActive={false}
+                      />
+                    )}
                   </LineChart>
                 </ResponsiveContainer>
               )}
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-50 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
-            <span>Dynamic Alpha: <strong className="text-emerald-600 font-bold">{marketScope === "india" ? "+3.24%" : "+2.65%"}</strong></span>
+          <div className="mt-2 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2 font-mono">
+            <span>Dynamic Alpha: <strong className="text-emerald-600 font-bold font-sans">{marketScope === "india" ? "+3.24%" : "+2.65%"}</strong></span>
             <span>Tracking Error: <strong className="text-slate-700 font-bold">1.75%</strong></span>
             <span>Market Beta: <strong className="text-slate-700 font-bold">{marketScope === "cross_market" ? "0.64 (Nifty/SPX)" : "0.85"}</strong></span>
           </div>
@@ -472,14 +721,14 @@ export default function DashboardOverviewPage() {
               className="w-full py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border border-white/10 cursor-pointer"
             >
               <Flame className="w-3.5 h-3.5 text-amber-300" />
-              <span>Indian &amp; Global Stress Tests</span>
+              <span>Indian & Global Stress Tests</span>
             </Link>
           </div>
         </div>
 
       </div>
 
-      {/* ───────── 3. LIVE MULTI-API TELEMETRY STRIP ───────── */}
+      {/* 3. LIVE MULTI-API TELEMETRY STRIP */}
       <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
@@ -592,7 +841,7 @@ export default function DashboardOverviewPage() {
         <div className="pt-2 border-t border-slate-100">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-              <span>Macroeconomic &amp; Cross-Market Risk Telemetry</span>
+              <span>Macroeconomic & Cross-Market Risk Telemetry</span>
               <span className="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200 text-[9px] font-bold">
                 RBI + NSE + Yahoo Finance + Finnhub
               </span>
@@ -647,7 +896,7 @@ export default function DashboardOverviewPage() {
             {/* Cross-Market Correlation */}
             <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Nifty vs S&amp;P 500</span>
+                <span className="text-slate-500 font-medium">Nifty vs S&P 500</span>
                 <span className="text-[9px] font-bold text-purple-600">Correlation</span>
               </div>
               <div className="text-base font-extrabold text-slate-900 font-mono mt-1">
@@ -675,7 +924,7 @@ export default function DashboardOverviewPage() {
         </div>
       </div>
 
-      {/* ───────── 4. LOWER SECTION: ALLOCATIONS & ACTIVITY ───────── */}
+      {/* 4. LOWER SECTION: ALLOCATIONS & ACTIVITY */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Dynamic Asset Holdings Table (Col Span 2) */}
@@ -697,10 +946,10 @@ export default function DashboardOverviewPage() {
 
           <div className="divide-y divide-slate-100">
             {activeAssets.map((asset) => (
-              <div key={asset.ticker} className="py-3 flex items-center justify-between hover:bg-slate-50/50 px-2 rounded-xl transition-colors">
+              <div key={asset.ticker} className="py-3 flex items-center justify-between hover:bg-slate-50/70 px-2.5 rounded-xl transition-all">
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black text-white"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black text-white shadow-xs"
                     style={{ backgroundColor: asset.color }}
                   >
                     {asset.ticker.slice(0, 2)}
@@ -726,7 +975,7 @@ export default function DashboardOverviewPage() {
                   </div>
                   <div className="text-[11px] text-slate-500 font-semibold mt-0.5">
                     {(asset.weight * 100).toFixed(1)}% Weight
-                    <span className="text-slate-400 ml-1.5">({asset.price})</span>
+                    <span className="text-slate-400 ml-1.5 font-mono">({asset.price})</span>
                   </div>
                 </div>
               </div>
@@ -737,7 +986,7 @@ export default function DashboardOverviewPage() {
         {/* Daily Execution Volume & Safeguard Progress */}
         <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm space-y-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 mb-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100 mb-3">
               <div>
                 <h3 className="text-base font-bold text-[#0A1128]">Daily Execution Volume</h3>
                 <p className="text-xs text-slate-400 mt-0.5">
@@ -749,30 +998,41 @@ export default function DashboardOverviewPage() {
               </span>
             </div>
 
-            <div className="w-full h-[150px] min-w-0">
+            {/* Readout when hovering bar */}
+            {hoveredBarDay && (
+              <div className="mb-2 p-2 rounded-lg bg-blue-50/70 border border-blue-200/60 text-[11px] flex items-center justify-between text-slate-700">
+                <span className="font-bold">{hoveredBarDay.day}: {hoveredBarDay.algo + hoveredBarDay.manual} Fills</span>
+                <span className="text-[#0066FF] font-semibold">{Math.round((hoveredBarDay.algo / (hoveredBarDay.algo + hoveredBarDay.manual)) * 100)}% Automated</span>
+              </div>
+            )}
+
+            <div className="w-full h-[155px] min-w-0">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={150}>
-                  <BarChart data={[
-                    { day: "Mon", algo: 42, manual: 12 },
-                    { day: "Tue", algo: 58, manual: 18 },
-                    { day: "Wed", algo: 65, manual: 15 },
-                    { day: "Thu", algo: 82, manual: 24 },
-                    { day: "Fri", algo: 94, manual: 28 },
-                    { day: "Sat", algo: 18, manual: 4 },
-                    { day: "Sun", algo: 12, manual: 2 },
-                  ]} barGap={4} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={155}>
+                  <BarChart
+                    data={[
+                      { day: "Mon", algo: 42, manual: 12 },
+                      { day: "Tue", algo: 58, manual: 18 },
+                      { day: "Wed", algo: 65, manual: 15 },
+                      { day: "Thu", algo: 82, manual: 24 },
+                      { day: "Fri", algo: 94, manual: 28 },
+                      { day: "Sat", algo: 18, manual: 4 },
+                      { day: "Sun", algo: 12, manual: 2 },
+                    ]}
+                    barGap={4}
+                    margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
+                    onMouseMove={(e: any) => {
+                      if (e && e.activePayload && e.activePayload.length) {
+                        setHoveredBarDay(e.activePayload[0].payload);
+                      }
+                    }}
+                    onMouseLeave={() => setHoveredBarDay(null)}
+                  >
                     <CartesianGrid strokeDasharray="3 3" stroke="#F8FAFC" vertical={false} />
                     <XAxis dataKey="day" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#FFFFFF",
-                        borderColor: "#E2E8F0",
-                        borderRadius: "10px",
-                        fontSize: "11px",
-                      }}
-                    />
-                    <Bar dataKey="algo" fill="#0066FF" radius={[3, 3, 0, 0]} maxBarSize={10} isAnimationActive={false} />
-                    <Bar dataKey="manual" fill="#38BDF8" radius={[3, 3, 0, 0]} maxBarSize={10} isAnimationActive={false} />
+                    <Tooltip content={<CustomActivityTooltip />} cursor={{ fill: "rgba(0, 102, 255, 0.05)" }} />
+                    <Bar dataKey="algo" fill="#0066FF" radius={[3, 3, 0, 0]} maxBarSize={12} isAnimationActive={false} />
+                    <Bar dataKey="manual" fill="#38BDF8" radius={[3, 3, 0, 0]} maxBarSize={12} isAnimationActive={false} />
                   </BarChart>
                 </ResponsiveContainer>
               )}

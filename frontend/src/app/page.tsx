@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Globe } from "@/components/ui/globe"
+import { useState } from "react";
+import Link from "next/link";
+import { X, ArrowRight } from "lucide-react";
+import { Globe } from "@/components/ui/globe";
 
 export default function HeroPage() {
   const [demoOpen, setDemoOpen] = useState(false)
@@ -267,7 +268,7 @@ export default function HeroPage() {
           <div className="w-full max-w-3xl bg-white rounded-3xl p-6 shadow-2xl border border-slate-200" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-900">Platform Walkthrough</h3>
-              <button onClick={() => setDemoOpen(false)} className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center font-bold transition-colors cursor-pointer">✕</button>
+              <button onClick={() => setDemoOpen(false)} className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer" title="Close"><X className="w-4 h-4" /></button>
             </div>
             <div className="mt-4 aspect-video rounded-2xl bg-slate-900 flex flex-col items-center justify-center text-white p-8 text-center">
               <div className="w-16 h-16 rounded-full bg-[#0066FF] flex items-center justify-center mb-4 shadow-lg shadow-blue-500/40 animate-pulse">
@@ -275,7 +276,7 @@ export default function HeroPage() {
               </div>
               <h4 className="text-xl font-bold mb-2">Automated Capital Optimization Engine</h4>
               <p className="text-slate-400 text-sm max-w-md">Continuous dynamic risk rebalancing, Markov regime shifts, and autonomous safeguard circuit breakers.</p>
-              <Link href="/dashboard" className="mt-6 px-6 py-2.5 rounded-full bg-white text-slate-950 text-sm font-semibold hover:bg-slate-100 transition-colors">Launch Live Dashboard →</Link>
+              <Link href="/dashboard" className="mt-6 px-6 py-2.5 rounded-full bg-white text-slate-950 text-sm font-semibold hover:bg-slate-100 transition-colors">Launch Live Dashboard <ArrowRight className="w-4 h-4 inline ml-1.5" /></Link>
             </div>
           </div>
         </div>

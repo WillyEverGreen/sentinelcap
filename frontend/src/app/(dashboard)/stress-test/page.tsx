@@ -4,8 +4,19 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   AlertTriangle, ShieldAlert, ShieldCheck, ShieldX, TrendingDown, 
-  Flame, Skull, Activity, ArrowRight, Play, RefreshCw, Zap, CheckCircle2
+  Flame, Skull, Activity, ArrowRight, Play, RefreshCw, Zap, CheckCircle2, BarChart3
 } from "lucide-react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Cell,
+  ReferenceLine
+} from "recharts";
 import { runStressTest, getStressScenarios, StressTestResponse } from "@/lib/api";
 
 const PRESET_SCENARIOS = [
@@ -40,25 +51,33 @@ const PRESET_SCENARIOS = [
 ];
 
 export default function StressTestPage() {
+  const [mounted, setMounted] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState("2008_GFC");
   const [scenariosList, setScenariosList] = useState<any[]>(PRESET_SCENARIOS);
+  const [chartMode, setChartMode] = useState<"pct" | "dollar">("pct");
 
-  useEffect(() => {
-    getStressScenarios().then(res => {
-      if (res && typeof res === "object") {
-        const loaded = Object.entries(res).filter(([k]) => k !== "Custom").map(([k, v]: [string, any]) => ({
-          id: k,
-          name: v.name || k,
-          icon: k.includes("2008") ? Skull : (k.includes("COVID") ? Flame : (k.includes("Rate") ? Zap : Activity)),
-          tag: v.category || "Macro Stress",
-          desc: v.description || "Historical crisis shock scenario."
-        }));
-        if (loaded.length > 0) setScenariosList(loaded);
-      }
-    }).catch(err => console.error("Scenarios load error:", err));
-  }, []);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<StressTestResponse | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    getStressScenarios()
+      .then((res) => {
+        if (res && typeof res === "object") {
+          const loaded = Object.entries(res)
+            .filter(([k]) => k !== "Custom")
+            .map(([k, v]: [string, any]) => ({
+              id: k,
+              name: v.name || k,
+              icon: k.includes("2008") ? Skull : k.includes("COVID") ? Flame : k.includes("Rate") ? Zap : Activity,
+              tag: v.category || "Macro Stress",
+              desc: v.description || "Historical crisis shock scenario.",
+            }));
+          if (loaded.length > 0) setScenariosList(loaded);
+        }
+      })
+      .catch((err) => console.error("Scenarios load error:", err));
+  }, []);
 
   const executeSimulation = async (scenarioId: string) => {
     setSelectedScenario(scenarioId);
@@ -95,6 +114,64 @@ export default function StressTestPage() {
         { ticker: "VNQ", weight: 0.10, shock: -0.37, pnl: -370000 },
         { ticker: "BIL", weight: 0.05, shock: 0.015, pnl: 7500 },
       ];
+
+  const chartData = assetList.map((item) => ({
+    ticker: item.ticker,
+    shockPct: Number((item.shock * 100).toFixed(1)),
+    pnlUsd: item.pnl,
+    pnlFormatted: (item.pnl / 1000).toFixed(0),
+    weight: Number((item.weight * 100).toFixed(0)),
+    isPositive: item.shock >= 0,
+  }));
+
+  // Custom Interactive Tooltip for Stress Shock Chart
+  const CustomStressTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const item = chartData.find((c) => c.ticker === label);
+      if (!item) return null;
+
+      return (
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-4 shadow-xl text-xs space-y-2 select-none min-w-[220px]">
+          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <span className="font-bold text-slate-900 text-xs uppercase tracking-wide">
+              {label} Shock Impact
+            </span>
+            <span
+              className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                item.isPositive
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : "bg-rose-50 text-rose-700 border border-rose-200"
+              }`}
+            >
+              {item.isPositive ? "HEDGE GAIN" : "DRAWDOWN LOSS"}
+            </span>
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 font-medium">Portfolio Weight:</span>
+              <span className="font-mono font-bold text-slate-700">{item.weight}%</span>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 font-medium">Scenario Return:</span>
+              <span className={`font-mono font-black ${item.isPositive ? "text-emerald-600" : "text-rose-600"}`}>
+                {item.shockPct > 0 ? `+${item.shockPct}%` : `${item.shockPct}%`}
+              </span>
+            </div>
+
+            <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-slate-400 font-medium">Estimated P&L Impact:</span>
+              <span className={`font-mono font-black text-sm ${item.isPositive ? "text-emerald-600" : "text-rose-600"}`}>
+                {item.pnlUsd >= 0 ? `+$${item.pnlUsd.toLocaleString()}` : `-$${Math.abs(item.pnlUsd).toLocaleString()}`}
+              </span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="space-y-6 select-none font-sans">
@@ -160,7 +237,7 @@ export default function StressTestPage() {
           <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-5">
             <div className="flex items-center justify-between">
               <h3 className="text-[15px] font-bold text-[#0A1128]">Projected Impact Summary</h3>
-              <span className="text-xs font-mono font-bold text-slate-400">Total: $10,000,000 USD</span>
+              <span className="text-xs font-mono font-bold text-slate-400">Base Capital: $10,000,000</span>
             </div>
 
             <div className="p-5 rounded-xl border bg-rose-50/60 border-rose-200">
@@ -188,17 +265,97 @@ export default function StressTestPage() {
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                If max drawdown breaches 8.0%, SentinelCap automatically reallocates 25% of equity exposure into BIL short-term cash reserves.
+                If max drawdown breaches 8.0%, SentinelCap automatically reallocates 25% of equity exposure into BIL / TREPS cash reserves.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Asset Breakdown (7 cols) */}
+        {/* Right Column: Interactive Asset Shock Chart (7 cols) */}
         <div className="lg:col-span-7 space-y-6">
+          
+          {/* Interactive Bar Chart of Asset P&L & Return Shock */}
           <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-bold text-[#0A1128]">Asset P&amp;L Stress Breakdown</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-[15px] font-bold text-[#0A1128] tracking-tight">
+                    Asset Shock & Return Attribution
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[10px] font-extrabold">
+                    Interactive
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Hover over bars to inspect simulated return and exact capital shortfall
+                </p>
+              </div>
+
+              {/* Mode Toggle */}
+              <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg text-xs font-bold">
+                <button
+                  onClick={() => setChartMode("pct")}
+                  className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                    chartMode === "pct" ? "bg-white text-[#0066FF] shadow-xs" : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  % Shock
+                </button>
+                <button
+                  onClick={() => setChartMode("dollar")}
+                  className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                    chartMode === "dollar" ? "bg-white text-[#0066FF] shadow-xs" : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  $ P&L Impact
+                </button>
+              </div>
+            </div>
+
+            <div className="w-full h-[220px] min-w-0">
+              {mounted && (
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={220}>
+                  <BarChart
+                    data={chartData}
+                    margin={{ top: 15, right: 15, left: 15, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#F8FAFC" vertical={false} />
+                    <XAxis dataKey="ticker" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis
+                      stroke="#94A3B8"
+                      fontSize={11}
+                      tickLine={false}
+                      axisLine={false}
+                      width={55}
+                      tickFormatter={(val) =>
+                        chartMode === "pct" ? `${val}%` : `$${(val / 1000).toFixed(0)}k`
+                      }
+                    />
+                    <Tooltip content={<CustomStressTooltip />} cursor={{ fill: "rgba(0, 102, 255, 0.04)" }} />
+                    <ReferenceLine y={0} stroke="#94A3B8" strokeWidth={1} />
+                    <Bar
+                      dataKey={chartMode === "pct" ? "shockPct" : "pnlUsd"}
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={32}
+                      isAnimationActive={false}
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.isPositive ? "#10B981" : "#F43F5E"}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+
+          {/* Table Breakdown */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <h3 className="text-[15px] font-bold text-[#0A1128]">Asset P&L Stress Breakdown</h3>
               <span className="text-xs text-slate-400">Simulation Output</span>
             </div>
 
@@ -209,12 +366,12 @@ export default function StressTestPage() {
                     <th className="pb-3">Asset</th>
                     <th className="pb-3 text-right">Base Allocation</th>
                     <th className="pb-3 text-right">Shock Return</th>
-                    <th className="pb-3 text-right">Simulated P&amp;L</th>
+                    <th className="pb-3 text-right">Simulated P&L</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {assetList.map((item) => {
-                    const isPositive = item.pnl > 0;
+                    const isPositive = item.pnl >= 0;
                     return (
                       <tr key={item.ticker} className="hover:bg-slate-50/60 transition-colors">
                         <td className="py-3 font-semibold text-slate-800">
@@ -234,6 +391,7 @@ export default function StressTestPage() {
               </table>
             </div>
           </div>
+
         </div>
 
       </div>

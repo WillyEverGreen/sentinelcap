@@ -1,8 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sliders, TrendingUp, ShieldCheck, CheckCircle2, Play, RefreshCw } from "lucide-react";
-import EfficientFrontierChart from "@/components/EfficientFrontierChart";
+import { Sliders, TrendingUp, ShieldCheck, CheckCircle2, Play, RefreshCw, BarChart3, ArrowRight } from "lucide-react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend
+} from "recharts";
+import EfficientFrontierChart, { FrontierPoint } from "@/components/EfficientFrontierChart";
 import { runOptimization, OptimizeRequest, OptimizeResponse, TradeItem } from "@/lib/api";
 
 const SAMPLE_TRADES: TradeItem[] = [
@@ -15,6 +25,7 @@ const SAMPLE_TRADES: TradeItem[] = [
 ];
 
 export default function OptimizePage() {
+  const [mounted, setMounted] = useState(false);
   const [strategy, setStrategy] = useState<OptimizeRequest["strategy"]>("mean_cvar");
   const [riskTolerance, setRiskTolerance] = useState(0.5);
   const [maxWeight, setMaxWeight] = useState(0.40);
@@ -23,6 +34,10 @@ export default function OptimizePage() {
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<OptimizeResponse | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const executeOptimization = async () => {
     setLoading(true);
@@ -47,12 +62,88 @@ export default function OptimizePage() {
   }, []);
 
   const res = data?.optimization_result;
-  const expReturn = res ? (res.expected_annual_return * 100).toFixed(2) : "9.84";
-  const vol = res ? (res.annual_volatility * 100).toFixed(2) : "11.20";
-  const sharpe = res ? res.sharpe_ratio.toFixed(2) : "1.42";
-  const cvar = res ? (res.cvar_95_10d * 100).toFixed(2) : "3.42";
+  const expReturn = res ? (res.expected_annual_return * 100).toFixed(2) : (loading ? "..." : "5.86");
+  const vol = res ? (res.annual_volatility * 100).toFixed(2) : (loading ? "..." : "3.73");
+  const sharpe = res ? res.sharpe_ratio.toFixed(2) : (loading ? "..." : "0.50");
+  const cvar = res ? (res.cvar_95_10d * 100).toFixed(2) : (loading ? "..." : "1.51");
 
   const tradeList = data?.trade_list || SAMPLE_TRADES;
+
+  // Chart data for weights comparison
+  const weightComparisonData = tradeList.map((t) => ({
+    ticker: t.ticker,
+    current: Number((t.current_weight * 100).toFixed(1)),
+    optimal: Number((t.optimal_weight * 100).toFixed(1)),
+    delta: Number((t.delta_weight * 100).toFixed(1)),
+    dollarChange: t.dollar_change,
+    action: t.action,
+  }));
+
+  // Custom Interactive Weight Tooltip
+  const CustomWeightTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const current = payload[0]?.value || 0;
+      const optimal = payload[1]?.value || 0;
+      const delta = (optimal - current).toFixed(1);
+      const item = weightComparisonData.find((w) => w.ticker === label);
+
+      return (
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-4 shadow-xl text-xs space-y-2 select-none min-w-[210px]">
+          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <span className="font-bold text-slate-800 text-xs uppercase tracking-wide">
+              {label} Rebalance
+            </span>
+            <span
+              className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                item?.action === "BUY"
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : item?.action === "SELL"
+                  ? "bg-rose-50 text-rose-700 border border-rose-200"
+                  : "bg-slate-50 text-slate-600 border border-slate-200"
+              }`}
+            >
+              {item?.action}
+            </span>
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-slate-400" />
+                <span className="text-slate-500 font-medium">Current Weight:</span>
+              </div>
+              <span className="font-mono font-bold text-slate-700">{current}%</span>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#0066FF]" />
+                <span className="text-[#0066FF] font-semibold">Target Weight:</span>
+              </div>
+              <span className="font-mono font-black text-slate-900">{optimal}%</span>
+            </div>
+
+            <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-slate-400 font-medium">Weight Shift:</span>
+              <span className={`font-mono font-bold ${Number(delta) >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                {Number(delta) >= 0 ? `+${delta}%` : `${delta}%`}
+              </span>
+            </div>
+
+            {item?.dollarChange !== undefined && (
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-slate-400">Target Rebalance:</span>
+                <span className="font-mono font-bold text-slate-700">
+                  ${Math.abs(item.dollarChange).toLocaleString()} USD
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="space-y-6 select-none font-sans">
@@ -62,7 +153,7 @@ export default function OptimizePage() {
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold text-[#0A1128] tracking-tight">Autonomous Portfolio Optimizer</h1>
             <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[11px] font-bold">
-              Mean-CVaR &amp; HRP
+              Mean-CVaR & HRP
             </span>
           </div>
           <p className="text-sm text-slate-500 mt-0.5">
@@ -186,7 +277,7 @@ export default function OptimizePage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm">
               <p className="text-xs text-slate-400 font-medium">Optimal Exp. Return</p>
-              <h4 className="text-lg font-extrabold text-emerald-600 mt-1">{expReturn}%</h4>
+              <h4 className="text-lg font-extrabold text-emerald-600 mt-1">+{expReturn}%</h4>
               <p className="text-[10.5px] text-slate-400 mt-0.5">Annualized p.a.</p>
             </div>
 
@@ -215,13 +306,60 @@ export default function OptimizePage() {
             currentPortfolio={data?.efficient_frontier?.current_portfolio || null}
             maxSharpePortfolio={data?.efficient_frontier?.max_sharpe_portfolio || null}
             minVariancePortfolio={data?.efficient_frontier?.min_variance_portfolio || null}
+            riskFreeRate={0.065}
           />
+
+          {/* Interactive Weight Rebalancing Comparison BarChart */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+              <div>
+                <h3 className="text-[15px] font-bold text-[#0A1128] tracking-tight">
+                  Asset Allocation Shift: Current vs Optimal Weights
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Interactive target rebalancing breakdown per asset class
+                </p>
+              </div>
+              <div className="flex items-center gap-3 text-xs font-semibold">
+                <div className="flex items-center gap-1.5 text-slate-500">
+                  <span className="w-2.5 h-2.5 rounded-sm bg-slate-300" />
+                  <span>Current Weight</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[#0066FF]">
+                  <span className="w-2.5 h-2.5 rounded-sm bg-[#0066FF]" />
+                  <span>Optimal Target</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full h-[220px] min-w-0">
+              {mounted && (
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={220}>
+                  <BarChart data={weightComparisonData} margin={{ top: 15, right: 15, left: 10, bottom: 5 }} barGap={6}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#F8FAFC" vertical={false} />
+                    <XAxis dataKey="ticker" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis
+                      stroke="#94A3B8"
+                      fontSize={11}
+                      tickLine={false}
+                      axisLine={false}
+                      width={45}
+                      tickFormatter={(val) => `${val}%`}
+                    />
+                    <Tooltip content={<CustomWeightTooltip />} cursor={{ fill: "rgba(0, 102, 255, 0.04)" }} />
+                    <Bar dataKey="current" fill="#CBD5E1" radius={[4, 4, 0, 0]} maxBarSize={22} isAnimationActive={false} />
+                    <Bar dataKey="optimal" fill="#0066FF" radius={[4, 4, 0, 0]} maxBarSize={22} isAnimationActive={false} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
 
           {/* Weights & Rebalance Trades Table */}
           <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-bold text-[#0A1128]">Asset Allocation &amp; Rebalance Orders</h3>
-              <span className="text-xs text-slate-400">Total Capital: $10,000,000 USD</span>
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <h3 className="text-[15px] font-bold text-[#0A1128]">Required Rebalance Orders</h3>
+              <span className="text-xs font-mono text-slate-400">6 Recommended Orders</span>
             </div>
 
             <div className="overflow-x-auto">
@@ -229,27 +367,46 @@ export default function OptimizePage() {
                 <thead>
                   <tr className="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
                     <th className="pb-3">Asset</th>
-                    <th className="pb-3 text-right">Current Weight</th>
-                    <th className="pb-3 text-right">Optimal Weight</th>
+                    <th className="pb-3 text-right">Current</th>
+                    <th className="pb-3 text-right">Optimal</th>
                     <th className="pb-3 text-right">Delta</th>
-                    <th className="pb-3 text-right">Rebalance Notional</th>
+                    <th className="pb-3 text-right">Notional Change</th>
+                    <th className="pb-3 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {tradeList.map((w: TradeItem) => {
-                    const isPositive = w.delta_weight > 0;
+                  {tradeList.map((trade) => {
+                    const isBuy = trade.action === "BUY";
+                    const isSell = trade.action === "SELL";
                     return (
-                      <tr key={w.ticker} className="hover:bg-slate-50/60 transition-colors">
+                      <tr key={trade.ticker} className="hover:bg-slate-50/60 transition-colors">
                         <td className="py-3 font-semibold text-slate-800">
-                          <span className="font-bold text-[#0066FF] mr-2">{w.ticker}</span>
+                          <span className="font-bold text-[#0066FF] mr-2">{trade.ticker}</span>
                         </td>
-                        <td className="py-3 text-right font-mono text-slate-600">{(w.current_weight * 100).toFixed(1)}%</td>
-                        <td className="py-3 text-right font-mono font-bold text-[#0066FF]">{(w.optimal_weight * 100).toFixed(1)}%</td>
-                        <td className={`py-3 text-right font-mono font-bold ${isPositive ? "text-emerald-600" : w.delta_weight < 0 ? "text-rose-500" : "text-slate-400"}`}>
-                          {w.delta_weight > 0 ? `+${(w.delta_weight * 100).toFixed(1)}%` : `${(w.delta_weight * 100).toFixed(1)}%`}
+                        <td className="py-3 text-right font-mono text-slate-600">
+                          {(trade.current_weight * 100).toFixed(1)}%
                         </td>
-                        <td className={`py-3 text-right font-mono font-bold ${isPositive ? "text-emerald-600" : w.dollar_change < 0 ? "text-slate-800" : "text-slate-400"}`}>
-                          {w.dollar_change > 0 ? `+$${Math.abs(w.dollar_change).toLocaleString()}` : w.dollar_change < 0 ? `-$${Math.abs(w.dollar_change).toLocaleString()}` : "$0"}
+                        <td className="py-3 text-right font-mono font-bold text-slate-900">
+                          {(trade.optimal_weight * 100).toFixed(1)}%
+                        </td>
+                        <td className={`py-3 text-right font-mono font-bold ${
+                          trade.delta_weight > 0 ? "text-emerald-600" : trade.delta_weight < 0 ? "text-rose-600" : "text-slate-400"
+                        }`}>
+                          {trade.delta_weight > 0 ? `+${(trade.delta_weight * 100).toFixed(1)}%` : `${(trade.delta_weight * 100).toFixed(1)}%`}
+                        </td>
+                        <td className="py-3 text-right font-mono text-slate-700">
+                          ${Math.abs(trade.dollar_change).toLocaleString()}
+                        </td>
+                        <td className="py-3 text-center">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold ${
+                            isBuy
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : isSell
+                              ? "bg-rose-50 text-rose-700 border border-rose-200"
+                              : "bg-slate-50 text-slate-500 border border-slate-200"
+                          }`}>
+                            {trade.action}
+                          </span>
                         </td>
                       </tr>
                     );
@@ -260,7 +417,6 @@ export default function OptimizePage() {
           </div>
 
         </div>
-
       </div>
     </div>
   );

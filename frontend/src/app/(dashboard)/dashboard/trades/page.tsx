@@ -1,7 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
-import { History, ArrowUpRight, ArrowDownRight, Filter, Search, CheckCircle2, Clock, ShieldCheck, Download, Plus } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { History, ArrowUpRight, ArrowDownRight, Filter, Search, CheckCircle2, Clock, ShieldCheck, Download, Plus, BarChart3, Activity } from "lucide-react";
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid
+} from "recharts";
 
 interface Trade {
   order_id: string;
@@ -26,16 +36,73 @@ const SAMPLE_TRADES: Trade[] = [
   { order_id: "ORD-99009", ticker: "EFA", asset_name: "iShares MSCI EAFE", side: "BUY", shares: 780, price: 77.40, notional: 60372, slippage_bps: 1.0, venue: "Goldman Prime", time: "10:22:40", status: "FILLED" },
 ];
 
+const HOURLY_VOLUME_DATA = [
+  { hour: "09:30", volume: 145000, slippage: 0.6, orders: 4 },
+  { hour: "10:30", volume: 210000, slippage: 1.0, orders: 6 },
+  { hour: "11:30", volume: 85000, slippage: 0.7, orders: 3 },
+  { hour: "12:30", volume: 65000, slippage: 0.4, orders: 2 },
+  { hour: "13:30", volume: 95000, slippage: 0.5, orders: 3 },
+  { hour: "14:30", volume: 380000, slippage: 1.2, orders: 9 },
+  { hour: "15:30", volume: 180000, slippage: 0.9, orders: 5 },
+];
+
 export default function TradesPage() {
+  const [mounted, setMounted] = useState(false);
   const [trades, setTrades] = useState<Trade[]>(SAMPLE_TRADES);
   const [filterSide, setFilterSide] = useState<string>("ALL");
   const [search, setSearch] = useState("");
+  const [hoveredHour, setHoveredHour] = useState<any | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const filtered = trades.filter((t) => {
     const matchesSide = filterSide === "ALL" || t.side === filterSide;
     const matchesSearch = t.ticker.toLowerCase().includes(search.toLowerCase()) || t.asset_name.toLowerCase().includes(search.toLowerCase());
     return matchesSide && matchesSearch;
   });
+
+  const activeHour = hoveredHour || HOURLY_VOLUME_DATA[5]; // defaults to 14:30 peak window
+
+  const CustomTradesTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const vol = payload.find((p: any) => p.dataKey === "volume")?.value || 0;
+      const slip = payload.find((p: any) => p.dataKey === "slippage")?.value || 0;
+      const item = HOURLY_VOLUME_DATA.find((h) => h.hour === label);
+
+      return (
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-4 shadow-xl text-xs space-y-2 min-w-[210px] select-none">
+          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 font-bold text-slate-800">
+            <span className="text-xs font-black uppercase">Window: {label} EST</span>
+            <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] font-mono text-[10.5px] font-bold border border-blue-200">
+              {item?.orders} Orders
+            </span>
+          </div>
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#0066FF]" />
+                <span className="text-slate-500 font-medium">Executed Volume:</span>
+              </div>
+              <span className="font-mono font-bold text-slate-900">${vol.toLocaleString()} USD</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <span className="text-slate-500 font-medium">Realized Slippage:</span>
+              </div>
+              <span className="font-mono font-bold text-emerald-600">{slip} bps</span>
+            </div>
+          </div>
+          <div className="pt-1.5 border-t border-slate-100 text-[10px] text-slate-400">
+            Smart routed via TWAP algorithm
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="space-y-6 select-none font-sans">
@@ -86,6 +153,104 @@ export default function TradesPage() {
         </div>
       </div>
 
+      {/* Interactive Execution Volume & Slippage Chart with Proper Padding & Clear Dual Y-Axes */}
+      <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4 overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-[15px] font-bold text-[#0A1128] tracking-tight">Intraday Execution Volume & Slippage Curve</h3>
+              <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0066FF] border border-blue-200 text-[10px] font-extrabold">
+                TWAP / VWAP Routed
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Executed dollar volume alongside realized market impact slippage across trading intervals
+            </p>
+          </div>
+
+          {/* Live Hover Readout Strip */}
+          <div className="flex flex-wrap items-center gap-4 bg-slate-50 border border-slate-200/70 px-3.5 py-1.5 rounded-xl text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="text-slate-400 font-medium">Window:</span>
+              <span className="font-bold font-mono text-slate-800">{activeHour.hour} EST</span>
+            </div>
+            <span className="w-1 h-1 rounded-full bg-slate-300" />
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-sm bg-[#0066FF]" />
+              <span className="text-slate-400 font-medium">Volume:</span>
+              <span className="font-bold font-mono text-slate-900">${activeHour.volume.toLocaleString()}</span>
+            </div>
+            <span className="w-1 h-1 rounded-full bg-slate-300" />
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="text-slate-400 font-medium">Slippage:</span>
+              <span className="font-bold font-mono text-emerald-600">{activeHour.slippage} bps</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Chart Container with ample breathing margins on left and right */}
+        <div className="w-full h-[230px] min-w-0 pt-1">
+          {mounted && (
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={230}>
+              <ComposedChart
+                data={HOURLY_VOLUME_DATA}
+                margin={{ top: 15, right: 25, left: 15, bottom: 5 }}
+                onMouseMove={(e: any) => {
+                  if (e && e.activePayload && e.activePayload.length) {
+                    setHoveredHour(e.activePayload[0].payload);
+                  }
+                }}
+                onMouseLeave={() => setHoveredHour(null)}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                <XAxis dataKey="hour" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis
+                  yAxisId="left"
+                  width={55}
+                  stroke="#64748B"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  domain={[0, 450000]}
+                  tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`}
+                />
+                <YAxis
+                  yAxisId="right"
+                  width={55}
+                  orientation="right"
+                  stroke="#10B981"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  domain={[0, 1.6]}
+                  tickFormatter={(val) => `${val} bps`}
+                />
+                <Tooltip content={<CustomTradesTooltip />} cursor={{ fill: "rgba(0, 102, 255, 0.04)" }} />
+                <Bar
+                  yAxisId="left"
+                  dataKey="volume"
+                  fill="#0066FF"
+                  radius={[5, 5, 0, 0]}
+                  maxBarSize={32}
+                  isAnimationActive={false}
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="slippage"
+                  stroke="#10B981"
+                  strokeWidth={2.5}
+                  dot={{ r: 4, fill: "#10B981", stroke: "#FFFFFF", strokeWidth: 2 }}
+                  activeDot={{ r: 6, fill: "#10B981", stroke: "#FFFFFF", strokeWidth: 2 }}
+                  isAnimationActive={false}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </div>
+
       {/* Main Table Card */}
       <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -100,18 +265,18 @@ export default function TradesPage() {
             />
           </div>
 
-          <div className="flex items-center gap-1.5 p-1 bg-slate-50 border border-slate-200/80 rounded-xl text-xs">
-            {["ALL", "BUY", "SELL"].map((s) => (
+          <div className="flex items-center gap-2">
+            {(["ALL", "BUY", "SELL"] as const).map((side) => (
               <button
-                key={s}
-                onClick={() => setFilterSide(s)}
-                className={`px-3 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
-                  filterSide === s
-                    ? "bg-white text-[#0066FF] shadow-sm"
-                    : "text-slate-500 hover:text-slate-900"
+                key={side}
+                onClick={() => setFilterSide(side)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  filterSide === side
+                    ? "bg-[#0066FF] text-white shadow-sm"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
-                {s}
+                {side}
               </button>
             ))}
           </div>
@@ -122,28 +287,28 @@ export default function TradesPage() {
             <thead>
               <tr className="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
                 <th className="pb-3">Order ID</th>
-                <th className="pb-3">Ticker</th>
-                <th className="pb-3">Side</th>
+                <th className="pb-3">Asset</th>
+                <th className="pb-3 text-center">Side</th>
                 <th className="pb-3 text-right">Shares</th>
-                <th className="pb-3 text-right">Fill Price</th>
+                <th className="pb-3 text-right">Price</th>
                 <th className="pb-3 text-right">Notional</th>
                 <th className="pb-3 text-right">Slippage</th>
                 <th className="pb-3">Venue</th>
                 <th className="pb-3">Time</th>
-                <th className="pb-3">Status</th>
+                <th className="pb-3 text-center">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filtered.map((t) => (
                 <tr key={t.order_id} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-3 font-mono font-bold text-slate-600">{t.order_id}</td>
-                  <td className="py-3 font-semibold text-slate-900">
-                    <span className="font-bold text-[#0066FF] mr-1.5">{t.ticker}</span>
-                    <span className="text-slate-500 font-normal">{t.asset_name}</span>
-                  </td>
+                  <td className="py-3 font-mono text-slate-500 font-semibold">{t.order_id}</td>
                   <td className="py-3">
-                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                      t.side === "BUY" ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
+                    <div className="font-bold text-[#0A1128]">{t.ticker}</div>
+                    <div className="text-[10px] text-slate-400">{t.asset_name}</div>
+                  </td>
+                  <td className="py-3 text-center">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      t.side === "BUY" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-rose-50 text-rose-700 border border-rose-200"
                     }`}>
                       {t.side}
                     </span>
@@ -151,12 +316,12 @@ export default function TradesPage() {
                   <td className="py-3 text-right font-mono text-slate-700">{t.shares.toLocaleString()}</td>
                   <td className="py-3 text-right font-mono text-slate-700">${t.price.toFixed(2)}</td>
                   <td className="py-3 text-right font-mono font-bold text-slate-900">${t.notional.toLocaleString()}</td>
-                  <td className="py-3 text-right font-mono text-slate-500">{t.slippage_bps} bps</td>
-                  <td className="py-3 text-slate-600">{t.venue}</td>
-                  <td className="py-3 font-mono text-slate-400">{t.time}</td>
-                  <td className="py-3">
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-bold inline-flex items-center gap-1">
-                      <CheckCircle2 className="w-2.5 h-2.5" />
+                  <td className="py-3 text-right font-mono text-emerald-600 font-bold">{t.slippage_bps} bps</td>
+                  <td className="py-3 text-slate-500">{t.venue}</td>
+                  <td className="py-3 font-mono text-slate-400 text-[11px]">{t.time}</td>
+                  <td className="py-3 text-center">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 text-[10px] font-bold inline-flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
                       {t.status}
                     </span>
                   </td>

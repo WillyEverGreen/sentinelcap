@@ -3,7 +3,7 @@
  * Typed REST interface to FastAPI backend with offline fallback resilience.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 async function fetchJSON<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
@@ -453,4 +453,42 @@ export async function getLiveNews(): Promise<LiveNewsResponse> {
 
 export async function getSecFilings(): Promise<SecFilingsResponse> {
   return fetchJSON<SecFilingsResponse>("/api/live-feed/sec-filings");
+}
+
+export interface ExecutionTrade {
+  order_id: string;
+  ticker: string;
+  asset_name: string;
+  side: "BUY" | "SELL";
+  shares: number;
+  price: number;
+  notional: number;
+  slippage_bps: number;
+  venue: string;
+  time: string;
+  status: "FILLED" | "SETTLING" | "ROUTED";
+}
+
+export interface TradesResponse {
+  summary: {
+    total_filled_volume: number;
+    total_orders: number;
+    filled_orders: number;
+    fill_rate_pct: number;
+    avg_slippage_bps: number;
+    slippage_target_bps: number;
+    primary_venue: string;
+    currency: string;
+  };
+  intraday_curve: Array<{
+    hour: string;
+    volume: number;
+    slippage: number;
+    orders: number;
+  }>;
+  trades: ExecutionTrade[];
+}
+
+export async function getExecutionTrades(): Promise<TradesResponse> {
+  return fetchJSON<TradesResponse>("/api/trades");
 }

@@ -90,13 +90,6 @@ export default function TradesPage() {
               </div>
               <span className="font-mono font-bold text-slate-900 dark:text-white">${vol.toLocaleString()} USD</span>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <span className="text-slate-500 font-medium">Realized Slippage:</span>
-              </div>
-              <span className="font-mono font-bold text-emerald-600">{slip} bps</span>
-            </div>
           </div>
           <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] text-slate-400">
             Smart routed via TWAP algorithm
@@ -162,7 +155,7 @@ export default function TradesPage() {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white tracking-tight">Intraday Execution Volume & Slippage Curve</h3>
-              <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[10px] font-extrabold">
+              <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[10px] font-extrabold">
                 TWAP / VWAP Routed
               </span>
             </div>
@@ -177,80 +170,130 @@ export default function TradesPage() {
               <span className="text-slate-400 font-medium">Window:</span>
               <span className="font-bold font-mono text-slate-800 dark:text-slate-200">{activeHour.hour} EST</span>
             </div>
-            <span className="w-1 h-1 rounded-full bg-slate-300" />
+            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-sm bg-[#0066FF]" />
               <span className="text-slate-400 font-medium">Volume:</span>
               <span className="font-bold font-mono text-slate-900 dark:text-white">${activeHour.volume.toLocaleString()}</span>
             </div>
-            <span className="w-1 h-1 rounded-full bg-slate-300" />
+            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
               <span className="text-slate-400 font-medium">Slippage:</span>
-              <span className="font-bold font-mono text-emerald-600">{activeHour.slippage} bps</span>
+              <span className="font-bold font-mono text-emerald-600 dark:text-emerald-400">{activeHour.slippage} bps</span>
             </div>
           </div>
         </div>
 
-        {/* Chart Container with ample breathing margins on left and right */}
-        <div className="w-full h-[230px] min-w-0 pt-1">
-          {mounted && (
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={230}>
-              <ComposedChart
-                data={HOURLY_VOLUME_DATA}
-                margin={{ top: 15, right: 25, left: 15, bottom: 5 }}
-                onMouseMove={(e: any) => {
-                  if (e && e.activePayload && e.activePayload.length) {
-                    setHoveredHour(e.activePayload[0].payload);
-                  }
-                }}
-                onMouseLeave={() => setHoveredHour(null)}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1E293B" : "#F1F5F9"} vertical={false} />
-                <XAxis dataKey="hour" stroke={isDark ? "#64748B" : "#94A3B8"} fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis
-                  yAxisId="left"
-                  width={55}
-                  stroke="#64748B"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  domain={[0, 450000]}
-                  tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`}
-                />
-                <YAxis
-                  yAxisId="right"
-                  width={55}
-                  orientation="right"
-                  stroke="#10B981"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  domain={[0, 1.6]}
-                  tickFormatter={(val) => `${val} bps`}
-                />
-                <Tooltip content={<CustomTradesTooltip />} cursor={{ fill: "rgba(0, 102, 255, 0.04)" }} />
-                <Bar
-                  yAxisId="left"
-                  dataKey="volume"
-                  fill="#0066FF"
-                  radius={[5, 5, 0, 0]}
-                  maxBarSize={32}
-                  isAnimationActive={false}
-                />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="slippage"
-                  stroke="#10B981"
-                  strokeWidth={2.5}
-                  dot={{ r: 4, fill: "#10B981", stroke: "#FFFFFF", strokeWidth: 2 }}
-                  activeDot={{ r: 6, fill: "#10B981", stroke: "#FFFFFF", strokeWidth: 2 }}
-                  isAnimationActive={false}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          )}
+        {/* Chart & Side Panel Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 pt-1">
+          {/* Chart Section */}
+          <div className="lg:col-span-3 w-full h-[250px] min-w-0">
+            {mounted && (
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={250}>
+                <ComposedChart
+                  data={HOURLY_VOLUME_DATA}
+                  margin={{ top: 15, right: 25, left: 15, bottom: 5 }}
+                  onMouseMove={(e: any) => {
+                    if (e && e.activePayload && e.activePayload.length) {
+                      setHoveredHour(e.activePayload[0].payload);
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredHour(null)}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1E293B" : "#F1F5F9"} vertical={false} />
+                  <XAxis dataKey="hour" stroke={isDark ? "#64748B" : "#94A3B8"} fontSize={11} tickLine={false} axisLine={false} />
+                  <YAxis
+                    yAxisId="left"
+                    width={55}
+                    stroke="#64748B"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                    domain={[0, 450000]}
+                    tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`}
+                  />
+                  <YAxis
+                    yAxisId="right"
+                    width={55}
+                    orientation="right"
+                    stroke="#10B981"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                    domain={[0, 1.6]}
+                    tickFormatter={(val) => `${val} bps`}
+                  />
+                  <Tooltip content={<CustomTradesTooltip />} cursor={{ fill: "rgba(0, 102, 255, 0.04)" }} />
+                  <Bar
+                    yAxisId="left"
+                    dataKey="volume"
+                    fill="#0066FF"
+                    radius={[5, 5, 0, 0]}
+                    barSize={36}
+                    isAnimationActive={false}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="slippage"
+                    stroke="#10B981"
+                    strokeWidth={2.5}
+                    dot={{ r: 4, fill: "#10B981", stroke: "#FFFFFF", strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: "#10B981", stroke: "#FFFFFF", strokeWidth: 2 }}
+                    isAnimationActive={false}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+
+          {/* Right Panel Section: Routing Venues */}
+          <div className="lg:col-span-1 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-100 dark:border-slate-800 p-5 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-5">
+                <Activity className="w-4 h-4 text-[#0066FF] dark:text-[#38BDF8]" />
+                <h4 className="text-sm font-bold text-slate-800 dark:text-white">Routing Venues</h4>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">Goldman Prime</span>
+                    <span className="font-mono text-slate-900 dark:text-white font-bold">65%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#0066FF] w-[65%]" />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">IEX Direct</span>
+                    <span className="font-mono text-slate-900 dark:text-white font-bold">25%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#0066FF] opacity-60 w-[25%]" />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">Fed Liquidity</span>
+                    <span className="font-mono text-slate-900 dark:text-white font-bold">10%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#0066FF] opacity-30 w-[10%]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700/80">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Dark Pool Routing</span>
+                <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold">INACTIVE</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

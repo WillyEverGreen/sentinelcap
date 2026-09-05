@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Bell, ChevronDown, Activity, AlertTriangle, Info } from "lucide-react";
+import { Search, Bell } from "lucide-react";
+import { useUser, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { 
   getLiveMarketOverview, 
   MarketOverviewResponse, 
@@ -49,16 +51,17 @@ const FALLBACK_NOTIFICATIONS: AuditLogEntry[] = [
 ];
 
 export default function Header() {
+  const { isSignedIn, user, isLoaded } = useUser();
   const [searchQuery, setSearchQuery] = useState("");
   const [liveData, setLiveData] = useState<MarketOverviewResponse | null>(null);
   
   // Interactive element states
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [showNotifications, setShowNotifications] = useState(false);
-  
   const [assets, setAssets] = useState<Asset[]>(FALLBACK_ASSETS);
   const [notifications, setNotifications] = useState<AuditLogEntry[]>(FALLBACK_NOTIFICATIONS);
   const [hasUnread, setHasUnread] = useState(true);
+  const [demoUser, setDemoUser] = useState<{ name: string; role: string; email: string } | null>(null);
 
   useEffect(() => {
     // 1. Live Market Data
@@ -85,6 +88,16 @@ export default function Header() {
         setNotifications(FALLBACK_NOTIFICATIONS);
         setHasUnread(true);
       });
+
+    // 4. Demo User from localStorage
+    try {
+      const saved = localStorage.getItem("sentinel_demo_user");
+      if (saved) {
+        setDemoUser(JSON.parse(saved));
+      }
+    } catch {
+      // ignore
+    }
   }, []);
 
   // Keyboard shortcut listener for Cmd+K / Ctrl+K
@@ -104,6 +117,17 @@ export default function Header() {
     if (hasUnread) {
       setHasUnread(false);
     }
+  };
+
+  const handleDemoSignOut = () => {
+    try {
+      localStorage.removeItem("sentinel_demo_user");
+      document.cookie = "sentinel_demo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    } catch {
+      // ignore
+    }
+    setDemoUser(null);
+    window.location.href = "/sign-in";
   };
 
   const niftyPrice = liveData?.india?.benchmark?.price || 23897.70;
@@ -191,7 +215,7 @@ export default function Header() {
                 </div>
               ) : (
                 <div className="px-4 py-6 text-center">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">No assets found for "{searchQuery}"</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">No assets found for &quot;{searchQuery}&quot;</p>
                 </div>
               )}
             </div>
@@ -240,27 +264,58 @@ export default function Header() {
                 ))}
               </div>
               <div className="px-4 py-2 bg-slate-50 dark:bg-[#1E293B] border-t border-slate-100 dark:border-slate-800 text-center cursor-pointer hover:bg-slate-100 dark:hover:bg-[#2A374A] transition-colors">
-                <span className="text-[11px] font-bold text-[#0066FF] dark:text-[#38BDF8]">View All Alerts</span>
+                <Link href="/dashboard/alerts" className="text-[11px] font-bold text-[#0066FF] dark:text-[#38BDF8]">
+                  View All Alerts
+                </Link>
               </div>
             </div>
           )}
         </div>
 
-        {/* User Profile */}
-        <div className="flex items-center gap-2 pl-1 cursor-pointer group">
-          <div className="w-8 h-8 rounded-lg overflow-hidden bg-gradient-to-tr from-[#0066FF] to-[#00D2FF] p-0.5 shadow-sm">
-            <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-              alt="Aditya Sharma"
-              className="w-full h-full object-cover rounded-[6px]"
+        {/* User Profile / Authentication */}
+        {isLoaded && isSignedIn ? (
+          <div className="flex items-center gap-2 pl-1">
+            <UserButton
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "w-8 h-8 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700",
+                },
+              }}
             />
+            <div className="hidden md:block text-left leading-tight">
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{user?.fullName || user?.firstName || "Aditya S."}</p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-400 font-medium">{user?.primaryEmailAddress?.emailAddress || "Head of Treasury"}</p>
+            </div>
           </div>
-          <div className="hidden md:block text-left leading-tight">
-            <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Aditya S.</p>
-            <p className="text-[10px] text-slate-400 dark:text-slate-400 font-medium">Head of Treasury</p>
+        ) : demoUser ? (
+          <div className="flex items-center gap-2 pl-1">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#1C64F2] to-[#38BDF8] flex items-center justify-center text-white text-xs font-extrabold shadow-xs">
+              {demoUser.name.slice(0, 2).toUpperCase()}
+            </div>
+            <div className="hidden md:block text-left leading-tight">
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{demoUser.name}</p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-400 font-medium">{demoUser.role}</p>
+            </div>
+            <button
+              onClick={handleDemoSignOut}
+              title="Sign out of demo session"
+              className="ml-1 text-[10.5px] font-semibold text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-slate-200/70 dark:border-slate-700 transition-colors cursor-pointer"
+            >
+              Sign out
+            </button>
           </div>
-          <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
-        </div>
+        ) : isLoaded && !isSignedIn ? (
+          <Link
+            href="/sign-in"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+          >
+            Sign In
+          </Link>
+        ) : (
+          <div className="flex items-center gap-2 pl-1">
+            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse" />
+          </div>
+        )}
 
       </div>
 

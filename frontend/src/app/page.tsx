@@ -46,7 +46,7 @@ export default function HeroPage() {
           <ThemeToggle compact />
 
           <Link
-            href="/dashboard"
+            href="/sign-in"
             className="hidden sm:inline-flex text-[13.5px] font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-5 py-2 rounded-full border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
           >
             Sign in

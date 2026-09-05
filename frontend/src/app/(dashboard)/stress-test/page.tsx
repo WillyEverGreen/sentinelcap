@@ -347,7 +347,7 @@ export default function StressTestPage() {
 
             <div className="w-full h-[220px] min-w-0">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={220}>
+                <ResponsiveContainer width="100%" height={220} minWidth={100} minHeight={220}>
                   <BarChart
                     data={chartData}
                     margin={{ top: 15, right: 15, left: 15, bottom: 0 }}

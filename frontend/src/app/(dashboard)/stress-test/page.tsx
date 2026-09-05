@@ -272,6 +272,36 @@ export default function StressTestPage() {
               </p>
             </div>
           </div>
+
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-[#131B2E] p-6 shadow-sm space-y-4">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-slate-700 dark:text-slate-300" />
+              <h3 className="text-[14px] font-bold text-[#0A1128] dark:text-white">Contagion Risk Factors</h3>
+            </div>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0" />
+                <p className="text-[11.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <strong className="text-slate-800 dark:text-slate-200 block mb-0.5">Liquidity Freeze</strong>
+                  High probability of severe bid-ask spread widening across fixed-income instruments during peak volatility.
+                </p>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                <p className="text-[11.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <strong className="text-slate-800 dark:text-slate-200 block mb-0.5">Cross-Asset Correlation</strong>
+                  Expect traditional diversification to break down as equities and REITs move in tandem.
+                </p>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" />
+                <p className="text-[11.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <strong className="text-slate-800 dark:text-slate-200 block mb-0.5">Margin Call Spirals</strong>
+                  Deleveraging by institutional peers could induce secondary shockwaves in large-cap equities.
+                </p>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Right Column: Interactive Asset Shock Chart (7 cols) */}

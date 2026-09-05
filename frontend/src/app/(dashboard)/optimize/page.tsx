@@ -177,100 +177,132 @@ export default function OptimizePage() {
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Left Form: Controls & Parameters (4 cols) */}
-        <div className="lg:col-span-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
-            <Sliders className="w-4 h-4 text-[#0066FF]" />
-            <h3>Optimization Parameters</h3>
+        {/* Left Column: Controls & Parameters (4 cols) */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-5">
+            <div className="flex items-center gap-2 text-[#0A1128] dark:text-white font-bold text-sm">
+              <Sliders className="w-4 h-4 text-[#0066FF]" />
+              <h3>Optimization Parameters</h3>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">Model / Strategy</label>
+                <select
+                  value={strategy}
+                  onChange={(e) => setStrategy(e.target.value as any)}
+                  className="w-full rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 px-3.5 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#0066FF] font-medium"
+                >
+                  <option value="mean_cvar">Mean-CVaR Optimization (Tail Risk)</option>
+                  <option value="hrp">Hierarchical Risk Parity (HRP)</option>
+                  <option value="markowitz_max_sharpe">Markowitz (Max Sharpe Ratio)</option>
+                  <option value="markowitz_min_variance">Markowitz (Minimum Variance)</option>
+                </select>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1.5">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Risk Tolerance (λ)</span>
+                  <span className="font-mono text-slate-900 dark:text-white font-bold">{(riskTolerance * 100).toFixed(0)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.05"
+                  max="1.0"
+                  step="0.05"
+                  value={riskTolerance}
+                  onChange={(e) => setRiskTolerance(parseFloat(e.target.value))}
+                  className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1.5">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Max Single-Asset Weight</span>
+                  <span className="font-mono text-slate-900 dark:text-white font-bold">{(maxWeight * 100).toFixed(0)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.15"
+                  max="0.90"
+                  step="0.05"
+                  value={maxWeight}
+                  onChange={(e) => setMaxWeight(parseFloat(e.target.value))}
+                  className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1.5">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Minimum Cash Reserve (BIL)</span>
+                  <span className="font-mono text-slate-900 dark:text-white font-bold">{(minCashBuffer * 100).toFixed(0)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="0.30"
+                  step="0.02"
+                  value={minCashBuffer}
+                  onChange={(e) => setMinCashBuffer(parseFloat(e.target.value))}
+                  className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1.5">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Turnover Friction Penalty</span>
+                  <span className="font-mono text-slate-900 dark:text-white font-bold">{(turnoverPenalty * 10000).toFixed(0)} bps</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="0.01"
+                  step="0.0005"
+                  value={turnoverPenalty}
+                  onChange={(e) => setTurnoverPenalty(parseFloat(e.target.value))}
+                  className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-blue-50/50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/60 text-[11px] text-slate-600 dark:text-slate-300 space-y-1">
+              <p className="font-bold text-[#0066FF] dark:text-[#38BDF8] flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Enforced Constraints
+              </p>
+              <p>• Tail Risk CVaR α=0.95 10-day horizon</p>
+              <p>• Cash liquidity floor ≥ {(minCashBuffer * 100).toFixed(0)}%</p>
+              <p>• No single asset concentration &gt; {(maxWeight * 100).toFixed(0)}%</p>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">Model / Strategy</label>
-              <select
-                value={strategy}
-                onChange={(e) => setStrategy(e.target.value as any)}
-                className="w-full rounded-xl bg-slate-50 dark:bg-[#1E293B] dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 dark:border-slate-800 px-3.5 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#0066FF] font-medium"
-              >
-                <option value="mean_cvar">Mean-CVaR Optimization (Tail Risk)</option>
-                <option value="hrp">Hierarchical Risk Parity (HRP)</option>
-                <option value="markowitz_max_sharpe">Markowitz (Max Sharpe Ratio)</option>
-                <option value="markowitz_min_variance">Markowitz (Minimum Variance)</option>
-              </select>
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-[#131B2E] p-6 shadow-sm space-y-4">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-slate-700 dark:text-slate-300" />
+              <h3 className="text-[14px] font-bold text-[#0A1128] dark:text-white">Optimizer Insights</h3>
             </div>
-
-            <div>
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">Risk Tolerance (λ)</span>
-                <span className="font-mono text-slate-900 dark:text-white font-bold">{(riskTolerance * 100).toFixed(0)}%</span>
-              </div>
-              <input
-                type="range"
-                min="0.05"
-                max="1.0"
-                step="0.05"
-                value={riskTolerance}
-                onChange={(e) => setRiskTolerance(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">Max Single-Asset Weight</span>
-                <span className="font-mono text-slate-900 dark:text-white font-bold">{(maxWeight * 100).toFixed(0)}%</span>
-              </div>
-              <input
-                type="range"
-                min="0.15"
-                max="0.90"
-                step="0.05"
-                value={maxWeight}
-                onChange={(e) => setMaxWeight(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">Minimum Cash Reserve (BIL)</span>
-                <span className="font-mono text-slate-900 dark:text-white font-bold">{(minCashBuffer * 100).toFixed(0)}%</span>
-              </div>
-              <input
-                type="range"
-                min="0.0"
-                max="0.30"
-                step="0.02"
-                value={minCashBuffer}
-                onChange={(e) => setMinCashBuffer(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">Turnover Friction Penalty</span>
-                <span className="font-mono text-slate-900 dark:text-white font-bold">{(turnoverPenalty * 10000).toFixed(0)} bps</span>
-              </div>
-              <input
-                type="range"
-                min="0.0"
-                max="0.01"
-                step="0.0005"
-                value={turnoverPenalty}
-                onChange={(e) => setTurnoverPenalty(parseFloat(e.target.value))}
-                className="w-full accent-[#0066FF] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
-              />
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/60/50 border border-blue-100 text-[11px] text-slate-600 dark:text-slate-300 space-y-1">
-            <p className="font-bold text-[#0066FF] flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Enforced Constraints
-            </p>
-            <p>• Tail Risk CVaR α=0.95 10-day horizon</p>
-            <p>• Cash liquidity floor ≥ {(minCashBuffer * 100).toFixed(0)}%</p>
-            <p>• No single asset concentration &gt; {(maxWeight * 100).toFixed(0)}%</p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                <p className="text-[11.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <strong className="text-slate-800 dark:text-slate-200 block mb-0.5">Diversification Bonus</strong>
+                  Constraints effectively force capital out of heavy SPY concentration into safer non-correlated yields.
+                </p>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF] mt-1.5 shrink-0" />
+                <p className="text-[11.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <strong className="text-slate-800 dark:text-slate-200 block mb-0.5">Turnover Friction</strong>
+                  Rebalancing costs are kept minimal due to defined penalty limits on low-conviction shifts.
+                </p>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                <p className="text-[11.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <strong className="text-slate-800 dark:text-slate-200 block mb-0.5">Yield Floor Buffer</strong>
+                  Treasuries (BIL) provide a hard buffer against tail events while maintaining short-term liquidity.
+                </p>
+              </li>
+            </ul>
           </div>
         </div>
 

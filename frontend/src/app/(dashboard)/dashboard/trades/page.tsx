@@ -8,7 +8,6 @@ import {
   ResponsiveContainer,
   ComposedChart,
   Bar,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -71,7 +70,6 @@ export default function TradesPage() {
   const CustomTradesTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const vol = payload.find((p: any) => p.dataKey === "volume")?.value || 0;
-      const slip = payload.find((p: any) => p.dataKey === "slippage")?.value || 0;
       const item = HOURLY_VOLUME_DATA.find((h) => h.hour === label);
 
       return (
@@ -149,23 +147,23 @@ export default function TradesPage() {
         </div>
       </div>
 
-      {/* Interactive Execution Volume & Slippage Chart with Proper Padding & Clear Dual Y-Axes */}
+      {/* Interactive Execution Volume Chart */}
       <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-[#131B2E] p-6 shadow-sm space-y-4 overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white tracking-tight">Intraday Execution Volume & Slippage Curve</h3>
+              <h3 className="text-[15px] font-bold text-[#0A1128] dark:text-white tracking-tight">Intraday Execution Volume</h3>
               <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0066FF] dark:text-[#38BDF8] border border-blue-200 dark:border-blue-900 text-[10px] font-extrabold">
                 TWAP / VWAP Routed
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Executed dollar volume alongside realized market impact slippage across trading intervals
+              Executed dollar volume across trading intervals
             </p>
           </div>
 
           {/* Live Hover Readout Strip */}
-          <div className="flex flex-wrap items-center gap-4 bg-slate-50 dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 rounded-xl text-xs">
+          <div className="flex flex-wrap items-center gap-4 bg-slate-50 dark:bg-[#1E293B] border border-slate-200/70 dark:border-slate-800 px-3.5 py-1.5 rounded-xl text-xs">
             <div className="flex items-center gap-1.5">
               <span className="text-slate-400 font-medium">Window:</span>
               <span className="font-bold font-mono text-slate-800 dark:text-slate-200">{activeHour.hour} EST</span>
@@ -175,12 +173,6 @@ export default function TradesPage() {
               <span className="w-2 h-2 rounded-sm bg-[#0066FF]" />
               <span className="text-slate-400 font-medium">Volume:</span>
               <span className="font-bold font-mono text-slate-900 dark:text-white">${activeHour.volume.toLocaleString()}</span>
-            </div>
-            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-slate-400 font-medium">Slippage:</span>
-              <span className="font-bold font-mono text-emerald-600 dark:text-emerald-400">{activeHour.slippage} bps</span>
             </div>
           </div>
         </div>
@@ -213,34 +205,13 @@ export default function TradesPage() {
                     domain={[0, 450000]}
                     tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`}
                   />
-                  <YAxis
-                    yAxisId="right"
-                    width={55}
-                    orientation="right"
-                    stroke="#10B981"
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={false}
-                    domain={[0, 1.6]}
-                    tickFormatter={(val) => `${val} bps`}
-                  />
                   <Tooltip content={<CustomTradesTooltip />} cursor={{ fill: "rgba(0, 102, 255, 0.04)" }} />
                   <Bar
                     yAxisId="left"
                     dataKey="volume"
                     fill="#0066FF"
                     radius={[5, 5, 0, 0]}
-                    barSize={36}
-                    isAnimationActive={false}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="slippage"
-                    stroke="#10B981"
-                    strokeWidth={2.5}
-                    dot={{ r: 4, fill: "#10B981", stroke: "#FFFFFF", strokeWidth: 2 }}
-                    activeDot={{ r: 6, fill: "#10B981", stroke: "#FFFFFF", strokeWidth: 2 }}
+                    barSize={44}
                     isAnimationActive={false}
                   />
                 </ComposedChart>

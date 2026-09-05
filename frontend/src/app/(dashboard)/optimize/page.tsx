@@ -62,10 +62,10 @@ export default function OptimizePage() {
   }, []);
 
   const res = data?.optimization_result;
-  const expReturn = res ? (res.expected_annual_return * 100).toFixed(2) : (loading ? "..." : "5.86");
-  const vol = res ? (res.annual_volatility * 100).toFixed(2) : (loading ? "..." : "3.73");
-  const sharpe = res ? res.sharpe_ratio.toFixed(2) : (loading ? "..." : "0.50");
-  const cvar = res ? (res.cvar_95_10d * 100).toFixed(2) : (loading ? "..." : "1.51");
+  const expReturn = res ? (res.expected_annual_return * 100).toFixed(2) : "5.86";
+  const vol = res ? (res.annual_volatility * 100).toFixed(2) : "3.73";
+  const sharpe = res ? res.sharpe_ratio.toFixed(2) : "0.50";
+  const cvar = res ? (res.cvar_95_10d * 100).toFixed(2) : "1.51";
 
   const tradeList = data?.trade_list || SAMPLE_TRADES;
 

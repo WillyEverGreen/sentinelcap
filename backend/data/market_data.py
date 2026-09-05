@@ -57,7 +57,10 @@ def generate_historical_data(n_days: int = 504, seed: int = 42) -> tuple[pd.Data
     shock_multiplier = np.array([-0.018, -0.016, 0.003, 0.004, -0.020, 0.0002])
     correlated_returns[shock_start:shock_start + shock_len] += shock_multiplier + np.random.normal(0, daily_vols * 2.2, (shock_len, len(tickers)))
     
-    dates = pd.date_range(end=pd.Timestamp.today().normalize(), periods=n_days, freq="B")
+    last_bday = pd.Timestamp.now().floor('D')
+    while last_bday.weekday() >= 5:
+        last_bday -= pd.Timedelta(days=1)
+    dates = pd.date_range(end=last_bday, periods=n_days, freq="B")
     returns_df = pd.DataFrame(correlated_returns, index=dates, columns=tickers)
     
     base_prices = {"SPY": 510.0, "EFA": 78.0, "AGG": 98.0, "GLD": 215.0, "VNQ": 88.0, "BIL": 91.5}

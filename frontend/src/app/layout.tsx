@@ -17,10 +17,11 @@ export const metadata: Metadata = {
   description: "Optimize asset allocation, enforce risk controls, and adapt in real time to a changing market - all in one intelligent platform.",
   icons: {
     icon: [
+      { url: "/logo-icon.png", type: "image/png" },
       { url: "/icon.svg", type: "image/svg+xml" },
       { url: "/favicon.ico", sizes: "any" },
     ],
-    apple: "/apple-icon.png",
+    apple: "/logo-icon.png",
   },
 };
 

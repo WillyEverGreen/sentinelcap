@@ -202,11 +202,11 @@ export default function SignUpPage() {
         {/* Top Header: CapitalAI Logo */}
         <div className="flex items-center justify-end w-full shrink-0">
           <Link href="/" className="flex items-center gap-2.5 group cursor-pointer">
-            <div className="flex items-end gap-[3.5px] h-6">
-              <span className="w-[5px] h-3.5 bg-[#00D2FF] rounded-full transition-all group-hover:h-5 duration-300" />
-              <span className="w-[5px] h-[19px] bg-[#0077FF] rounded-full transition-all group-hover:h-3.5 duration-300" />
-              <span className="w-[5px] h-6 bg-[#0044FF] rounded-full transition-all group-hover:h-6 duration-300" />
-            </div>
+            <img
+              src="/logo-icon.png"
+              alt="CapitalAI"
+              className="h-6 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            />
             <span className="text-[21px] font-extrabold tracking-[-0.03em] text-[#0A1128]">
               Capital<span className="text-[#0066FF]">AI</span>
             </span>

@@ -1,4 +1,4 @@
-﻿FROM node:20-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -18,6 +18,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
+ENV PORT=3000
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npx next start -p ${PORT:-3000}"]

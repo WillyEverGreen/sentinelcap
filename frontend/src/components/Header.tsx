@@ -227,7 +227,7 @@ export default function Header() {
                 </div>
               ) : (
                 <div className="px-4 py-6 text-center">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">No assets found for "{searchQuery}"</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">No assets found for &quot;{searchQuery}&quot;</p>
                 </div>
               )}
             </div>

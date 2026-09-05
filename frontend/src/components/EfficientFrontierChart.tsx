@@ -71,7 +71,7 @@ export default function EfficientFrontierChart({
 
   // 1. Process & sort real backend frontier points
   const sortedPoints = useMemo(() => {
-    let pts = frontierPoints && frontierPoints.length >= 3 ? [...frontierPoints] : [
+    const pts = frontierPoints && frontierPoints.length >= 3 ? [...frontierPoints] : [
       { volatility: 0.0372, expected_return: 0.0575, sharpe: 0.470, cvar_95_10d: 0.0152 },
       { volatility: 0.0393, expected_return: 0.0645, sharpe: 0.623, cvar_95_10d: 0.0175 },
       { volatility: 0.0454, expected_return: 0.0751, sharpe: 0.773, cvar_95_10d: 0.0210 },

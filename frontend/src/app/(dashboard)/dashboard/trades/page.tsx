@@ -190,7 +190,7 @@ export default function TradesPage() {
           {/* Chart Section */}
           <div className="lg:col-span-3 w-full h-[250px] min-w-0">
             {mounted && (
-              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={250}>
+              <ResponsiveContainer width="100%" height={250} minWidth={100} minHeight={250}>
                 <ComposedChart
                   data={HOURLY_VOLUME_DATA}
                   margin={{ top: 15, right: 25, left: 15, bottom: 5 }}

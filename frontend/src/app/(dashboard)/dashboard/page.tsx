@@ -602,7 +602,7 @@ export default function DashboardOverviewPage() {
             {/* Recharts Dual-Line Chart */}
             <div className="w-full h-[270px] min-w-0 pt-2">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={270}>
+                <ResponsiveContainer width="100%" height={270} minWidth={100} minHeight={270}>
                   <LineChart
                     data={chartData}
                     margin={{ top: 15, right: 15, left: 10, bottom: 0 }}
@@ -1044,7 +1044,7 @@ export default function DashboardOverviewPage() {
 
             <div className="w-full h-[145px] min-w-0">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={145}>
+                <ResponsiveContainer width="100%" height={145} minWidth={100} minHeight={145}>
                   <BarChart
                     data={[
                       { day: "Mon", algo: 42, manual: 12 },

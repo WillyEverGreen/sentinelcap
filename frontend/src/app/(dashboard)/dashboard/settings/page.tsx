@@ -18,7 +18,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6 select-none font-sans max-w-5xl">
+    <div className="space-y-6 select-none font-sans">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100">
         <div>

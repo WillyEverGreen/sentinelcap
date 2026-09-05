@@ -1,5 +1,6 @@
 "use client"
 
+import MarketingNavbar from "@/components/MarketingNavbar"
 import { useState } from "react"
 import Link from "next/link"
 import { Globe } from "@/components/ui/globe"
@@ -9,60 +10,12 @@ export default function HeroPage() {
   const [demoOpen, setDemoOpen] = useState(false)
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-slate-100 select-none flex flex-col font-sans transition-colors duration-150">
+    <main className="relative w-full min-h-screen overflow-x-hidden bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-150">
+      {/* --- HERO SECTION --- */}
+      <div className="relative w-full h-screen overflow-hidden flex flex-col select-none">
 
-      {/* ── Navbar ── */}
-      <header className="relative z-30 w-full flex items-center justify-between px-8 md:px-14 lg:px-20 pt-6 pb-2 flex-shrink-0 bg-white/90 dark:bg-[#0A0F1D]/90 backdrop-blur-md transition-colors duration-150">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="flex items-end gap-[3px] h-6">
-            <span className="w-[5px] h-3 bg-[#00D2FF] rounded-full transition-all group-hover:h-5 duration-300" />
-            <span className="w-[5px] h-[18px] bg-[#0077FF] rounded-full transition-all group-hover:h-3.5 duration-300" />
-            <span className="w-[5px] h-6 bg-[#0044FF] rounded-full transition-all group-hover:h-6 duration-300" />
-          </div>
-          <span className="text-[21px] font-extrabold tracking-[-0.03em] text-[#0A1128] dark:text-white">
-            Capital<span className="text-[#0066FF] dark:text-[#38BDF8]">AI</span>
-          </span>
-        </Link>
-
-        <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-          {["Product", "Resources", "Pricing", "About"].map((item) => (
-            <button
-              key={item}
-              className="text-[14px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
-            >
-              {item}
-            </button>
-          ))}
-          <div className="flex items-center gap-1 text-[14px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
-            Solutions
-            <svg className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </div>
-        </nav>
-
-        <div className="flex items-center gap-3">
-          {/* Quick theme toggle */}
-          <ThemeToggle compact />
-
-          <Link
-            href="/sign-in"
-            className="hidden sm:inline-flex text-[13.5px] font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-5 py-2 rounded-full border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-white dark:text-[#0A1128] px-5 py-2.5 rounded-full bg-[#0A1128] dark:bg-white hover:bg-[#1a2540] dark:hover:bg-slate-200 shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
-          >
-            Get Started
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
-          </Link>
-        </div>
-      </header>
+      {/* 🚀 Navbar 🚀 */}
+      <MarketingNavbar />
 
       {/* ── LEFT FLANK: Concentric Oval Rays (No cards) ── */}
       <div className="absolute left-0 top-0 bottom-0 w-[360px] md:w-[460px] lg:w-[540px] pointer-events-none z-10 overflow-hidden">
@@ -286,6 +239,59 @@ export default function HeroPage() {
           </div>
         </div>
       )}
+    
+      </div>
+      
+      {/* --- PRODUCT SECTION --- */}
+      <section id="product" className="w-full py-24 px-8 md:px-20 bg-white dark:bg-[#0A0F1D]">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">Product</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
+            CapitalAI provides an advanced quantitative optimizer and autonomous safeguard system designed for institutional asset managers. Explore our interactive dashboard to stress-test your portfolio.
+          </p>
+        </div>
+      </section>
+
+      {/* --- RESOURCES SECTION --- */}
+      <section id="resources" className="w-full py-24 px-8 md:px-20 bg-slate-50 dark:bg-slate-900">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">Resources</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
+            Read our whitepapers on Mean-CVaR optimization and Markov Regime Switching to understand the math behind our capital protection algorithms.
+          </p>
+        </div>
+      </section>
+
+      {/* --- PRICING SECTION --- */}
+      <section id="pricing" className="w-full py-24 px-8 md:px-20 bg-white dark:bg-[#0A0F1D]">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">Pricing</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
+            Enterprise-grade pricing for institutional clients. API access, dedicated hosting, and white-glove onboarding included. Contact sales for a quote.
+          </p>
+        </div>
+      </section>
+
+      {/* --- ABOUT SECTION --- */}
+      <section id="about" className="w-full py-24 px-8 md:px-20 bg-slate-50 dark:bg-slate-900">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">About Us</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
+            We are a team of quantitative researchers and engineers building the next generation of resilient financial infrastructure.
+          </p>
+        </div>
+      </section>
+
+      {/* --- SOLUTIONS SECTION --- */}
+      <section id="solutions" className="w-full py-24 px-8 md:px-20 bg-white dark:bg-[#0A0F1D]">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">Solutions</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
+            Tailored solutions for Family Offices, Hedge Funds, and Asset Managers aiming to hedge tail-risk and automate portfolio rebalancing.
+          </p>
+        </div>
+      </section>
+
     </main>
   )
 }

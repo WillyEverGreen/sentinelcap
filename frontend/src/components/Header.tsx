@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Search, Bell } from "lucide-react";
 import { useUser, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { 
   getLiveMarketOverview, 
   MarketOverviewResponse, 
@@ -51,9 +52,22 @@ const FALLBACK_NOTIFICATIONS: AuditLogEntry[] = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
   const { isSignedIn, user, isLoaded } = useUser();
   const [searchQuery, setSearchQuery] = useState("");
   const [liveData, setLiveData] = useState<MarketOverviewResponse | null>(null);
+
+  const getPageTitle = () => {
+    if (pathname === "/dashboard") return "Capital Overview";
+    if (pathname === "/optimize") return "Portfolio Optimizer";
+    if (pathname === "/stress-test") return "Stress Testing";
+    if (pathname === "/audit-log") return "Safeguard Controls";
+    if (pathname === "/dashboard/trades") return "Execution Blotter";
+    if (pathname === "/dashboard/alerts") return "War Room Alerts";
+    if (pathname === "/dashboard/risk") return "Risk Parameters";
+    if (pathname === "/dashboard/settings") return "Settings";
+    return "Capital Overview";
+  };
   
   // Interactive element states
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -147,7 +161,7 @@ export default function Header() {
       {/* Left: Clean Brand & Institutional Status */}
       <div className="flex items-center gap-3">
         <h1 className="text-[17px] font-extrabold tracking-tight text-[#0A1128] dark:text-white">
-          Capital Overview
+          {getPageTitle()}
         </h1>
         <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100/80 dark:bg-[#1E293B] border border-slate-200/60 dark:border-slate-800 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />

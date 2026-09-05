@@ -37,6 +37,8 @@ export interface Asset {
   liquidity_horizon_days: number;
   expected_annual_return: number;
   annual_volatility: number;
+  price?: number | string;
+  type?: string;
 }
 
 export interface PortfolioData {

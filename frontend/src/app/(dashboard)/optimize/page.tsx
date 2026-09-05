@@ -334,7 +334,7 @@ export default function OptimizePage() {
 
             <div className="w-full h-[220px] min-w-0">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={220}>
+                <ResponsiveContainer width="100%" height={220} minWidth={100} minHeight={220}>
                   <BarChart data={weightComparisonData} margin={{ top: 15, right: 15, left: 10, bottom: 5 }} barGap={6}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#F8FAFC" vertical={false} />
                     <XAxis dataKey="ticker" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />

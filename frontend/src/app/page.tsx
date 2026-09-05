@@ -43,7 +43,7 @@ export default function HeroPage() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/dashboard"
+            href="/sign-in"
             className="hidden sm:inline-flex text-[13.5px] font-semibold text-slate-600 hover:text-slate-900 px-5 py-2 rounded-full border border-slate-200 hover:border-slate-300 transition-all"
           >
             Sign in

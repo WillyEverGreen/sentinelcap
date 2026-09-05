@@ -373,7 +373,7 @@ export default function TradesPage() {
 
         <div className="w-full h-[240px] min-w-0">
           {mounted && (
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={240}>
+            <ResponsiveContainer width="100%" height={240} minWidth={100} minHeight={240}>
               <ComposedChart
                 data={hourlyVolumeData}
                 margin={{ top: 15, right: 25, left: 15, bottom: 5 }}

@@ -2,8 +2,6 @@
   <img src="./frontend/public/logo.png" width="120" alt="SentinelCap Logo" />
 </p>
 
-<h1 align="center">CapitalAI</h1>
-
 <p align="center">
   <b>Institutional Portfolio Optimizer & Autonomous Safeguard System</b><br/>
   <i>Advanced Quantitative Telemetry and Tail Risk Management</i>
@@ -106,7 +104,8 @@ SentinelCap centralizes quantitative asset allocation and embeds autonomous safe
 
 ### Prerequisites
 
-- Node.js (v18.x or later) & npm
+* Node.js (v18.x or later) & npm
+
 * Python 3.12 & `uv` package manager
 
 ### 1. Start the Backend Quant Engine

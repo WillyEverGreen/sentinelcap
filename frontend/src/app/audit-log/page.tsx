@@ -64,7 +64,7 @@ export default function AuditLogPage() {
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-zinc-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-white/[0.06]">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
             <History className="w-6 h-6 text-sky-400" />
@@ -78,7 +78,7 @@ export default function AuditLogPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={fetchLog}
-            className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
+            className="p-2.5 rounded-xl bg-[#1c1e2d] hover:bg-[#25283b] text-zinc-300 border border-white/[0.06] transition-colors"
             title="Refresh log"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
@@ -86,7 +86,7 @@ export default function AuditLogPage() {
 
           <button
             onClick={() => setOverrideModal(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 text-xs font-semibold transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1c1e2d] hover:bg-[#25283b] text-zinc-200 border border-white/[0.08] text-xs font-semibold transition-all cursor-pointer"
           >
             <Lock className="w-3.5 h-3.5 text-amber-400" />
             CRO Manual Override
@@ -96,7 +96,7 @@ export default function AuditLogPage() {
 
       {/* Control Summary Banner */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+        <div className="p-4 rounded-2xl border border-white/[0.06] bg-[#1c1e2d]">
           <div className="text-[10px] text-zinc-400 font-mono">CURRENT STATUS</div>
           <div className="flex items-center gap-2 mt-1">
             <span className={`text-xl font-bold font-mono ${
@@ -107,10 +107,10 @@ export default function AuditLogPage() {
               {status?.status || "NORMAL"}
             </span>
           </div>
-          <div className="text-[10px] text-zinc-500 font-mono mt-1">3-Tier Circuit Breaker</div>
+          <div className="text-[10px] text-zinc-400 font-mono mt-1">3-Tier Circuit Breaker</div>
         </div>
 
-        <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+        <div className="p-4 rounded-2xl border border-white/[0.06] bg-[#1c1e2d]">
           <div className="text-[10px] text-zinc-400 font-mono">OPERATIONAL MODE</div>
           <div className="flex items-center justify-between mt-1">
             <span className="text-xl font-bold font-mono text-white">
@@ -118,23 +118,23 @@ export default function AuditLogPage() {
             </span>
             <button
               onClick={handleToggleMode}
-              className="text-[10px] font-mono px-2 py-1 bg-zinc-800 hover:bg-zinc-700 rounded border border-zinc-700 text-sky-400"
+              className="text-[10px] font-mono px-2.5 py-1 bg-[#151724] hover:bg-[#25283b] rounded-lg border border-white/[0.06] text-sky-400 cursor-pointer"
             >
               SWITCH
             </button>
           </div>
-          <div className="text-[10px] text-zinc-500 font-mono mt-1">
+          <div className="text-[10px] text-zinc-400 font-mono mt-1">
             {status?.mode === "auto" ? "Autonomous Execution Active" : "Requires Human Approval"}
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+        <div className="p-4 rounded-2xl border border-white/[0.06] bg-[#1c1e2d]">
           <div className="text-[10px] text-zinc-400 font-mono">TOTAL RECORDED EVENTS</div>
           <div className="text-xl font-bold font-mono text-white mt-1">{entries.length}</div>
-          <div className="text-[10px] text-zinc-500 font-mono mt-1">Append-only audit ledger</div>
+          <div className="text-[10px] text-zinc-400 font-mono mt-1">Append-only audit ledger</div>
         </div>
 
-        <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+        <div className="p-4 rounded-2xl border border-white/[0.06] bg-[#1c1e2d]">
           <div className="text-[10px] text-zinc-400 font-mono">LAST TELEMETRY EVAL</div>
           <div className="text-xs font-mono text-zinc-300 mt-2 truncate">
             {status?.last_evaluated ? new Date(status.last_evaluated).toLocaleTimeString() : "Live Active"}
@@ -152,27 +152,27 @@ export default function AuditLogPage() {
             <button
               key={lvl}
               onClick={() => setFilterLevel(lvl)}
-              className={`px-3 py-1 rounded-md text-xs font-mono font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono font-medium transition-all cursor-pointer ${
                 filterLevel === lvl
-                  ? "bg-zinc-800 text-white border border-zinc-700"
-                  : "text-zinc-500 hover:text-zinc-300 bg-zinc-900/40"
+                  ? "bg-[#25283b] text-sky-400 border border-sky-500/30"
+                  : "text-zinc-400 hover:text-zinc-300 bg-[#1c1e2d] border border-white/[0.04]"
               }`}
             >
               {lvl}
             </button>
           ))}
         </div>
-        <div className="text-xs font-mono text-zinc-500">
+        <div className="text-xs font-mono text-zinc-400">
           Showing {filteredEntries.length} of {entries.length} events
         </div>
       </div>
 
       {/* Audit Log Table */}
-      <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/50 backdrop-blur-sm overflow-hidden">
+      <div className="rounded-2xl border border-white/[0.06] bg-[#1c1e2d] shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-zinc-800 bg-zinc-950/40 text-zinc-400 text-[11px] font-mono">
+              <tr className="border-b border-white/[0.06] bg-[#141522] text-zinc-400 text-[11px] font-mono">
                 <th className="py-3 px-4 font-medium">EVENT ID</th>
                 <th className="py-3 px-4 font-medium">TIMESTAMP (UTC)</th>
                 <th className="py-3 px-4 font-medium text-center">SEVERITY</th>
@@ -181,25 +181,24 @@ export default function AuditLogPage() {
                 <th className="py-3 px-4 font-medium">AUTONOMOUS ACTION EXECUTED</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/50">
+            <tbody className="divide-y divide-white/[0.04]">
               {filteredEntries.map((item) => {
                 const isFrozen = item.level === "FROZEN";
                 const isRed = item.level === "RED";
                 const isAmber = item.level === "AMBER";
-                const isNormal = item.level === "NORMAL";
 
                 return (
-                  <tr key={item.id} className="hover:bg-zinc-800/20 transition-colors">
+                  <tr key={item.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-3 px-4 font-mono font-bold text-sky-400">{item.id}</td>
                     <td className="py-3 px-4 font-mono text-zinc-400">
                       {new Date(item.timestamp).toISOString().replace("T", " ").slice(0, 19)}
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${
                         isFrozen ? "text-red-400 bg-red-950/80 border-red-500 animate-pulse" :
-                        isRed ? "text-rose-400 bg-rose-950/60 border-rose-500/40" :
-                        isAmber ? "text-amber-400 bg-amber-950/60 border-amber-500/40" :
-                        "text-emerald-400 bg-emerald-950/60 border-emerald-500/40"
+                        isRed ? "text-rose-400 bg-rose-500/10 border-rose-500/20" :
+                        isAmber ? "text-amber-400 bg-amber-500/10 border-amber-500/20" :
+                        "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
                       }`}>
                         {item.level}
                       </span>
@@ -208,7 +207,7 @@ export default function AuditLogPage() {
                     <td className="py-3 px-4 text-zinc-300">
                       <div>{item.trigger}</div>
                       {item.metric_value > 0 && (
-                        <div className="text-[10px] text-zinc-500 font-mono">
+                        <div className="text-[10px] text-zinc-400 font-mono">
                           Value: {(item.metric_value * 100).toFixed(1)}% | Limit: {(item.threshold_value * 100).toFixed(1)}%
                         </div>
                       )}
@@ -227,9 +226,9 @@ export default function AuditLogPage() {
       {/* CRO Override Modal */}
       {overrideModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-md w-full rounded-xl border border-zinc-700 bg-zinc-900 p-6 space-y-4 shadow-2xl">
+          <div className="max-w-md w-full rounded-2xl border border-white/[0.08] bg-[#1c1e2d] p-6 space-y-4 shadow-2xl">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
                 <Lock className="w-5 h-5" />
               </div>
               <div>
@@ -245,7 +244,7 @@ export default function AuditLogPage() {
                   type="text"
                   value={officerId}
                   onChange={(e) => setOfficerId(e.target.value)}
-                  className="w-full rounded-lg bg-zinc-950 border border-zinc-700 px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-sky-500"
+                  className="w-full rounded-xl bg-[#141522] border border-white/[0.08] px-3.5 py-2 text-xs text-white font-mono focus:outline-none focus:border-sky-500"
                 />
               </div>
 
@@ -255,7 +254,7 @@ export default function AuditLogPage() {
                   value={overrideReason}
                   onChange={(e) => setOverrideReason(e.target.value)}
                   rows={3}
-                  className="w-full rounded-lg bg-zinc-950 border border-zinc-700 px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
+                  className="w-full rounded-xl bg-[#141522] border border-white/[0.08] px-3.5 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
                 />
               </div>
             </div>
@@ -263,13 +262,13 @@ export default function AuditLogPage() {
             <div className="flex justify-end gap-3 pt-2">
               <button
                 onClick={() => setOverrideModal(false)}
-                className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-300"
+                className="px-4 py-2 rounded-xl bg-[#25283b] hover:bg-[#2d3047] text-xs font-medium text-zinc-300 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleExecuteOverride}
-                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow-lg"
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow-lg cursor-pointer"
               >
                 CONFIRM OVERRIDE & RESET
               </button>

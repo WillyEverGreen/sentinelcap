@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Sliders, ArrowRightLeft, TrendingUp, ShieldCheck, CheckCircle2, Play, RefreshCw, Award } from "lucide-react";
 import EfficientFrontierChart from "@/components/EfficientFrontierChart";
-import { runOptimization, OptimizeRequest, OptimizeResponse, getPortfolio } from "@/lib/api";
+import { runOptimization, OptimizeRequest, OptimizeResponse } from "@/lib/api";
 
 export default function OptimizePage() {
   const [strategy, setStrategy] = useState<OptimizeRequest["strategy"]>("mean_cvar");
@@ -41,7 +41,7 @@ export default function OptimizePage() {
     <div className="space-y-6">
       
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-zinc-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-white/[0.06]">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
             <Sliders className="w-6 h-6 text-sky-400" />
@@ -55,7 +55,7 @@ export default function OptimizePage() {
         <button
           onClick={executeOptimization}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-lg shadow-sky-600/20 transition-all cursor-pointer disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-500/20 transition-all cursor-pointer disabled:opacity-50"
         >
           {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-white" />}
           RUN REBALANCE OPTIMIZATION
@@ -66,7 +66,7 @@ export default function OptimizePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Sliders Form (4 cols) */}
-        <div className="lg:col-span-4 rounded-xl border border-zinc-800/80 bg-zinc-900/50 p-5 backdrop-blur-sm space-y-5">
+        <div className="lg:col-span-4 rounded-2xl border border-white/[0.06] bg-[#1c1e2d] p-5 shadow-sm space-y-5">
           <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Parameters & Constraints</h3>
 
           {/* Strategy Selector */}
@@ -75,7 +75,7 @@ export default function OptimizePage() {
             <select
               value={strategy}
               onChange={(e) => setStrategy(e.target.value as any)}
-              className="w-full rounded-lg bg-zinc-950 border border-zinc-700 px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
+              className="w-full rounded-xl bg-[#141522] border border-white/[0.08] px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
             >
               <option value="mean_cvar">Mean-CVaR (Tail-Risk Linear Program)</option>
               <option value="hrp">Hierarchical Risk Parity (HRP Graph)</option>
@@ -97,9 +97,9 @@ export default function OptimizePage() {
               step="0.05"
               value={riskTolerance}
               onChange={(e) => setRiskTolerance(parseFloat(e.target.value))}
-              className="w-full accent-sky-500 h-1.5 bg-zinc-800 rounded-lg cursor-pointer"
+              className="w-full accent-sky-500 h-1.5 bg-[#25283b] rounded-lg cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-zinc-500 font-mono mt-0.5">
+            <div className="flex justify-between text-[10px] text-zinc-400 font-mono mt-0.5">
               <span>0.1 (Conservative)</span>
               <span>1.0 (Aggressive)</span>
             </div>
@@ -118,9 +118,9 @@ export default function OptimizePage() {
               step="0.05"
               value={maxWeight}
               onChange={(e) => setMaxWeight(parseFloat(e.target.value))}
-              className="w-full accent-sky-500 h-1.5 bg-zinc-800 rounded-lg cursor-pointer"
+              className="w-full accent-sky-500 h-1.5 bg-[#25283b] rounded-lg cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-zinc-500 font-mono mt-0.5">
+            <div className="flex justify-between text-[10px] text-zinc-400 font-mono mt-0.5">
               <span>20%</span>
               <span>60%</span>
             </div>
@@ -139,9 +139,9 @@ export default function OptimizePage() {
               step="0.01"
               value={minCashBuffer}
               onChange={(e) => setMinCashBuffer(parseFloat(e.target.value))}
-              className="w-full accent-sky-500 h-1.5 bg-zinc-800 rounded-lg cursor-pointer"
+              className="w-full accent-sky-500 h-1.5 bg-[#25283b] rounded-lg cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-zinc-500 font-mono mt-0.5">
+            <div className="flex justify-between text-[10px] text-zinc-400 font-mono mt-0.5">
               <span>0% (Fully Invested)</span>
               <span>25% (High Liquidity)</span>
             </div>
@@ -160,16 +160,16 @@ export default function OptimizePage() {
               step="0.001"
               value={turnoverPenalty}
               onChange={(e) => setTurnoverPenalty(parseFloat(e.target.value))}
-              className="w-full accent-sky-500 h-1.5 bg-zinc-800 rounded-lg cursor-pointer"
+              className="w-full accent-sky-500 h-1.5 bg-[#25283b] rounded-lg cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-zinc-500 font-mono mt-0.5">
+            <div className="flex justify-between text-[10px] text-zinc-400 font-mono mt-0.5">
               <span>0.0 (High Churn)</span>
               <span>0.01 (Low Churn)</span>
             </div>
           </div>
 
           <div className="pt-2">
-            <div className="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800 text-[11px] text-zinc-400 font-mono space-y-1">
+            <div className="p-3.5 rounded-xl bg-[#141522] border border-white/[0.06] text-[11px] text-zinc-400 font-mono space-y-1">
               <div className="text-zinc-300 font-semibold">ALGORITHMIC NOTE:</div>
               <p>Turnover dampener penalizes $L_1$ weight distance $|w - w_0|$ to minimize transaction friction and bid-ask slippage.</p>
             </div>
@@ -182,30 +182,30 @@ export default function OptimizePage() {
           {/* Post-Optimization Analytics Strip */}
           {data && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3 rounded-lg bg-zinc-900/60 border border-zinc-800">
+              <div className="p-4 rounded-2xl bg-[#1c1e2d] border border-white/[0.06]">
                 <div className="text-[10px] text-zinc-400 font-mono">EXPECTED RETURN</div>
-                <div className="text-lg font-bold font-mono text-emerald-400">
+                <div className="text-lg font-bold font-mono text-emerald-400 mt-1">
                   {(data.optimization_result.expected_annual_return * 100).toFixed(2)}%
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-zinc-900/60 border border-zinc-800">
+              <div className="p-4 rounded-2xl bg-[#1c1e2d] border border-white/[0.06]">
                 <div className="text-[10px] text-zinc-400 font-mono">ANNUAL VOLATILITY</div>
-                <div className="text-lg font-bold font-mono text-zinc-200">
+                <div className="text-lg font-bold font-mono text-zinc-200 mt-1">
                   {(data.optimization_result.annual_volatility * 100).toFixed(2)}%
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-zinc-900/60 border border-zinc-800">
+              <div className="p-4 rounded-2xl bg-[#1c1e2d] border border-white/[0.06]">
                 <div className="text-[10px] text-zinc-400 font-mono">SHARPE RATIO</div>
-                <div className="text-lg font-bold font-mono text-sky-400">
+                <div className="text-lg font-bold font-mono text-sky-400 mt-1">
                   {data.optimization_result.sharpe_ratio.toFixed(2)}
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-zinc-900/60 border border-zinc-800">
+              <div className="p-4 rounded-2xl bg-[#1c1e2d] border border-white/[0.06]">
                 <div className="text-[10px] text-zinc-400 font-mono">95% 10D CVaR</div>
-                <div className="text-lg font-bold font-mono text-purple-300">
+                <div className="text-lg font-bold font-mono text-purple-300 mt-1">
                   {(data.optimization_result.cvar_95_10d * 100).toFixed(2)}%
                 </div>
               </div>
@@ -224,13 +224,13 @@ export default function OptimizePage() {
 
           {/* Rebalancing Trade List Ticket */}
           {data?.trade_list && (
-            <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/50 p-5 backdrop-blur-sm space-y-3">
+            <div className="rounded-2xl border border-white/[0.06] bg-[#1c1e2d] p-5 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-semibold text-white tracking-wide">Institutional Execution Trade List</h3>
                   <p className="text-xs text-zinc-400">Executable orders to transition current balance sheet to optimal weights</p>
                 </div>
-                <div className="text-xs font-mono text-zinc-400 bg-zinc-800 px-2 py-1 rounded">
+                <div className="text-xs font-mono text-zinc-400 bg-[#141522] border border-white/[0.06] px-2.5 py-1 rounded-lg">
                   Turnover: ${(data.total_turnover_dollar / 1000).toFixed(0)}k ({(data.total_turnover_pct * 100).toFixed(1)}%)
                 </div>
               </div>
@@ -238,7 +238,7 @@ export default function OptimizePage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-zinc-800 text-zinc-400 text-[11px] font-mono">
+                    <tr className="border-b border-white/[0.06] text-zinc-400 text-[11px] font-mono">
                       <th className="pb-2 font-medium">TICKER</th>
                       <th className="pb-2 font-medium text-right">CURRENT</th>
                       <th className="pb-2 font-medium text-right text-sky-400">OPTIMAL</th>
@@ -247,12 +247,12 @@ export default function OptimizePage() {
                       <th className="pb-2 font-medium text-center">ACTION</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-800/50">
+                  <tbody className="divide-y divide-white/[0.04]">
                     {data.trade_list.map((trade) => {
                       const isBuy = trade.action === "BUY";
                       const isSell = trade.action === "SELL";
                       return (
-                        <tr key={trade.ticker} className="hover:bg-zinc-800/30 transition-colors">
+                        <tr key={trade.ticker} className="hover:bg-white/[0.02] transition-colors">
                           <td className="py-2.5 font-bold font-mono text-white">{trade.ticker}</td>
                           <td className="py-2.5 font-mono text-right text-zinc-400">
                             {(trade.current_weight * 100).toFixed(1)}%
@@ -260,7 +260,7 @@ export default function OptimizePage() {
                           <td className="py-2.5 font-mono text-right font-semibold text-white">
                             {(trade.optimal_weight * 100).toFixed(1)}%
                           </td>
-                          <td className={`py-2.5 font-mono text-right font-semibold ${isBuy ? "text-emerald-400" : isSell ? "text-rose-400" : "text-zinc-500"}`}>
+                          <td className={`py-2.5 font-mono text-right font-semibold ${isBuy ? "text-emerald-400" : isSell ? "text-rose-400" : "text-zinc-400"}`}>
                             {trade.delta_weight > 0 ? "+" : ""}{(trade.delta_weight * 100).toFixed(1)}%
                           </td>
                           <td className="py-2.5 font-mono text-right text-zinc-300">
@@ -268,12 +268,12 @@ export default function OptimizePage() {
                           </td>
                           <td className="py-2.5 text-center">
                             <span
-                              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${
                                 isBuy
-                                  ? "text-emerald-400 bg-emerald-950/60 border-emerald-500/30"
+                                  ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
                                   : isSell
-                                  ? "text-rose-400 bg-rose-950/60 border-rose-500/30"
-                                  : "text-zinc-400 bg-zinc-800/60 border-zinc-700/30"
+                                  ? "text-rose-400 bg-rose-500/10 border-rose-500/20"
+                                  : "text-zinc-400 bg-zinc-800 border-zinc-700"
                               }`}
                             >
                               {trade.action}

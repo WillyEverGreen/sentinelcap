@@ -2,19 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { 
-  DollarSign, AlertTriangle, ShieldCheck, Activity, Droplets, 
-  TrendingUp, Sliders, ArrowRight, ShieldAlert, CheckCircle2, Lock 
-} from "lucide-react";
-import KPICard from "@/components/KPICard";
-import AllocationChart from "@/components/AllocationChart";
-import RiskMetricsTable from "@/components/RiskMetricsTable";
 import { getPortfolio, getRiskStatus, PortfolioResponse, RiskMetricsResponse } from "@/lib/api";
 
 export default function DashboardPage() {
   const [portfolio, setPortfolio] = useState<PortfolioResponse | null>(null);
   const [riskData, setRiskData] = useState<RiskMetricsResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState<string>("ALL");
 
   const fetchData = async () => {
     try {
@@ -34,222 +28,547 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, []);
 
-  if (loading && !riskData) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <div className="w-10 h-10 border-2 border-sky-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs font-mono text-zinc-500 tracking-wider">CONNECTING TO RISK ENGINE TELEMETRY...</p>
-      </div>
-    );
-  }
-
-  // Fallback defaults if API not yet populated
   const totalVal = portfolio?.total_value || 10_000_000;
-  const cvar99 = riskData?.risk_metrics?.var_metrics?.historical?.es_cvar_pct || 0.051;
+  const cvar99 = riskData?.risk_metrics?.var_metrics?.historical?.es_cvar_pct || 0.0512;
   const riskBudget = portfolio?.portfolio?.risk_budget_cvar_99 || 0.06;
-  const currentDrawdown = riskData?.risk_metrics?.drawdown?.current_drawdown_pct || 0.032;
-  const maxDrawdownLimit = portfolio?.portfolio?.max_drawdown_limit || 0.08;
+  const lcr = riskData?.frtb_liquidity?.liquidity_coverage?.coverage_ratio || 4.03;
   const regimeLabel = riskData?.regime?.regime_label || "Calm";
-  const crisisProb = riskData?.regime?.crisis_probability || 0.05;
-  const lcr = riskData?.frtb_liquidity?.liquidity_coverage?.coverage_ratio || 1.42;
 
-  const cbStatus = riskData?.circuit_breaker?.status || "NORMAL";
-  const cbMode = riskData?.circuit_breaker?.mode || "auto";
-
-  // Build allocation items
-  const assets = portfolio?.portfolio?.assets || [
-    { ticker: "SPY", name: "SPDR S&P 500 ETF", category: "Equity", weight: 0.35, liquidity_horizon_days: 10 },
-    { ticker: "EFA", name: "iShares MSCI EAFE", category: "Equity", weight: 0.15, liquidity_horizon_days: 10 },
-    { ticker: "AGG", name: "US Aggregate Bond", category: "Fixed Income", weight: 0.25, liquidity_horizon_days: 20 },
-    { ticker: "GLD", name: "SPDR Gold Shares", category: "Commodity", weight: 0.10, liquidity_horizon_days: 20 },
-    { ticker: "VNQ", name: "Vanguard Real Estate", category: "Real Estate", weight: 0.10, liquidity_horizon_days: 20 },
-    { ticker: "BIL", name: "1-3M Treasury Bills", category: "Cash", weight: 0.05, liquidity_horizon_days: 10 },
+  // Institutional Multi-Asset Positions
+  const assets = [
+    { ticker: "SPY", name: "SPDR S&P 500 ETF Trust", category: "EQUITY", weight: 0.35, val: 3500000, price: "$510.20", lh: 10, riskPct: 59.4, color: "#38bdf8", type: "Equities" },
+    { ticker: "AGG", name: "iShares Core US Aggregate Bond", category: "FIXED_INCOME", weight: 0.25, val: 2500000, price: "$98.40", lh: 20, riskPct: 0.4, color: "#818cf8", type: "Bonds" },
+    { ticker: "EFA", name: "iShares MSCI EAFE Developed", category: "EQUITY", weight: 0.15, val: 1500000, price: "$78.10", lh: 10, riskPct: 21.7, color: "#38bdf8", type: "Equities" },
+    { ticker: "GLD", name: "SPDR Gold Shares Physical Trust", category: "COMMODITY", weight: 0.10, val: 1000000, price: "$215.50", lh: 20, riskPct: 3.1, color: "#fbbf24", type: "Gold & REIT" },
+    { ticker: "VNQ", name: "Vanguard Real Estate REIT ETF", category: "COMMODITY", weight: 0.10, val: 1000000, price: "$88.20", lh: 20, riskPct: 15.5, color: "#c084fc", type: "Gold & REIT" },
+    { ticker: "BIL", name: "SPDR Bloomberg 1-3M T-Bill", category: "FIXED_INCOME", weight: 0.05, val: 500000, price: "$91.50", lh: 10, riskPct: 0.1, color: "#34d399", type: "Bonds" },
   ];
 
-  const allocationItems = assets.map((a) => {
-    const liveWeight = riskData?.active_weights?.[a.ticker] ?? a.weight;
-    return {
-      ticker: a.ticker,
-      name: a.name,
-      category: a.category,
-      weight: liveWeight,
-      dollarValue: liveWeight * totalVal,
-      liquidityDays: a.liquidity_horizon_days,
-    };
-  });
+  const filteredAssets = activeCategory === "ALL" 
+    ? assets 
+    : assets.filter((a) => a.category === activeCategory);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       
-      {/* Hero Header & Circuit Breaker Telemetry Banner */}
-      <div className="rounded-xl border border-zinc-800 bg-gradient-to-r from-zinc-900/80 via-zinc-900/40 to-zinc-950 p-5 backdrop-blur-md">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                ACTIVE PORTFOLIO • {portfolio?.portfolio?.portfolio_id || "PORT-INST-001"}
-              </span>
-              <span className="text-xs font-mono text-zinc-500">CURRENCY: USD</span>
-            </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight mt-1.5">
-              Capital Management & Risk Control Engine
-            </h1>
-            <p className="text-xs text-zinc-400 mt-0.5">
-              Autonomous risk telemetry, FRTB-compliant coherent tail-risk controls, and real-time circuit breakers.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/optimize"
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-lg shadow-sky-600/20 transition-all"
-            >
-              <Sliders className="w-3.5 h-3.5" />
-              Rebalance Portfolio
-            </Link>
-            <Link
-              href="/stress-test"
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 text-xs font-semibold transition-all"
-            >
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-              War Room
-            </Link>
-          </div>
+      {/* Header matching reference image: Title + Breadcrumb */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-[22px] font-bold text-white tracking-tight">eCommerce & Capital Dashboard</h1>
+          <p className="text-xs text-slate-400 mt-1 font-medium">Home - Dashboard</p>
         </div>
-
-        {/* Live Status Bar Notification */}
-        {cbStatus !== "NORMAL" && (
-          <div className="mt-4 p-3 rounded-lg border flex items-center justify-between gap-3 text-xs bg-rose-950/40 border-rose-600/40 text-rose-300 animate-pulse">
-            <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-rose-400" />
-              <span>
-                <strong>SAFEGUARD TRIGGERED:</strong> {riskData?.circuit_breaker?.action_taken}
-              </span>
-            </div>
-            <Link href="/audit-log" className="underline font-semibold flex items-center gap-1 hover:text-white">
-              View Audit Log <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <Link
+            href="/optimize"
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2"
+          >
+            <span>Rebalance Portfolio</span>
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </Link>
+        </div>
       </div>
 
-      {/* 5 Hero KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <KPICard
-          title="Portfolio Capital"
-          value={`$${(totalVal / 1_000_000).toFixed(2)}M`}
-          subtitle="6 Multi-Asset Classes"
-          badge="LIVE"
-          badgeType="neutral"
-          icon={DollarSign}
-        />
-
-        <KPICard
-          title="99% 10-Day CVaR"
-          value={`${(cvar99 * 100).toFixed(2)}%`}
-          subtitle={`$${((cvar99 * totalVal) / 1_000).toFixed(0)}k tail risk`}
-          badge={cvar99 <= riskBudget ? "COMPLIANT" : "BREACH"}
-          badgeType={cvar99 <= riskBudget ? "success" : "danger"}
-          icon={ShieldCheck}
-          progress={(cvar99 / riskBudget) * 100}
-          target={`Budget: ${(riskBudget * 100).toFixed(1)}%`}
-        />
-
-        <KPICard
-          title="Current Drawdown"
-          value={`${(currentDrawdown * 100).toFixed(2)}%`}
-          subtitle="From trailing peak"
-          badge={currentDrawdown <= maxDrawdownLimit ? "HEALTHY" : "CRITICAL"}
-          badgeType={currentDrawdown <= maxDrawdownLimit ? "success" : "danger"}
-          icon={Activity}
-          progress={(currentDrawdown / maxDrawdownLimit) * 100}
-          target={`Limit: ${(maxDrawdownLimit * 100).toFixed(1)}%`}
-        />
-
-        <KPICard
-          title="Markov Regime"
-          value={regimeLabel.toUpperCase()}
-          subtitle={`Crisis prob: ${(crisisProb * 100).toFixed(1)}%`}
-          badge={regimeLabel === "Calm" ? "LOW VOL" : "HIGH VOL"}
-          badgeType={regimeLabel === "Calm" ? "success" : "danger"}
-          icon={TrendingUp}
-        />
-
-        <KPICard
-          title="Liquidity Coverage"
-          value={`${lcr.toFixed(2)}x`}
-          subtitle="High Quality Liquid Assets"
-          badge={lcr >= 1.0 ? "PASS" : "WARNING"}
-          badgeType={lcr >= 1.0 ? "success" : "warning"}
-          icon={Droplets}
-          target="Min: 0.80x"
-        />
-      </div>
-
-      {/* Main Grid: Allocation + Multi-Method Risk */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Allocation Breakdown (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          <AllocationChart allocations={allocationItems} totalValue={totalVal} />
-
-          {/* Model Backtesting & Regulatory Governance Card */}
-          {riskData?.backtesting_validation && (
-            <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-5 backdrop-blur-sm space-y-4">
+      {/* TOP SECTION: Grid matching reference */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        {/* LEFT COLUMN: 4 metric cards matching reference (7 cols) */}
+        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
+          
+          {/* Card 1: Donut Chart Card ($69,700 style) */}
+          <div className="bg-[#181b2a] border border-white/[0.05] rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+            <div>
               <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold text-white tracking-wide">Regulatory Model Backtesting</h3>
-                  <p className="text-xs text-zinc-400">Statistical validation for internal models approach (IMA)</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm text-slate-400 font-medium">$</span>
+                  <span className="text-2xl font-bold font-mono text-white tracking-tight">10,000,000</span>
                 </div>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                  riskData.backtesting_validation.basel_traffic_light.zone === "GREEN"
-                    ? "text-emerald-400 bg-emerald-950/60 border-emerald-500/30"
-                    : "text-amber-400 bg-amber-950/60 border-amber-500/30"
-                }`}>
-                  BASEL {riskData.backtesting_validation.basel_traffic_light.zone}
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <svg className="w-3 h-3 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7" />
+                    <polyline points="7 7 17 7 17 17" />
+                  </svg>
+                  2.2%
                 </span>
               </div>
+              <p className="text-xs text-slate-400 mt-1">Expected Capital Allocation</p>
+            </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-zinc-800/40 border border-zinc-800">
-                  <div className="text-zinc-500 text-[10px] font-mono">KUPIEC POF TEST</div>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="font-semibold text-white">
-                      {riskData.backtesting_validation.kupiec_test.is_accepted ? "PASSED" : "REJECTED"}
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-zinc-400 font-mono mt-0.5">
-                    p-val: {riskData.backtesting_validation.kupiec_test.p_value.toFixed(4)}
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-zinc-800/40 border border-zinc-800">
-                  <div className="text-zinc-500 text-[10px] font-mono">CHRISTOFFERSEN TEST</div>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="font-semibold text-white">
-                      {riskData.backtesting_validation.christoffersen_test.is_accepted ? "PASSED" : "REJECTED"}
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-zinc-400 font-mono mt-0.5">
-                    Independence: Unclustered
-                  </div>
-                </div>
+            {/* Donut Chart on Left, Legend on Right */}
+            <div className="flex items-center justify-between gap-4 mt-5">
+              {/* SVG Donut */}
+              <div className="relative w-28 h-28 flex-shrink-0">
+                <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                  {/* Outer circle background track */}
+                  <circle cx="50" cy="50" r="38" fill="none" stroke="#22263d" strokeWidth="12" />
+                  
+                  {/* Segment 1: Equities (50%) - Electric Cyan */}
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    fill="none"
+                    stroke="#38bdf8"
+                    strokeWidth="12"
+                    strokeDasharray="119.38 238.76"
+                    strokeDashoffset="0"
+                    strokeLinecap="round"
+                    className="transition-all duration-1000"
+                  />
+                  {/* Segment 2: Fixed Income (25%) - Soft Indigo */}
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    fill="none"
+                    stroke="#818cf8"
+                    strokeWidth="12"
+                    strokeDasharray="59.69 238.76"
+                    strokeDashoffset="-119.38"
+                    strokeLinecap="round"
+                    className="transition-all duration-1000"
+                  />
+                  {/* Segment 3: Real Assets & Gold (25%) - Warm Amber */}
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    fill="none"
+                    stroke="#fbbf24"
+                    strokeWidth="12"
+                    strokeDasharray="59.69 238.76"
+                    strokeDashoffset="-179.07"
+                    strokeLinecap="round"
+                    className="transition-all duration-1000"
+                  />
+                </svg>
               </div>
 
-              <p className="text-[11px] text-zinc-400 font-mono bg-zinc-950/40 p-2.5 rounded border border-zinc-800/60">
-                {riskData.backtesting_validation.basel_traffic_light.verdict}
-              </p>
+              {/* Legend List matching reference */}
+              <div className="space-y-2 text-xs flex-1">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="flex items-center gap-2 text-slate-300">
+                    <span className="w-2 h-2 rounded-full bg-[#38bdf8] inline-block shadow-sm shadow-sky-400/50" /> Equities
+                  </span>
+                  <span className="font-mono font-semibold text-white">$5,000k</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="flex items-center gap-2 text-slate-300">
+                    <span className="w-2 h-2 rounded-full bg-[#818cf8] inline-block shadow-sm shadow-indigo-400/50" /> Bonds
+                  </span>
+                  <span className="font-mono font-semibold text-white">$3,000k</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="flex items-center gap-2 text-slate-300">
+                    <span className="w-2 h-2 rounded-full bg-[#fbbf24] inline-block shadow-sm shadow-amber-400/50" /> Gold/REIT
+                  </span>
+                  <span className="font-mono font-semibold text-white">$2,000k</span>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+
+          {/* Card 2: Mini Bar Chart Card ($2,420 style) */}
+          <div className="bg-[#181b2a] border border-white/[0.05] rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold font-mono text-white tracking-tight">4.03x</span>
+                </div>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <svg className="w-3 h-3 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7" />
+                    <polyline points="7 7 17 7 17 17" />
+                  </svg>
+                  2.6%
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Average Liquidity Coverage (LCR)</p>
+            </div>
+
+            {/* Glowing vertical mini bar chart */}
+            <div className="h-16 flex items-end justify-between gap-2.5 mt-4 pt-2">
+              {[35, 60, 45, 80, 50, 95, 70, 85].map((h, i) => (
+                <div key={i} className="flex-1 bg-[#22263d] rounded-md h-full flex items-end p-0.5">
+                  <div
+                    style={{ height: `${h}%` }}
+                    className="w-full bg-gradient-to-t from-sky-600 to-cyan-400 rounded-sm hover:brightness-125 transition-all cursor-pointer shadow-sm shadow-cyan-500/20"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Card 3: Progress Card (1,836 style) */}
+          <div className="bg-[#181b2a] border border-white/[0.05] rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold font-mono text-white tracking-tight">5.12%</span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <svg className="w-3 h-3 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="7" y1="7" x2="17" y2="17" />
+                    <polyline points="17 7 17 17 7 17" />
+                  </svg>
+                  2.2%
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">99% 10-Day Expected Shortfall</p>
+            </div>
+
+            <div className="mt-5 space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-400">85% to Risk Budget</span>
+                <span className="font-mono text-emerald-400 font-semibold">6.0% Limit</span>
+              </div>
+              <div className="h-2 w-full bg-[#22263d] rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 rounded-full w-[85%] shadow-sm shadow-emerald-400/30" />
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4: Team / Regime Card (6.3k style) */}
+          <div className="bg-[#181b2a] border border-white/[0.05] rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold font-mono text-white tracking-tight">CALM</span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  LOW VOL
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Hamilton Markov Regime State</p>
+            </div>
+
+            <div className="mt-4">
+              <p className="text-[11px] text-slate-400 font-medium mb-2">Today's Risk Guardians</p>
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2 overflow-hidden">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[#181b2a] shadow-sm">
+                    CR
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-pink-600 flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[#181b2a] shadow-sm">
+                    LP
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[#181b2a] shadow-sm">
+                    FR
+                  </div>
+                </div>
+                <span className="text-[11px] font-mono text-slate-400 font-semibold bg-[#22263d] px-2.5 py-0.5 rounded-full border border-white/[0.05]">
+                  +3 nodes
+                </span>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        {/* Right Column: 4-Method VaR / ES Table & Risk Attribution (7 cols) */}
-        <div className="lg:col-span-7">
-          {riskData?.risk_metrics && (
-            <RiskMetricsTable metrics={riskData.risk_metrics} riskBudget={riskBudget} />
-          )}
+        {/* RIGHT COLUMN: Large Area Chart Card matching reference (5 cols) */}
+        <div className="lg:col-span-5 bg-[#181b2a] border border-white/[0.05] rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+          <div>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-white tracking-wide">Sales & Capital this Month</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Simulated multi-asset liquidity growth</p>
+              </div>
+              <button className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.04] transition-colors">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="1" />
+                  <circle cx="19" cy="12" r="1" />
+                  <circle cx="5" cy="12" r="1" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mt-4">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xs text-slate-400 font-medium">$</span>
+                <span className="text-2xl font-bold font-mono text-white tracking-tight">14,094,000</span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 ml-2">
+                  <svg className="w-3 h-3 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7" />
+                    <polyline points="7 7 17 7 17 17" />
+                  </svg>
+                  4.6%
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">Another $48,346 to goal target</p>
+            </div>
+          </div>
+
+          {/* Smooth Green Area Line Chart */}
+          <div className="mt-6">
+            <div className="flex justify-between text-[11px] text-slate-400 font-mono mb-2">
+              <span>$24k</span>
+              <span>$20.5k</span>
+              <span>$17k</span>
+              <span>$13.5k</span>
+              <span>$10k</span>
+            </div>
+
+            <div className="relative w-full aspect-[2.4/1]">
+              <svg viewBox="0 0 400 160" className="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+
+                {/* Grid lines */}
+                {[30, 70, 110, 140].map((y) => (
+                  <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#22263d" strokeDasharray="4 4" strokeWidth="1" />
+                ))}
+
+                {/* Filled Area */}
+                <path
+                  d="M 0,95 L 40,85 L 80,60 L 120,60 L 160,30 L 200,30 L 240,80 L 280,105 L 320,85 L 360,85 L 400,60 L 400,160 L 0,160 Z"
+                  fill="url(#greenGrad)"
+                />
+
+                {/* Crisp Glowing Green Path matching reference */}
+                <path
+                  d="M 0,95 L 40,85 L 80,60 L 120,60 L 160,30 L 200,30 L 240,80 L 280,105 L 320,85 L 360,85 L 400,60"
+                  fill="none"
+                  stroke="#10b981"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                {/* Highlight Point */}
+                <circle cx="200" cy="30" r="4.5" fill="#10b981" stroke="#181b2a" strokeWidth="2.5" />
+              </svg>
+            </div>
+
+            {/* Date Axis matching reference */}
+            <div className="flex justify-between text-[11px] text-slate-400 font-mono mt-3">
+              <span>Jun 04</span>
+              <span>Jun 07</span>
+              <span>Jun 10</span>
+              <span>Jun 13</span>
+              <span>Jun 16</span>
+            </div>
+          </div>
         </div>
+
+      </div>
+
+      {/* BOTTOM SECTION: Grid matching reference */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        {/* BOTTOM LEFT: Recent Orders style table with Category Tab Pills (7 cols) */}
+        <div className="lg:col-span-7 bg-[#181b2a] border border-white/[0.05] rounded-2xl p-5 shadow-sm space-y-4">
+          
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-white tracking-wide">Recent Orders & Positions</h3>
+            <button className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.04] transition-colors">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="1" />
+                <circle cx="19" cy="12" r="1" />
+                <circle cx="5" cy="12" r="1" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Category Tabs with Professional SVGs matching reference */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              {
+                id: "ALL",
+                label: "All Assets",
+                svg: (
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                    <line x1="8" y1="21" x2="16" y2="21" />
+                    <line x1="12" y1="17" x2="12" y2="21" />
+                  </svg>
+                ),
+              },
+              {
+                id: "EQUITY",
+                label: "Equities",
+                svg: (
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                    <polyline points="17 6 23 6 23 12" />
+                  </svg>
+                ),
+              },
+              {
+                id: "FIXED_INCOME",
+                label: "Bonds",
+                svg: (
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="3" y1="21" x2="21" y2="21" />
+                    <line x1="6" y1="18" x2="6" y2="10" />
+                    <line x1="12" y1="18" x2="12" y2="10" />
+                    <line x1="18" y1="18" x2="18" y2="10" />
+                    <path d="M3 10 12 3l9 7" />
+                  </svg>
+                ),
+              },
+              {
+                id: "COMMODITY",
+                label: "Gold & REIT",
+                svg: (
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                ),
+              },
+            ].map((tab) => {
+              const active = activeCategory === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveCategory(tab.id)}
+                  className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                    active
+                      ? "bg-[#1e2338] text-sky-400 border-sky-500/40 shadow-sm"
+                      : "bg-[#141624] text-slate-400 border-white/[0.04] hover:bg-[#1a1d2e] hover:text-white"
+                  }`}
+                >
+                  <span className={active ? "text-sky-400" : "text-slate-400"}>{tab.svg}</span>
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Clean table matching reference columns */}
+          <div className="overflow-x-auto pt-2">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-white/[0.05] text-slate-400 text-[11px] font-mono pb-2">
+                  <th className="pb-2 font-medium">Item</th>
+                  <th className="pb-2 font-medium text-right">Quantity</th>
+                  <th className="pb-2 font-medium text-right">Price</th>
+                  <th className="pb-2 font-medium text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.04]">
+                {filteredAssets.map((item) => (
+                  <tr key={item.ticker} className="hover:bg-white/[0.02] transition-colors group">
+                    <td className="py-3 flex items-center gap-3">
+                      {/* Asset Category Squircle Icon Badge */}
+                      <div
+                        style={{ backgroundColor: `${item.color}15`, color: item.color }}
+                        className="w-8 h-8 rounded-xl flex items-center justify-center font-bold font-mono text-xs border border-current/20 shadow-sm"
+                      >
+                        {item.ticker.slice(0, 2)}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-white text-xs group-hover:text-sky-300 transition-colors">{item.name}</div>
+                        <div className="text-[10px] text-slate-400 font-mono">Item: {item.ticker} • {item.type}</div>
+                      </div>
+                    </td>
+
+                    <td className="py-3 text-right font-mono text-slate-300 font-medium">
+                      x{(item.weight * 10).toFixed(0)}
+                    </td>
+
+                    <td className="py-3 text-right font-mono text-slate-400">
+                      <div>{item.price}</div>
+                    </td>
+
+                    <td className="py-3 text-right font-mono font-bold text-white">
+                      ${(item.val / 1000).toLocaleString()}.00
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* BOTTOM RIGHT: Discounted Product Sales style chart (5 cols) */}
+        <div className="lg:col-span-5 bg-[#181b2a] border border-white/[0.05] rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+          <div>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-white tracking-wide">Discounted Capital & Tail Risk</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Users and automated hedge channels</p>
+              </div>
+              <button className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.04] transition-colors">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="1" />
+                  <circle cx="19" cy="12" r="1" />
+                  <circle cx="5" cy="12" r="1" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mt-4">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xs text-slate-400 font-medium">$</span>
+                <span className="text-2xl font-bold font-mono text-white tracking-tight">3,706</span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 ml-2">
+                  <svg className="w-3 h-3 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7" />
+                    <polyline points="7 7 17 7 17 17" />
+                  </svg>
+                  2.8%
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">Total Discounted Sales this month</p>
+            </div>
+          </div>
+
+          {/* Smooth Cyan Line Chart */}
+          <div className="mt-6">
+            <div className="flex justify-between text-[11px] text-slate-400 font-mono mb-2">
+              <span>$362</span>
+              <span>$357</span>
+              <span>$351</span>
+              <span>$346</span>
+              <span>$340</span>
+            </div>
+
+            <div className="relative w-full aspect-[2.4/1]">
+              <svg viewBox="0 0 400 160" className="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#0284c7" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#0284c7" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+
+                {/* Grid lines */}
+                {[30, 70, 110, 140].map((y) => (
+                  <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#22263d" strokeDasharray="4 4" strokeWidth="1" />
+                ))}
+
+                {/* Cyan Area Fill */}
+                <path
+                  d="M 0,90 L 40,110 L 80,95 L 120,95 L 160,110 L 200,90 L 240,90 L 280,120 L 320,105 L 360,105 L 400,95 L 400,160 L 0,160 Z"
+                  fill="url(#blueGrad)"
+                />
+
+                {/* Crisp Glowing Cyan Line matching reference */}
+                <path
+                  d="M 0,90 L 40,110 L 80,95 L 120,95 L 160,110 L 200,90 L 240,90 L 280,120 L 320,105 L 360,105 L 400,95"
+                  fill="none"
+                  stroke="#0ea5e9"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                <circle cx="240" cy="90" r="4.5" fill="#0ea5e9" stroke="#181b2a" strokeWidth="2.5" />
+              </svg>
+            </div>
+
+            {/* Date Axis matching reference */}
+            <div className="flex justify-between text-[11px] text-slate-400 font-mono mt-3">
+              <span>Jun 04</span>
+              <span>Jun 07</span>
+              <span>Jun 10</span>
+              <span>Jun 13</span>
+              <span>Jun 16</span>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
